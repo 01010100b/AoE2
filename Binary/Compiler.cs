@@ -16,7 +16,7 @@ namespace Binary
 
             if (!condition.StartsWith("("))
             {
-                condition = "(" + condition + ")"; // hh
+                condition = "(" + condition + ")"; // h
             }
 
             var sb = new StringBuilder();
