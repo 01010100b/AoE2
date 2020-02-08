@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DF5234EA-3C4F-463C-9BD7-C6A1529B7355}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Binary</RootNamespace>
+    <AssemblyName>Binary</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Assert.cs" />
+    <Compile Include="Element.cs" />
+    <Compile Include="Elements\CommentElement.cs" />
+    <Compile Include="Elements\ConstElement.cs" />
+    <Compile Include="Elements\DefGlobalElement.cs" />
+    <Compile Include="Elements\DefLocalElement.cs" />
+    <Compile Include="Elements\DefStrategicElement.cs" />
+    <Compile Include="Elements\LoadIfDefinedElement.cs" />
+    <Compile Include="Elements\LoadElement.cs" />
+    <Compile Include="Elements\LoadRandomElement.cs" />
+    <Compile Include="Elements\PreprocessorElement.cs" />
+    <Compile Include="Elements\RuleElement.cs" />
+    <Compile Include="Elements\StatementElement.cs" />
+    <Compile Include="Language.cs" />
+    <Compile Include="Loader.cs" />
+    <Compile Include="Parser.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Compiler.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".editorconfig" />
+    <None Include="App.config" />
+    <None Include="Releases\Binary 0.1.zip" />
+    <None Include="Releases\Binary 0.2.zip" />
+    <None Include="Script\Binary.ai" />
+    <None Include="Script\Binary.per" />
+    <None Include="Script\Binary\Attacking.per" />
+    <None Include="Script\Binary\AutoBalanceGatherers.per" />
+    <None Include="Script\Binary\AutoResearchEconomy.per" />
+    <None Include="Script\Binary\AutoResearchMilitary.per" />
+    <None Include="Script\Binary\Buildings.per" />
+    <None Include="Script\Binary\Const.per" />
+    <None Include="Script\Binary\Economy.per" />
+    <None Include="Script\Binary\FoodEconomy.per" />
+    <None Include="Script\Binary\FoodEconomy2.per" />
+    <None Include="Script\Binary\Functions\GetObjectCount.per" />
+    <None Include="Script\Binary\Functions\GetObjectMovementDistance.per" />
+    <None Include="Script\Binary\Functions\GetRandomNumber.per" />
+    <None Include="Script\Binary\Functions\ObjectExists.per" />
+    <None Include="Script\Binary\Functions\TryImportantBuilding.per" />
+    <None Include="Script\Binary\Functions\TryImportantResearch.per" />
+    <None Include="Script\Binary\Functions\TryResearch.per" />
+    <None Include="Script\Binary\PublicInterface.per" />
+    <None Include="Script\Binary\Research.per" />
+    <None Include="Script\Binary\Scouting.per" />
+    <None Include="Script\Binary\SitRep.per" />
+    <None Include="Script\Binary\Statistics.per" />
+    <None Include="Script\Binary\Strategies\BasicStrategy.per" />
+    <None Include="Script\Binary\Strategies\BasicStrategyCivs.per" />
+    <None Include="Script\Binary\Strategy.per" />
+    <None Include="Script\Binary\Team.per" />
+    <None Include="Script\Binary\Units.per" />
+    <None Include="Script\Binary\UserPatchConst.per" />
+    <Content Include="Script\Binary\Tests.txt" />
+    <Content Include="Script\Binary\TODO.txt" />
+    <Content Include="Script\lang.xml" />
+    <None Include="Test\Binary.per" />
+    <None Include="Test\rec.20200102-171326.mgz" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="BeforeBuild">
+    <!-- Remove bin folder -->
+    <RemoveDir Directories="$(TargetDir)" />
+  </Target>
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <ANTLR Include="Script\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ANTLR)" DestinationFolder="$(TargetDir)\Script\%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

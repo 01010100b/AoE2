@@ -1,0 +1,722 @@
+﻿; BUILDINGS
+
+(defconst CAMP-DELETION-DISTANCE 6)
+
+#function BuildPoint gl-escrow gl-building gl-point-x gl-point-y gl-zone-size
+
+	var gl-built = NO
+	
+	#if (gl-currently-placing-building == OFF) (up-can-build gl-escrow g: gl-building)
+
+		gl-currently-placing-building = gl-building
+		
+		gl-point1-x = gl-point-x
+		gl-point1-y = gl-point-y
+		up-set-target-point gl-point1
+		gl-currently-placing-point-x = gl-point1-x
+		gl-currently-placing-point-y = gl-point1-y
+		
+		sn-placement-zone-size = gl-zone-size
+		
+		up-build place-point gl-escrow g: gl-building
+		
+		;up-chat-data-to-self "Build at x: %d" g: gl-point1-x
+		;up-chat-data-to-self "Build at y: %d" g: gl-point1-y
+	
+		up-get-fact game-time 0 gl-started-placing
+		gl-built = YES
+
+	#end-if
+	
+#return gl-built
+
+#function BuildNormal gl-escrow gl-building
+
+	var gl-built = NO
+
+	#if (gl-currently-placing-building == OFF) (up-can-build gl-escrow g: gl-building)
+
+		#if (gl-building != lumber-camp) (gl-building != mining-camp) (gl-building != mill) (gl-building != farm)
+
+			var gl-zone-size
+			var gl-lerp-tiles
+			gl-zone-size = sn-minimum-town-size
+			gl-zone-size -= 10
+			gl-lerp-tiles = -10
+
+			#if or (gl-building == town-center) (gl-building == house)
+			
+				gl-lerp-tiles = 10
+				
+			#end-if
+			
+			#if gl-building == castle
+			
+				gl-lerp-tiles = sn-minimum-town-size
+				gl-lerp-tiles += 5
+				gl-zone-size = 5
+				
+			#end-if
+			
+			up-get-point position-self gl-point1
+			up-get-point position-center gl-point2
+			
+			var gl-target
+			up-find-player enemy find-closest gl-target
+			sn-focus-player-number = gl-target
+			up-full-reset-search
+			up-find-remote c: town-center c: 1
+			up-get-search-state gl-search-state
+			
+			#if gl-remote-total > 0
+			
+				up-set-target-object search-remote c: 0
+				up-get-point position-object gl-point2
+				
+			#end-if
+			
+			up-lerp-tiles gl-point1 gl-point2 g: gl-lerp-tiles
+			
+			BuildPoint(gl-escrow, gl-building, gl-point1-x, gl-point1-y, gl-zone-size)
+		
+		#else
+	
+			sn-allow-adjacent-dropsites = 0
+			
+			#if gl-building == lumber-camp
+			
+				sn-allow-adjacent-dropsites = 1
+				
+			#end-if
+			
+			up-build place-normal gl-escrow g: gl-building
+			gl-currently-placing-building = gl-building
+	
+		#end-if
+	
+		up-get-fact game-time 0 gl-started-placing
+		gl-built = YES
+
+	#end-if
+
+#return gl-built
+
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-enable-new-building-system 1)
+	(set-strategic-number sn-percent-building-cancellation 10)
+	(set-strategic-number sn-disable-builder-assistance 1)
+	(set-strategic-number sn-town-center-placement mining-camp)
+	(set-strategic-number sn-defer-dropsite-update 1)
+	(set-strategic-number sn-dropsite-separation-distance 3)
+	(set-strategic-number sn-mill-max-distance 20)
+	(set-strategic-number sn-camp-max-distance 20)
+	(set-strategic-number sn-cap-civilian-builders 4)
+	(set-strategic-number sn-minimum-town-size 20)
+	(disable-self)
+)
+
+(defrule
+	(true)
+=>
+	(up-assign-builders c: town-center-foundation c: 6)
+	(up-assign-builders c: castle c: 10)
+	(up-assign-builders c: stable c: 2)
+	(up-assign-builders c: archery-range c: 2)
+	(up-assign-builders c: market c: 3)
+	(up-assign-builders c: siege-workshop c: 3)
+	(disable-self)
+)
+
+(defrule
+	(current-age == feudal-age)
+=>
+	(set-strategic-number sn-cap-civilian-builders 8)
+	(set-strategic-number sn-minimum-town-size 25)
+)
+
+(defrule
+	(current-age == castle-age)
+=>
+	(set-strategic-number sn-cap-civilian-builders 12)
+	(set-strategic-number sn-minimum-town-size 30)
+)
+
+(defrule
+	(current-age == imperial-age)
+=>
+	(set-strategic-number sn-cap-civilian-builders 16)
+	(set-strategic-number sn-minimum-town-size 35)
+)
+
+#if sn-town-threat == HIGH
+
+	sn-cap-civilian-builders = 1
+	
+#end-if
+
+; Important building
+
+#if gl-currently-placing-building == OFF
+
+	; important building has changed, cancel current important building
+	#if (gl-current-important-building != OFF) (up-compare-goal gl-current-important-building s:!= sn-important-building) 
+	
+		up-setup-cost-data 1 gl-cost
+		up-add-object-cost g: gl-current-important-building c: 1
+		
+		#foreach $resource in food wood gold stone
+		
+			gl-escrow-$resource -= gl-cost-$resource
+			
+		#end-foreach
+		
+		gl-current-important-building = OFF
+		
+	#end-if
+	
+	; new important building
+	#if (gl-current-important-building == OFF) (strategic-number sn-important-building != OFF)
+		
+		gl-current-important-building = sn-important-building
+		
+		up-setup-cost-data 1 gl-cost
+		up-add-object-cost g: gl-current-important-building c: 1
+		
+		#foreach $resource in food wood gold stone
+	
+			gl-escrow-$resource += gl-cost-$resource
+		
+		#end-foreach
+		
+		up-store-type-name g: gl-current-important-building
+		up-chat-data-to-self "Saving up for building: %s" c: 7031232
+	
+	#end-if
+
+	; build it
+	#if (gl-current-important-building != OFF) (up-can-build gl-with-escrow g: gl-current-important-building)
+
+		var gl-built
+		gl-built = BuildNormal(gl-with-escrow, gl-current-important-building)
+		
+		#if gl-built == YES
+		
+			up-setup-cost-data 1 gl-cost
+			up-add-object-cost g: gl-current-important-building c: 1
+	
+			#foreach $resource in food wood gold stone
+	
+				gl-escrow-$resource -= gl-cost-$resource
+		
+			#end-foreach
+			
+			gl-current-important-building = OFF
+		
+		#end-if
+		
+	#end-if
+
+#end-if
+
+; Town centers
+
+#if up-object-type-count-total c: town-center s:< sn-min-town-center
+	
+	var gl-town-centers-needed = sn-min-town-center
+	var gl-foundations
+	up-get-fact building-type-count-total town-center-foundation gl-foundations
+	gl-town-centers-needed -= gl-foundations
+		
+	#if up-object-type-count-total c: town-center g:< gl-town-centers-needed
+		
+		sn-important-building = town-center
+			
+	#end-if
+		
+#end-if
+
+; Military buildings
+
+#if sn-auto-production-buildings == ON
+	
+	#foreach $unit in primary-unit secondary-unit tertiary-unit siege-unit
+	
+		#if sn-$unit != OFF
+		
+			;chat-local-to-self "Auto production $unit"
+			var gl-need-barracks = NO
+			var gl-need-blacksmith = NO
+			
+			var gl-unit
+			up-get-object-type-data s: sn-$unit object-data-type gl-unit
+			
+			var gl-train-site
+			up-get-object-type-data g: gl-unit object-data-train-site gl-train-site
+			
+			#if or (gl-train-site == archery-range) (gl-train-site == stable)
+			
+				;chat-local-to-self "Need barracks"
+				gl-need-barracks = YES
+				
+			#end-if
+			
+			#if gl-train-site == siege-workshop
+			
+				;chat-local-to-self "Need blacksmith"
+				gl-need-blacksmith = YES
+				
+			#end-if
+			
+			#if (gl-need-barracks == YES) (building-type-count-total barracks == 0)
+				
+				TryImportantBuilding(barracks)
+				
+			#end-if
+			
+			#if (gl-need-blacksmith == YES) (building-type-count-total blacksmith == 0)
+			
+				TryImportantBuilding(blacksmith)
+				
+			#end-if
+			
+			#if up-object-type-count-total g: gl-train-site c:== 0
+			
+				TryImportantBuilding(gl-train-site)
+				
+			#end-if
+			
+		#end-if
+		
+	#end-foreach
+	
+	#foreach $unit in primary-unit secondary-unit tertiary-unit siege-unit
+	
+		#if sn-$unit != OFF
+			
+			var gl-unit
+			up-get-object-type-data s: sn-$unit object-data-type gl-unit
+			
+			var gl-train-site
+			up-get-object-type-data g: gl-unit object-data-train-site gl-train-site
+			
+			#if (not (up-train-site-ready g: gl-unit)) (up-pending-objects g: gl-train-site c:== 0)
+			
+				TryImportantBuilding(gl-train-site)
+				
+			#end-if
+			
+		#end-if
+		
+	#end-foreach
+	
+	#if (military-population >= 5) (building-type-count-total barracks > 0) (building-type-count-total blacksmith == 0)
+	
+		TryImportantBuilding(blacksmith, BUILDING-NORMAL, -1, -1)
+		
+		#if (building-type-count-total blacksmith == 1) (current-age >= castle-age)
+		
+			TryImportantBuilding(blacksmith, BUILDING-NORMAL, -1, -1)
+			
+		#end-if
+		
+	#end-if
+	
+#end-if
+
+;region Eco buildings
+
+#if gl-currently-placing-building == OFF
+
+	; houses
+	
+	#if (housing-headroom < 4) (population-headroom > 0) (can-build-with-escrow house) (building-type-count-total house < 2)
+	
+		up-full-reset-search
+		up-find-local c: villager-class c: 5
+		up-remove-objects search-local object-data-language-id c:== lid-villager-builder
+		up-remove-objects search-local object-data-index > 0
+		
+		up-set-target-object search-local c: 0
+		up-get-point position-object gl-point1
+		
+		BuildPoint(with-escrow, house, gl-point1-x, gl-point1-y, 2)
+		
+		up-assign-builders c: house c: 2
+		
+	#end-if
+	
+	#if building-type-count house >= 1
+	
+		up-assign-builders c: house c: 1
+		
+	#end-if
+
+	#if (housing-headroom < 4) (population-headroom > 0) (can-build-with-escrow house) (up-pending-objects c: house c:== 0)
+
+		BuildNormal(gl-with-escrow, house)
+	
+	#end-if
+	
+	#if (current-age >= castle-age) (housing-headroom < 10) (population-headroom > 0) (can-build-with-escrow house) (up-pending-objects c: house c:< 2)
+
+		BuildNormal(gl-with-escrow, house)
+	
+	#end-if
+
+	; mills
+
+	#if (can-build-with-escrow mill) (up-pending-objects c: mill == 0)
+
+		var gl-min-mill = 0
+		
+		#if building-type-count mill == 0
+		
+			#if (resource-found food) (or (civilian-population > 10) (and (unit-type-count livestock-class < 2) (game-time > 180)))
+			
+				gl-min-mill = 1
+				chat-local-to-self "Mill"
+				
+			#end-if
+
+		#else
+		
+			up-get-fact building-type-count-total farm gl-min-mill
+			gl-min-mill -= 8
+			gl-min-mill /= 10
+			gl-min-mill max= 1
+			
+		#end-if
+			
+		#if up-object-type-count-total c: mill g:< gl-min-mill
+	
+			BuildNormal(gl-with-escrow, mill)
+			sn-mill-max-distance += 1
+			
+			;sn-mill-max-distance += 2
+		
+		#end-if
+			
+	#end-if
+
+	; lumber camps
+	
+	#if (can-build-with-escrow lumber-camp) (up-pending-objects c: lumber-camp == 0) (sn-wood-gatherer-percentage > 0) (resource-found wood) (dropsite-min-distance wood < 250)
+	
+		var gl-should-build = NO
+		
+		#if dropsite-min-distance wood > 2
+		
+			gl-should-build = YES
+			
+		#end-if
+		
+		var gl-needed-camps
+		up-get-fact unit-type-count villager-wood gl-needed-camps
+		gl-needed-camps z/= 10
+		gl-needed-camps max= 1
+		
+		#if up-object-type-count-total c: lumber-camp g:< gl-needed-camps
+		
+			gl-should-build = YES
+			
+		#end-if
+		
+		up-get-point position-self gl-point1
+		up-set-target-point gl-point1
+		up-full-reset-search
+		up-filter-status c: status-ready c: list-active
+		up-filter-distance c: -1 s: sn-camp-max-distance
+		up-find-resource c: wood c: 40
+		up-get-search-state gl-search-state
+		
+		#if (gl-should-build == YES) (gl-remote-total < 20)
+		
+			gl-should-build = NO
+			
+		#end-if
+		
+		#if gl-should-build == YES
+		
+			BuildNormal(gl-with-escrow, lumber-camp)
+			sn-camp-max-distance += 3
+		
+		#end-if
+	
+	#end-if
+
+	; mining camps
+
+	#foreach $ore in gold stone
+		
+		#if (can-build-with-escrow mining-camp) (up-pending-objects c: mining-camp == 0) (sn-$ore-gatherer-percentage > 0) (resource-found $ore) (dropsite-min-distance $ore < 250)
+
+			var gl-should-build = NO
+		
+			#if dropsite-min-distance $ore > 2
+		
+				gl-should-build = YES
+			
+			#end-if
+			
+			var gl-needed-camps
+			up-get-fact unit-type-count villager-$ore gl-needed-camps
+			gl-needed-camps z/= 10
+			gl-needed-camps *= 2
+			gl-needed-camps max= 1
+			
+			#if up-object-type-count-total c: mining-camp g:< gl-needed-camps
+		
+				gl-should-build = YES
+			
+			#end-if
+			
+			up-get-point position-self gl-point1
+			up-set-target-point gl-point1
+			up-full-reset-search
+			up-filter-status c: status-resource c: list-active
+			up-filter-distance c: -1 s: sn-camp-max-distance
+			up-find-resource c: $ore c: 20
+			up-get-search-state gl-search-state
+		
+			#if (gl-should-build == YES) (gl-remote-total == 0)
+		
+				gl-should-build = NO
+			
+			#end-if
+		
+			#if gl-should-build == YES
+		
+				BuildNormal(gl-with-escrow, mining-camp)
+				sn-camp-max-distance += 2
+		
+			#end-if
+	
+		#end-if
+	
+	#end-foreach
+
+	; farms
+
+	var gl-min-farm
+	up-get-fact civilian-population 0 gl-min-farm
+	gl-min-farm %*= sn-food-gatherer-percentage
+
+	#if up-object-type-count-total c: livestock-class c:> 1
+
+		gl-min-farm -= 6
+	
+	#end-if
+
+	#if up-gaia-type-count c: bush > 1
+
+		gl-min-farm -= 4
+	
+	#end-if
+	
+	#if civilian-population < 15
+	
+		gl-min-farm min= 2
+		
+	#end-if
+
+	var gl-required-farms
+	up-get-fact building-type-count-total farm gl-required-farms
+	gl-required-farms -= gl-min-farm
+	gl-required-farms *= -1
+	
+	#if (gl-required-farms > 0) (idle-farm-count < 8) (up-pending-objects c: farm < 4)
+	
+		var gl-farm-boom = YES
+		
+		#if sn-primary-unit != OFF
+		
+			var gl-train-site
+			up-get-object-type-data s: sn-primary-unit object-data-train-site gl-train-site
+	
+			#if up-object-type-count-total g: gl-train-site c:== 0
+	
+				gl-farm-boom = NO
+		
+			#end-if
+			
+		#end-if
+		
+		#foreach $unit in primary-unit secondary-unit tertiary-unit
+	
+			#if sn-$unit != OFF
+			
+				var gl-unit
+				up-get-object-type-data s: sn-$unit object-data-type gl-unit
+			
+				var gl-train-site
+				up-get-object-type-data g: gl-unit object-data-train-site gl-train-site
+			
+				#if up-object-type-count-total g: gl-train-site c:== 0
+			
+					gl-farm-boom = NO
+				
+				#end-if
+			
+			#end-if
+		
+		#end-foreach
+	
+		#if (gl-farm-boom == YES) (can-build-with-escrow farm) (dropsite-min-distance wood <= 4) (sn-important-building != town-center) (sn-important-building != market) (sn-important-building != blacksmith)
+	
+			BuildNormal(gl-with-escrow, farm)
+		
+		#else
+		
+			#if can-build farm
+			
+				BuildNormal(gl-without-escrow, farm)
+				
+			#end-if
+			
+		#end-if
+	
+	#end-if
+
+#end-if
+
+;endregion
+
+; delete old camps
+
+#if timer-triggered ti-repeat-13
+
+	var gl-index
+	var gl-resources
+	
+	#if building-type-count lumber-camp > 3
+	
+		up-full-reset-search
+		up-find-local c: lumber-camp c: 10
+		up-get-search-state gl-search-state
+		
+		gl-index = GetRandomNumber(gl-local-total)
+		up-set-target-object search-local g: gl-index
+		up-get-point position-object gl-point1
+		up-set-target-point gl-point1
+		
+		up-filter-status c: status-ready c: list-active
+		up-filter-distance c: -1 c: CAMP-DELETION-DISTANCE
+		up-find-resource c: wood c: 20
+		up-get-search-state gl-search-state
+		
+		gl-resources = gl-remote-total
+		
+		up-filter-status c: status-resource c: list-active
+		up-filter-distance c: -1 c: CAMP-DELETION-DISTANCE
+		up-find-resource c: wood c: 20
+		up-get-search-state gl-search-state
+		
+		gl-resources += gl-remote-total
+		
+		up-reset-search 0 0 1 1
+		up-filter-distance c: -1 c: 10
+		up-find-remote c: watch-tower-line c: 5
+		up-get-search-state gl-search-state
+		
+		#if gl-remote-total > 0
+		
+			gl-resources = 0
+			
+		#end-if
+		
+		#if gl-resources == 0
+		
+			up-remove-objects search-local object-data-index g:!= gl-index
+			up-target-point gl-point1 action-delete -1 -1
+			;chat-local-to-self "Deleting lumber camp"
+			
+		#end-if
+		
+	#end-if
+	
+	#if building-type-count mining-camp > 3
+	
+		up-full-reset-search
+		up-find-local c: mining-camp c: 10
+		up-get-search-state gl-search-state
+		
+		gl-index = GetRandomNumber(gl-local-total)
+		up-set-target-object search-local g: gl-index
+		up-get-point position-object gl-point1
+		up-set-target-point gl-point1
+		
+		up-filter-status c: status-resource c: list-active
+		up-filter-distance c: -1 c: CAMP-DELETION-DISTANCE
+		
+		up-find-resource c: gold c: 20
+		up-get-search-state gl-search-state
+		gl-resources = gl-remote-total
+		
+		up-find-resource c: stone c: 20
+		up-get-search-state gl-search-state
+		gl-resources += gl-remote-total
+		
+		up-reset-search 0 0 1 1
+		up-filter-distance c: -1 c: 10
+		up-find-remote c: watch-tower-line c: 5
+		up-get-search-state gl-search-state
+		
+		#if gl-remote-total > 0
+		
+			;gl-resources = 0
+			
+		#end-if
+		
+		#if gl-resources == 0
+		
+			up-remove-objects search-local object-data-index g:!= gl-index
+			up-target-point gl-point1 action-delete -1 -1
+			;chat-local-to-self "Deleting mining camp"
+			
+		#end-if
+		
+	#end-if
+	
+#end-if
+
+; placement 
+
+#if gl-currently-placing-building != OFF
+
+	#if not (up-pending-placement g: gl-currently-placing-building)
+	
+		#if gl-currently-placing-building == sn-important-building
+	
+			sn-important-building = OFF
+		
+		#end-if
+		
+		gl-currently-placing-building = OFF
+		
+	#else
+	
+		#if timer-triggered ti-repeat-23
+		
+			up-store-type-name g: gl-currently-placing-building
+			up-chat-data-to-self "Placing: %s" c: 7031232
+			
+			up-chat-data-to-self "At x: %d" g: gl-currently-placing-point-x
+			up-chat-data-to-self "At y: %d" g: gl-currently-placing-point-y
+		
+		#end-if
+		
+		var gl-time
+		up-get-fact game-time 0 gl-time
+		gl-time -= gl-started-placing
+		
+		#if gl-time > 30
+		
+			up-reset-placement g: gl-currently-placing-building
+			
+		#end-if
+		
+	#end-if
+	
+#end-if

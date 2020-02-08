@@ -1,0 +1,13 @@
+﻿#function TryImportantResearch gl-research-id
+
+	var gl-researched = NO
+	gl-researched = TryResearch(gl-research-id)
+
+	#if (gl-researched == NO) (sn-important-research == OFF) (up-research-status g: gl-research-id == research-available)
+
+		sn-important-research = gl-research-id
+		gl-researched = YES
+	
+	#end-if
+
+#return gl-researched

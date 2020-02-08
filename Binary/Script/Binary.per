@@ -1,0 +1,191 @@
+﻿; BINARY
+
+(load "Binary\PublicInterface")
+
+(defconst BINARY-ID 1754)
+(defconst gl-team-id 420)
+(defconst gl-team-town-under-attack 11)
+(defconst gl-team-target 12)
+(defconst gl-team-self-x 478)
+(defconst gl-team-self-y 479)
+(defconst gl-team-attacking 392)
+
+(defrule
+	(true)
+=>
+	(set-goal gl-team-id BINARY-ID)
+	(disable-self)
+)
+
+gl-team-target = sn-target-player-number
+gl-team-attacking = sn-attack
+
+(defconst ti-next-villager 10)
+(defconst ti-sheep-found 11)
+
+#defglobal gl-with-escrow = with-escrow
+#defglobal gl-without-escrow = without-escrow
+
+; Economy
+#defglobal gl-min-trade-carts = 0
+#defglobal gl-escrow-food = 100
+#defglobal gl-escrow-wood = 100
+#defglobal gl-escrow-gold = 0
+#defglobal gl-escrow-stone = 0
+#defglobal gl-previous-update-vilagers = -1
+
+; Research
+#defglobal gl-current-important-research = OFF
+
+; Buildings
+#defglobal gl-current-important-building = OFF
+#defglobal gl-currently-placing-building = OFF
+#defglobal gl-currently-placing-point-x = 0
+#defglobal gl-currently-placing-point-y = 0
+#defglobal gl-started-placing
+
+; Units
+#defglobal gl-current-important-unit = OFF
+
+; Attacking
+#defglobal gl-currently-attacking = NO
+
+; Scouting
+#defglobal gl-scout = OFF
+
+#if (game-time > 1800) (civilian-population < 5) (building-type-count town-center == 0) (military-population < 5)
+
+	chat-to-all "gg"
+	resign
+	
+#end-if
+
+(defrule
+    (true)
+=>
+    (set-strategic-number sn-percent-civilian-explorers 100)
+	(set-strategic-number sn-cap-civilian-explorers 10)
+    (set-strategic-number sn-total-number-explorers 10)
+    (set-strategic-number sn-number-explore-groups 10)
+	(set-strategic-number sn-initial-exploration-required 0)
+    (disable-self)
+)
+
+(defrule
+	(unit-type-count livestock-class > 0)
+=>
+	(enable-timer ti-sheep-found 10)
+	(up-get-point position-self gl-point1)
+	(up-full-reset-search)
+	(up-find-local c: villager-class c: 10)
+	(up-remove-objects search-local object-data-order != orderid-explore)
+	(up-target-point gl-point1 action-move -1 -1)
+	(disable-self)
+)
+
+(defrule
+	(timer-triggered ti-sheep-found)
+=>
+	(set-strategic-number sn-percent-civilian-explorers 0)
+	(set-strategic-number sn-cap-civilian-explorers 0)
+    (set-strategic-number sn-total-number-explorers 1)
+    (set-strategic-number sn-number-explore-groups 1)
+	(up-reset-scouts)
+	(disable-timer ti-sheep-found)
+	(disable-self)
+)
+
+(load "Binary\Team")
+
+(load "Binary\Strategy")
+
+
+#if sn-auto-balance-gatherers == ON
+
+	(load "Binary\AutoBalanceGatherers")
+	
+#end-if
+
+(load "Binary\Economy")
+
+(load "Binary\FoodEconomy2")
+
+
+#if sn-auto-research-economy == ON
+
+	(load "Binary\AutoResearchEconomy")
+
+#end-if
+
+#if sn-auto-research-military == ON
+
+	(load "Binary\AutoResearchMilitary")
+
+#end-if
+
+
+(load "Binary\Research")
+
+
+(load "Binary\Buildings")
+
+
+(load "Binary\Units")
+
+
+(load "Binary\Attacking")
+
+
+(load "Binary\Scouting")
+
+
+(load "Binary\SitRep")
+
+
+(load "Binary\Statistics")
+
+
+; target point for building placement fix
+gl-point1-x = gl-currently-placing-point-x
+gl-point1-y = gl-currently-placing-point-y
+up-set-target-point gl-point1
+
+#if timer-triggered ti-repeat-23
+
+	#if sn-important-research != OFF
+	
+		up-store-tech-name s: sn-important-research
+		up-chat-data-to-player my-player-number "Important research: %s" c: 7031232
+		
+	#end-if
+	
+	#if sn-important-building != OFF
+	
+		up-store-type-name s: sn-important-building
+		up-chat-data-to-player my-player-number "Important building: %s" c: 7031232
+		
+	#end-if
+	
+	#if sn-important-unit != OFF
+	
+		up-store-type-name s: sn-important-unit
+		up-chat-data-to-player my-player-number "Important unit: %s" c: 7031232
+		
+	#end-if
+	
+#end-if
+
+; chat SitRep
+#if timer-triggered ti-repeat-1m
+
+	up-chat-data-to-player my-player-number "My target: %d" s: sn-target-player-number
+	up-chat-data-to-player my-player-number "Superiority: %d" s: sn-superiority
+	up-chat-data-to-player my-player-number "Target army: %d" s: sn-target-army
+	
+	#foreach $class in town infantry archery cavalry monk eagle-warrior
+	
+		up-chat-data-to-player my-player-number "$class threat: %d" s: sn-$class-threat
+		
+	#end-foreach
+	
+#end-if

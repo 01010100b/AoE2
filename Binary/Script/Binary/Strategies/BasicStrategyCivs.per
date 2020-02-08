@@ -1,0 +1,226 @@
+﻿; TODO all civs
+
+;-----------START
+;defaults
+gl-my-feudal-unit = skirmisher-line
+gl-my-primary-unit = knight-line
+gl-my-secondary-unit = skirmisher-line
+gl-my-siege-unit = battering-ram-line
+gl-my-primary-trash-unit = spearman-line
+gl-my-secondary-trash-unit = skirmisher-line
+gl-my-infantry-counter = archer-line
+gl-my-archer-counter = skirmisher-line
+gl-my-cavalry-counter = spearman-line
+gl-my-monk-counter = scout-cavalry-line
+gl-my-eagle-warrior-counter = militiaman-line
+
+;civ grouping
+var gl-meso-civ = NO
+
+;target civs
+var gl-meso-civ-target-primary = militiaman-line
+var gl-meso-civ-target-secondary = knight-line
+
+;-----------CIV GROUPS
+
+#load-if-defined AZTEC-CIV
+	
+	gl-meso-civ = YES
+	
+#end-if
+
+#load-if-defined INCAN-CIV
+
+	gl-meso-civ = YES
+
+#end-if
+
+#load-if-defined MAYAN-CIV
+
+	gl-meso-civ = YES
+
+#end-if
+
+#if gl-meso-civ == YES
+
+	gl-my-feudal-unit = archer-line
+	gl-my-primary-unit = archer-line
+	gl-my-secondary-unit = eagle-warrior-line
+	gl-my-monk-counter = eagle-warrior-line
+	gl-meso-civ-target-secondary = eagle-warrior-line
+		
+#end-if
+
+;-----------CIVS
+
+#load-if-defined AZTEC-CIV
+	
+	#if (building-type-count castle > 0)
+	
+		gl-my-infantry-counter = jaguar-man-line
+		gl-my-eagle-warrior-counter = jaguar-man-line
+		gl-my-primary-unit = jaguar-man-line
+		gl-meso-civ-target-primary = jaguar-man-line
+		gl-meso-civ-target-secondary = militiaman-line
+		
+		TryImportantResearch(ri-garland-wars)
+		
+	#end-if
+
+#end-if
+
+#load-if-defined BERBERS-CIV
+
+	#if (building-type-count stable > 0) (gold-amount > 200) (current-age >= castle-age)
+	
+		gl-my-cavalry-counter = camel-line
+		
+	#end-if
+	
+	#if (current-age >= castle-age)
+	
+		gl-my-archer-counter = genitour-line
+		
+	#end-if
+
+#end-if
+
+#load-if-defined BRITON-CIV
+
+	#if (building-type-count castle > 0)
+	
+		gl-my-primary-unit = longbowman-line
+		gl-my-secondary-unit = knight-line
+		
+		TryImportantResearch(ri-yeomen)
+				
+	#end-if
+
+#end-if
+
+#load-if-defined BYZANTINE-CIV
+
+	#if (building-type-count stable > 0) (gold-amount > 200) (current-age >= castle-age)
+	
+		gl-my-cavalry-counter = camel-line
+			
+	#end-if
+	
+	#if (building-type-count castle > 0)
+	
+		gl-my-infantry-counter = cataphract-line
+		gl-my-eagle-warrior-counter = cataphract-line
+		gl-meso-civ-target-primary = cataphract-line
+		gl-meso-civ-target-secondary = militiaman-line
+		
+		TryImportantResearch(ri-logistica)
+		
+	#end-if
+
+#end-if
+
+#load-if-defined CELTIC-CIV
+
+	#if (building-type-count castle > 0)
+	
+		gl-meso-civ-target-secondary = woad-raider-line
+		gl-my-siege-unit = mangonel-line		
+		gl-my-primary-unit = woad-raider-line
+		gl-my-secondary-unit = knight-line
+		
+		TryImportantResearch(ri-furor-celtica)
+		
+	#end-if
+
+#end-if
+
+#load-if-defined CHINESE-CIV
+
+	gl-my-primary-unit = archer-line
+	gl-my-secondary-unit = knight-line
+	
+	#if (building-type-count stable > 0) (gold-amount > 200) (current-age >= castle-age)
+	
+		gl-my-cavalry-counter = camel-line
+			
+	#end-if
+
+	#if (building-type-count castle > 0)
+	
+		gl-my-primary-unit = chu-ko-nu-line
+		gl-my-secondary-unit = knight-line
+		
+		TryImportantResearch(ri-rocketry)
+		
+	#end-if
+
+#end-if
+
+#load-if-defined FRANKISH-CIV
+
+	#if (building-type-count castle > 0)
+	
+		gl-my-secondary-unit = throwing-axeman-line
+		
+		TryImportantResearch(ri-bearded-axe)
+		
+	#end-if
+
+#end-if
+
+#load-if-defined GOTHIC-CIV
+	
+	gl-my-primary-unit = huskarl-line
+	gl-my-secondary-unit = militiaman-line
+	gl-my-archer-counter = huskarl-line
+	
+	#if not (research-completed ri-anarchy)
+	
+		gl-my-primary-unit = militiaman-line
+		gl-my-secondary-unit = knight-line
+		gl-my-archer-counter = skirmisher-line
+		
+	#end-if
+
+	#if (building-type-count castle > 0)
+	
+		TryImportantResearch(ri-anarchy)		
+		
+	#end-if
+
+#end-if
+
+#load-if-defined INDIAN-CIV
+
+	gl-my-primary-unit = camel-line
+	gl-my-secondary-unit = spearman-line
+
+#end-if
+
+#load-if-defined MALAY-CIV
+
+	#if (research-available ri-forced-levy)
+	
+		TryImportantResearch(ri-forced-levy)
+		
+	#end-if
+	
+	#if (research-completed ri-forced-levy)
+	
+		gl-my-primary-trash-unit = militiaman-line
+		
+	#end-if
+	
+#end-if
+
+;-----------TARGET CIVS
+
+var gl-target-civ
+up-get-target-fact civilization 0 gl-target-civ
+
+#if or (gl-target-civ == aztecs) (or (gl-target-civ == incans) (gl-target-civ == mayans))
+
+	gl-my-primary-unit = gl-meso-civ-target-primary
+	gl-my-secondary-unit = gl-meso-civ-target-secondary	
+	
+#end-if

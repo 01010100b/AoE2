@@ -1,0 +1,198 @@
+﻿; ECONOMY
+
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-intelligent-gathering 1)
+	(set-strategic-number sn-use-by-type-max-gathering 1)
+	
+	(set-strategic-number sn-maximum-wood-drop-distance 5)
+	(set-strategic-number sn-maximum-gold-drop-distance 5)
+	(set-strategic-number sn-maximum-stone-drop-distance 5)
+	;(set-strategic-number sn-retask-gather-amount 200)
+	;(set-strategic-number sn-max-retask-gather-amount 500)
+	(disable-self)
+)
+
+; Escrow
+
+#foreach $resource in food wood gold stone
+
+	var gl-escrow-amount
+	up-get-fact escrow-amount $resource gl-escrow-amount
+	
+	#if gl-escrow-amount > gl-escrow-$resource
+	
+		up-modify-escrow $resource g:= gl-escrow-$resource
+		set-escrow-percentage $resource 0
+	
+	#end-if
+	
+	#if gl-escrow-amount < gl-escrow-$resource
+	
+		up-get-fact $resource-amount 0 gl-escrow-amount
+		gl-escrow-amount min= gl-escrow-$resource
+		up-modify-escrow $resource g:= gl-escrow-amount
+		set-escrow-percentage $resource 100
+	
+	#end-if
+
+#end-foreach 
+
+; Gatherer percentages update
+
+var gl-update = NO
+
+#if (current-age == dark-age) (up-object-type-count c: villager g:!= gl-previous-update-vilagers)
+
+	gl-update = YES
+	
+#end-if
+
+#if (timer-triggered ti-repeat-3m)
+
+	gl-update = YES
+	
+#end-if
+
+#if gl-update == YES
+
+	var gl-total-gatherers
+	up-get-fact civilian-population 0 gl-total-gatherers
+	
+	var gl-remaining-gatherers = gl-total-gatherers
+	
+	#foreach $resource in food wood gold stone
+	
+		var gl-$resource-gatherers = sn-min-$resource-gatherer
+		gl-remaining-gatherers -= gl-$resource-gatherers
+		gl-remaining-gatherers max= 0
+		
+	#end-foreach
+	
+	var gl-extra-gatherers
+	var gl-total-percentage = 0
+	
+	#foreach $resource in food wood gold stone
+		
+		gl-extra-gatherers = gl-remaining-gatherers
+		gl-extra-gatherers %*= sn-percentage-extra-$resource
+		
+		gl-$resource-gatherers += gl-extra-gatherers
+		gl-$resource-gatherers %/= gl-total-gatherers
+		
+		sn-$resource-gatherer-percentage = gl-$resource-gatherers
+		gl-total-percentage += sn-$resource-gatherer-percentage
+		
+	#end-foreach
+	
+	#foreach $resource in food wood gold stone
+	
+		sn-$resource-gatherer-percentage %/= gl-total-percentage
+		
+	#end-foreach
+	
+	gl-previous-update-vilagers = gl-total-gatherers
+	
+	gl-total-gatherers %*= sn-gold-gatherer-percentage
+	
+	up-get-point position-self gl-point1
+	up-set-target-point gl-point1
+	up-full-reset-search
+	up-filter-status c: status-resource c: list-active
+	up-filter-distance c: -1 s: sn-camp-max-distance
+	up-find-resource c: gold c: 10
+	up-get-search-state gl-search-state
+	
+	#if gl-remote-total < 2
+	
+		gl-min-trade-carts = gl-total-gatherers
+		
+	#end-if
+	
+	#if or (up-players-in-game ally < 2) (building-type-count market == 0)
+	
+		gl-min-trade-carts = 0
+		
+	#end-if
+	
+#end-if
+
+; Market eco balance
+
+#if (can-buy-commodity food) (commodity-buying-price food < 200)
+
+	#if food-amount < 50
+	
+		buy-commodity food
+		
+		chat-local-to-self "Buying food for villagers"
+		
+	#end-if
+	
+	#if (sn-important-research == castle-age) (food-amount < 800)
+	
+		buy-commodity food
+		
+		chat-local-to-self "Buying food for castle age"
+		
+	#end-if
+	
+#end-if
+
+#if sn-market-eco-balance != OFF
+
+	var gl-sell-price = 50
+	var gl-buy-price = 150
+	
+	#if sn-market-eco-balance == MEDIUM
+	
+		gl-sell-price = 25
+		gl-buy-price = 250
+		
+	#end-if
+	
+	#if sn-market-eco-balance == HIGH
+	
+		gl-sell-price = 1
+		gl-buy-price = 10000
+		
+	#end-if
+	
+	#foreach $commodity in food wood stone
+		
+		; buy it
+		#if (can-buy-commodity $commodity) (up-resource-amount amount-gold c:> 1000) (or (up-resource-amount amount-$commodity c:< 100) (up-resource-amount amount-$commodity g:< gl-escrow-$commodity)) 
+		
+			var gl-price
+			up-get-fact commodity-buying-price $commodity gl-price
+			
+			#if gl-price <= gl-buy-price
+			
+				buy-commodity $commodity
+				
+				;chat-local-to-self "Buying $commodity"
+				
+			#end-if
+			
+		#end-if
+		
+		; sell it
+		#if (can-sell-commodity $commodity) (up-resource-amount amount-$commodity c:> 1000)
+		
+			var gl-price
+			up-get-fact commodity-selling-price $commodity gl-price
+			
+			#if gl-price >= gl-sell-price
+			
+				sell-commodity $commodity
+				
+				;chat-local-to-self "Selling $commodity"
+				
+			#end-if
+			
+		#end-if
+	
+	#end-foreach
+	
+#end-if

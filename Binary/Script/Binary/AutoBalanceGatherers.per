@@ -1,0 +1,105 @@
+﻿; AUTO BALANCE GATHERERS
+
+#if civilian-population < 21
+
+	sn-min-food-gatherer = 6
+	sn-min-wood-gatherer = 3
+	sn-min-gold-gatherer = 0
+	sn-min-stone-gatherer = 0
+	sn-percentage-extra-food = 80
+	sn-percentage-extra-wood = 20
+	sn-percentage-extra-gold = 0
+	sn-percentage-extra-stone = 0
+	
+#else
+	
+	; Eco
+
+	var gl-pop-cap
+	up-get-fact population-cap 0 gl-pop-cap
+	gl-pop-cap %*= sn-civilian-population-percentage
+	gl-pop-cap -= 10
+	
+	var gl-tc-in-use = sn-min-town-center
+	#if up-resource-amount amount-civilian-population g:>= gl-pop-cap
+	
+		gl-tc-in-use = 1
+		
+	#end-if
+	
+	sn-min-food-gatherer = gl-tc-in-use
+	sn-min-food-gatherer *= 8 ; 8 farms per tc
+	sn-min-wood-gatherer = gl-tc-in-use
+	sn-min-wood-gatherer *= 4 ; build farms and houses for new villagers
+
+	sn-min-food-gatherer += 4
+	sn-min-wood-gatherer += 6
+
+	sn-min-gold-gatherer = 5 ; get at least some gold to trade with
+	
+	#if (up-research-status c: castle-age c:>= research-pending)
+	
+		sn-min-stone-gatherer = 5
+		
+	#end-if
+
+	up-setup-cost-data 1 gl-cost
+	
+	; lack of resources
+	
+	#foreach $resource in food wood gold stone
+	
+		#if up-resource-amount amount-$resource g:< gl-escrow-$resource
+		
+			var gl-need
+			up-get-fact $resource-amount 0 gl-need
+			gl-need -= gl-escrow-$resource
+			gl-need *= -1
+			
+			gl-cost-$resource += gl-need
+			
+		#end-if
+		
+	#end-foreach
+	
+	; Army
+
+	#foreach $unit in primary-unit secondary-unit tertiary-unit siege-unit
+	
+		#if sn-$unit != OFF
+		
+			up-add-object-cost s: sn-$unit s: sn-min-$unit
+			
+		#end-if
+		
+	#end-foreach
+	
+	; TODO research & various
+	
+	var gl-total-cost = 0
+	gl-total-cost += gl-cost-food
+	gl-total-cost += gl-cost-wood
+	gl-total-cost += gl-cost-gold
+	gl-total-cost += gl-cost-stone
+	
+	#foreach $resource in food wood gold stone
+	
+		gl-cost-$resource %/= gl-total-cost
+		sn-percentage-extra-$resource = gl-cost-$resource
+		
+	#end-foreach
+	
+#end-if
+
+#if civilian-population < 10
+
+	sn-min-food-gatherer = 6
+	sn-min-wood-gatherer = 0
+	sn-min-gold-gatherer = 0
+	sn-min-stone-gatherer = 0
+	sn-percentage-extra-food = 0
+	sn-percentage-extra-wood = 100
+	sn-percentage-extra-gold = 0
+	sn-percentage-extra-stone = 0
+	
+#end-if

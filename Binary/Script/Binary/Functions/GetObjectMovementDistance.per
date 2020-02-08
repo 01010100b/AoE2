@@ -1,0 +1,12 @@
+﻿#function GetObjectMovementDistance gl-object-id
+
+	var gl-distance
+
+	up-set-target-by-id g: gl-object-id
+	up-get-object-data object-data-point-x gl-point1-x
+	up-get-object-data object-data-point-y gl-point1-y
+	up-get-object-data object-data-move-x gl-point2-x
+	up-get-object-data object-data-move-y gl-point2-y
+	up-get-point-distance gl-point1 gl-point2 gl-distance
+
+#return gl-distance

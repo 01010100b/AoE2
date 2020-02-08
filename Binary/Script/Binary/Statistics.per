@@ -1,0 +1,185 @@
+﻿(defrule
+	(true)
+=>
+	(up-log-data 0 "Stats New Game" c: 0)
+	(disable-self)
+)
+
+#if timer-triggered ti-repeat-7
+
+	var gl-data
+	
+	up-get-fact game-time 0 gl-data
+	up-log-data 0 "Stats game-time: %d" g: gl-data
+	
+	
+	#if current-age == dark-age
+		
+		up-log-data 0 "Stats current-age: dark-age" c: 0
+		
+	#end-if
+	
+	#if current-age == feudal-age
+		
+		up-log-data 0 "Stats current-age: feudal-age" c: 0
+		
+	#end-if
+	
+	#if current-age == castle-age
+		
+		up-log-data 0 "Stats current-age: castle-age" c: 0
+		
+	#end-if
+	
+	#if current-age == imperial-age
+		
+		up-log-data 0 "Stats current-age: imperial-age" c: 0
+		
+	#end-if
+	
+	
+	up-get-fact civilian-population 0 gl-data
+	up-log-data 0 "Stats civilian-population: %d" g: gl-data
+	
+	up-get-fact military-population 0 gl-data
+	up-log-data 0 "Stats military-population: %d" g: gl-data
+	
+	
+	#foreach $resource in food wood gold stone
+	
+		up-get-fact resource-amount amount-$resource-total gl-data
+		up-log-data 0 "Stats $resource-total: %d" g: gl-data
+		
+		up-get-fact resource-amount amount-$resource gl-data
+		gl-data -= gl-escrow-$resource
+		up-log-data 0 "Stats $resource-buffer: %d" g: gl-data
+		
+		up-get-fact unit-type-count villager-$resource gl-data
+		up-log-data 0 "Stats villager-$resource: %d" g: gl-data
+	
+	#end-foreach
+	
+	
+	#if up-train-site-ready c: villager
+	
+		up-log-data 0 "Stats tc-idle: 1" c: 0
+		
+	#else
+	
+		up-log-data 0 "Stats tc-idle: 0" c: 0
+		
+	#end-if
+	
+	
+	gl-data = 0
+	
+	#if research-completed ri-wheel-barrow
+		
+		gl-data += 1
+		
+	#end-if
+	
+	#if research-completed ri-hand-cart
+	
+		gl-data += 1
+		
+	#end-if
+	
+	up-log-data 0 "Stats villager upgrades: %d" g: gl-data
+	
+	
+	gl-data = 0
+	
+	#if research-completed ri-double-bit-axe
+	
+		gl-data += 1
+		
+	#end-if
+	
+	#if research-completed ri-bow-saw
+	
+		gl-data += 1
+		
+	#end-if
+	
+	#if research-completed ri-two-man-saw
+	
+		gl-data += 1
+		
+	#end-if
+	
+	up-log-data 0 "Stats wood upgrades: %d" g: gl-data
+	
+	
+	gl-data = 0
+	
+	#if research-completed ri-gold-mining
+		
+		gl-data += 1
+		
+	#end-if
+	
+	#if research-completed ri-gold-shaft-mining
+	
+		gl-data += 1
+		
+	#end-if
+	
+	up-log-data 0 "Stats gold upgrades: %d" g: gl-data
+	
+	
+	gl-data = 0
+	
+	#if research-completed ri-stone-mining
+		
+		gl-data += 1
+		
+	#end-if
+	
+	#if research-completed ri-stone-shaft-mining
+	
+		gl-data += 1
+		
+	#end-if
+	
+	up-log-data 0 "Stats stone upgrades: %d" g: gl-data
+	
+	up-full-reset-search
+	up-find-local c: villager-class c: 40
+	
+	up-get-search-state gl-search-state
+	
+	var gl-villager-samples-moving = 0
+	var gl-villager-samples-walking = 0
+	#for 0 20 gl-i
+	
+		var gl-index
+		gl-index = GetRandomNumber(gl-local-total)
+		up-set-target-object search-local g: gl-index
+		
+		var gl-object-id
+		up-get-object-data object-data-id gl-object-id
+		
+		var gl-moving-distance
+		gl-moving-distance = GetObjectMovementDistance(gl-object-id)
+		
+		#if gl-moving-distance > 1
+		
+			gl-villager-samples-moving += 1
+			
+		#end-if
+		
+		#if gl-moving-distance > 5
+		
+			gl-villager-samples-walking += 1
+			
+		#end-if
+		
+	#end-for
+	
+	gl-villager-samples-moving %/= 20
+	gl-villager-samples-walking %/= 20
+	up-log-data 0 "Stats moving villager percentage: %d" g: gl-villager-samples-moving
+	up-log-data 0 "Stats walking villager percentage: %d" g: gl-villager-samples-walking
+
+#end-if 

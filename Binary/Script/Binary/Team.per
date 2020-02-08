@@ -1,0 +1,28 @@
+﻿sn-coop-share-information = 1
+
+up-find-player enemy find-closest gl-team-target
+sn-target-player-number = gl-team-target
+
+#foreach $player in 1 2 3 4 5 6 7 8
+
+	#if (player-in-game $player) (players-stance $player ally) (up-compare-const my-player-number c:< $player)
+	
+		var gl-id
+		var gl-target
+		var gl-attacking
+		
+		up-get-player-fact $player allied-goal gl-team-id gl-id
+		up-get-player-fact $player allied-goal gl-team-target gl-target
+		up-get-player-fact $player allied-goal gl-team-attacking gl-attacking
+		
+		#if gl-id == BINARY-ID
+		
+			gl-team-target = gl-target
+			sn-target-player-number = gl-team-target
+			sn-attack = gl-attacking
+			
+		#end-if
+		
+	#end-if
+	
+#end-foreach

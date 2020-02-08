@@ -1,0 +1,315 @@
+﻿; FOOD ECONOMY
+
+(defconst MAX-BOAR-DISTANCE 35)
+
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-maximum-food-drop-distance 8)
+	(set-strategic-number sn-maximum-hunt-drop-distance 0)
+	(set-strategic-number sn-enable-boar-hunting 0)
+	(set-strategic-number sn-livestock-to-town-center 1)
+	(disable-self)
+)
+
+#if gl-current-meat != OFF
+
+	var gl-exists
+	gl-exists = ObjectExists(gl-current-meat)
+	
+	#if gl-exists == NO
+
+		gl-current-meat = OFF
+		
+		chat-local-to-self "Current meat is gone."
+		
+	#end-if
+
+#end-if
+
+#if gl-next-meat != OFF
+
+	var gl-exists
+	gl-exists = ObjectExists(gl-next-meat)
+	
+	#if gl-exists == NO
+
+		gl-next-meat = OFF
+		
+		chat-local-to-self "Next meat is gone."
+		
+	#end-if
+
+#end-if
+
+#if gl-next-boar != OFF
+
+	var gl-exists
+	gl-exists = ObjectExists(gl-next-boar)
+	
+	#if gl-exists == NO
+
+		gl-next-boar = OFF
+		
+		chat-local-to-self "Next boar is gone."
+		
+	#end-if
+
+#end-if
+
+#if timer-triggered ti-repeat-5
+
+	#if gl-current-meat != OFF
+
+		up-chat-data-to-self "Current meat: %d" g: gl-current-meat
+	
+	#end-if
+
+	#if gl-next-meat != OFF
+
+		up-chat-data-to-self "Next meat: %d" g: gl-next-meat
+	
+	#end-if
+
+	#if gl-next-boar != OFF
+
+		up-chat-data-to-self "Next boar: %d" g: gl-next-boar
+	
+	#end-if
+	
+#end-if
+
+up-get-point position-self gl-point1
+up-set-target-point gl-point1
+
+#if gl-next-boar != OFF
+
+	var gl-hitpoints
+	var gl-distance
+	up-set-target-by-id g: gl-next-boar
+	up-get-object-data object-data-hitpoints gl-hitpoints
+	up-get-object-data object-data-distance gl-distance
+	
+	#if (gl-hitpoints == 0)
+	
+		#if (gl-distance <= 20)
+		
+			gl-next-meat = gl-next-boar
+			
+		#end-if
+		
+		gl-next-boar = OFF
+	
+	#end-if
+	
+#end-if
+
+sn-focus-player-number = 0
+up-full-reset-search
+
+up-find-local c: livestock-class c: 10
+up-clean-search search-local object-data-distance search-order-asc
+
+up-find-remote c: boar c: 10
+up-find-remote c: javelina c: 10
+up-find-remote c: elephant c: 10
+up-find-remote c: rhinoceros c: 10
+up-clean-search search-remote object-data-distance search-order-asc
+up-remove-objects search-remote object-data-distance > MAX-BOAR-DISTANCE
+
+up-get-search-state gl-search-state
+
+#if gl-next-meat == OFF
+
+	var gl-food-remaining = 0
+	
+	#if gl-current-meat != OFF
+	
+		up-set-target-by-id g: gl-current-meat
+		up-get-object-data object-data-carry gl-food-remaining
+	
+	#end-if
+	
+	#if (gl-food-remaining < 50)
+	
+		up-remove-objects search-local object-data-distance > 12
+		up-get-search-state gl-search-state
+		
+		#if gl-local-total > 0
+	
+			up-set-target-object search-local c: 0
+			up-get-object-data object-data-id gl-next-meat
+		
+			chat-local-to-self "Not enough meat remaining, getting next meat."
+			
+		#end-if
+		
+		#if (gl-remote-total > 0) (gl-next-boar == OFF) (or (civilian-population >= 10) (unit-type-count villager-shepherd >= 7))
+		
+			up-set-target-object search-remote c: 0
+			up-get-object-data object-data-id gl-next-boar
+			
+		#end-if
+	
+	#end-if
+
+#end-if
+
+#if gl-next-meat != OFF
+
+	var gl-hitpoints
+	up-set-target-by-id g: gl-next-meat
+	up-get-object-data object-data-hitpoints gl-hitpoints
+	
+	#if (gl-hitpoints == 0) (gl-current-meat == gl-next-meat)
+	
+		gl-next-meat = OFF
+	
+	#end-if
+	
+	#if (gl-current-meat == OFF)
+
+		var gl-distance
+		up-set-target-by-id g: gl-next-meat
+		up-get-object-data object-data-distance gl-distance
+		
+		#if or (gl-distance < 4) (gl-hitpoints == 0)
+	
+			gl-current-meat = gl-next-meat
+		
+			chat-local-to-self "Switching to next meat."
+			
+		#end-if
+	
+	#end-if
+	
+#end-if
+
+; move sheep
+
+up-get-point position-self gl-point1
+up-set-target-point gl-point1
+sn-focus-player-number = 0
+
+up-full-reset-search
+up-find-local c: livestock-class c: 10
+up-clean-search search-local object-data-distance search-order-asc
+up-get-search-state gl-search-state
+
+#if gl-local-total > 0
+
+	up-get-point position-self gl-point2
+	gl-point2-x -= 10
+	up-bound-point gl-point1 gl-point2
+	up-set-target-point gl-point1
+	
+	up-remove-objects search-local object-data-id g:== gl-current-meat
+	up-remove-objects search-local object-data-id g:== gl-next-meat
+	up-remove-objects search-local object-data-distance <= 1
+	
+	up-target-point gl-point1 action-move -1 -1
+	
+	#if gl-next-meat != OFF
+	
+		up-get-point position-self gl-point1
+		gl-point1-x -= 2
+		gl-point1-y += 1
+		up-set-target-point gl-point1
+		
+		up-full-reset-search
+		up-find-local c: livestock-class c: 10
+		up-remove-objects search-local object-data-id g:!= gl-next-meat
+		up-remove-objects search-local object-data-distance <= 1
+		
+		up-target-point gl-point1 action-move -1 -1
+		
+	#end-if
+	
+#end-if
+
+; task villagers
+
+up-get-point position-self gl-point1
+up-set-target-point gl-point1
+up-full-reset-search
+
+up-find-local c: male-hunter c: 10
+up-find-local c: female-hunter c: 10
+up-find-local c: male-shepherd c: 10
+up-find-local c: female-shepherd c: 10
+up-remove-objects search-local object-data-target-id g:== gl-next-boar
+
+up-find-remote c: boar c: 10
+up-find-remote c: javelina c: 10
+up-find-remote c: elephant c: 10
+up-find-remote c: rhinoceros c: 10
+up-find-remote c: deer c: 10
+up-find-remote c: ostrich c: 10
+up-find-remote c: zebra c: 10
+up-clean-search search-remote object-data-distance search-order-asc
+up-remove-objects search-remote object-data-hitpoints == 0
+up-remove-objects search-remote object-data-index > 0
+
+up-get-search-state gl-search-state
+
+var gl-kill-animal = NO
+
+#if (gl-remote-total > 0)
+
+	var gl-distance
+	up-set-target-object search-remote c: 0
+	up-get-object-data object-data-distance gl-distance
+	
+	#if gl-distance < 8
+	
+		gl-kill-animal = YES
+		up-target-objects 1 action-default -1 -1
+		
+		up-get-object-data object-data-id gl-next-meat
+		
+		chat-local-to-self "Killing animal"
+		
+	#end-if
+	
+#end-if
+
+#if (gl-kill-animal == NO)
+	
+	#if (gl-local-total < 6) (unit-type-count villager-forager > 0)
+	
+		up-find-local c: male-forager c: 1
+		
+	#end-if
+	
+	up-set-target-by-id g: gl-next-boar
+	#if (gl-next-boar != OFF) (up-object-data object-data-tasks-count < 1) ;(up-object-data object-data-target-id < 1)
+	
+		up-remove-objects search-local object-data-hitpoints < 25
+		up-remove-objects search-local object-data-index > 0
+		up-target-objects 1 action-default -1 -1
+		
+		chat-local-to-self "Luring boar"
+		
+	#else
+		
+		#if gl-current-meat != OFF
+		
+			up-set-target-by-id g: gl-current-meat
+			up-get-point position-object gl-point1
+			up-set-target-point gl-point1
+			
+			up-clean-search search-local object-data-distance search-order-asc
+			up-remove-objects search-local object-data-target-id g:== gl-current-meat
+			;up-remove-objects search-local object-data-target-id g:== gl-next-meat
+			up-remove-objects search-local object-data-index >= 6
+			
+			up-target-objects 1 action-default -1 -1
+			
+		#end-if
+		
+	#end-if
+
+#end-if
+
+;up-chat-data-to-self "Current meat: %d" g: gl-current-meat
+;up-chat-data-to-self "Next meat: %d" g: gl-next-meat

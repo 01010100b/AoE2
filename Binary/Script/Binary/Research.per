@@ -1,0 +1,64 @@
+﻿; RESEARCH
+
+#if (strategic-number sn-important-research != OFF) (up-research-status s: sn-important-research c:!= research-available)
+
+	sn-important-research = OFF
+	
+#end-if
+
+; important research has changed, cancel current important research
+#if (not (goal gl-current-important-research OFF)) (up-compare-goal gl-current-important-research s:!= sn-important-research) 
+
+	up-setup-cost-data 1 gl-cost
+	up-add-research-cost g: gl-current-important-research c: 1
+	
+	#foreach $resource in food wood gold stone
+	
+		gl-escrow-$resource -= gl-cost-$resource
+		
+	#end-foreach
+	
+	gl-current-important-research = OFF
+	
+#end-if
+
+; new important research
+#if (goal gl-current-important-research OFF) (strategic-number sn-important-research != OFF)
+
+	gl-current-important-research = sn-important-research
+	
+	up-setup-cost-data 1 gl-cost
+	up-add-research-cost g: gl-current-important-research c: 1
+	
+	#foreach $resource in food wood gold stone
+	
+		gl-escrow-$resource += gl-cost-$resource
+		
+	#end-foreach
+	
+	up-store-tech-name g: gl-current-important-research
+	up-chat-data-to-self "Saving up for research: %s" c: 7031232
+	
+#end-if
+
+; research it
+#if (not (goal gl-current-important-research OFF)) (up-can-research gl-with-escrow g: gl-current-important-research)
+
+	up-setup-cost-data 1 gl-cost
+	up-add-research-cost g: gl-current-important-research c: 1
+	
+	#foreach $resource in food wood gold stone
+	
+		gl-escrow-$resource -= gl-cost-$resource
+		
+	#end-foreach
+	
+	up-research gl-with-escrow g: gl-current-important-research
+	
+	up-store-tech-name g: gl-current-important-research
+	up-chat-data-to-self "Researching: %s" c: 7031232
+	
+	gl-current-important-research = OFF
+	sn-important-research = OFF
+	
+#end-if

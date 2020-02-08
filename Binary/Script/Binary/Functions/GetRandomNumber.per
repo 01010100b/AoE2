@@ -1,0 +1,9 @@
+﻿#function GetRandomNumber gl-max
+
+var gl-result
+
+generate-random-number 32767
+up-get-fact random-number 0 gl-result
+gl-result mod= gl-max
+
+#return gl-result

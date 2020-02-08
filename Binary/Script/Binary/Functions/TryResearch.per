@@ -1,0 +1,12 @@
+﻿#function TryResearch gl-research-id
+
+	var gl-researched = NO
+
+	#if up-can-research gl-without-escrow g: gl-research-id
+
+		up-research gl-without-escrow g: gl-research-id
+		gl-researched = YES
+	
+	#end-if
+
+#return gl-researched

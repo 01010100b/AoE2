@@ -1,0 +1,331 @@
+﻿; AUTO RESEARCH MILITARY
+
+; TODO second unique technology?
+
+; Unit upgrades
+
+; normal
+
+#foreach $unit:$upgrade:$ri-upgrade in my-unique-unit:my-elite-unique-unit:my-unique-unit-upgrade scout-cavalry:light-cavalry:ri-light-cavalry light-cavalry:hussar:ri-hussar knight:cavalier:ri-cavalier cavalier:paladin:ri-paladin camel:heavy-camel:ri-heavy-camel heavy-camel:imperial-camel:ri-imperial-camel battle-elephant:elite-battle-elephant:ri-elite-battle-elephant archer:crossbowman:ri-crossbow crossbowman:arbalest:ri-arbalest skirmisher:elite-skirmisher:ri-elite-skirmisher elite-skirmisher:imperial-skirmisher:ri-imperial-skirmisher cavalry-archer:heavy-cavalry-archer:ri-heavy-cavalry-archer genitour:elite-genitour:ri-elite-genitour militiaman:man-at-arms:ri-man-at-arms man-at-arms:long-swordsman:ri-long-swordsman long-swordsman:two-handed-swordsman:ri-two-handed-swordsman two-handed-swordsman:champion:ri-champion spearman:pikeman:ri-pikeman pikeman:halberdier:ri-halberdier eagle-scout:heavy-eagle-warrior:ri-eagle-warrior heavy-eagle-warrior:elite-eagle-warrior:ri-elite-eagle-warrior eagle-warrior:elite-eagle-warrior:ri-elite-eagle-warrior
+	
+	#if unit-type-count $unit > 0
+	
+		var gl-old-hp
+		var gl-new-hp
+		var gl-old-attack
+		var gl-new-attack
+		var gl-old-armor
+		var gl-new-armor
+		var gl-old-pierce-armor
+		var gl-new-pierce-armor
+		
+		var gl-improvement
+		var gl-unit-cost
+		var gl-research-cost
+		var gl-units-for-upgrade
+	
+		up-get-object-type-data c: $unit object-data-maxhp gl-old-hp
+		up-get-object-type-data c: $upgrade object-data-maxhp gl-new-hp
+		up-get-object-type-data c: $unit object-data-base-attack gl-old-attack
+		up-get-object-type-data c: $upgrade object-data-base-attack gl-new-attack
+		up-get-object-type-data c: $unit object-data-strike-armor gl-old-armor
+		up-get-object-type-data c: $upgrade object-data-strike-armor gl-new-armor
+		up-get-object-type-data c: $unit object-data-pierce-armor gl-old-pierce-armor
+		up-get-object-type-data c: $upgrade object-data-pierce-armor gl-new-pierce-armor
+		
+		gl-old-hp max= 1
+		gl-new-hp max= 1
+		gl-old-attack max= 1
+		gl-new-attack max= 1
+		gl-old-armor max= 1
+		gl-new-armor max= 1
+		gl-old-pierce-armor max= 1
+		gl-new-pierce-armor max= 1
+		
+		gl-new-hp %/= gl-old-hp
+		gl-new-attack %/= gl-old-attack
+		gl-old-armor += gl-old-pierce-armor
+		gl-new-armor += gl-new-pierce-armor
+		gl-new-armor %/= gl-old-armor
+		
+		gl-improvement = gl-new-hp
+		gl-improvement += gl-new-attack
+		gl-improvement += gl-new-armor
+		gl-improvement /= 3
+		gl-improvement -= 100
+		gl-improvement max= 1
+		;up-chat-data-to-self "Improvement: %d" g: gl-improvement
+		
+		up-setup-cost-data 1 gl-cost
+		up-add-object-cost c: $unit c: 1
+		gl-unit-cost = 0
+		gl-unit-cost += gl-cost-food
+		gl-unit-cost += gl-cost-wood
+		gl-unit-cost += gl-cost-gold
+		gl-unit-cost += gl-cost-stone
+		
+		up-setup-cost-data 1 gl-cost
+		up-add-research-cost c: $ri-upgrade c: 1
+		gl-research-cost = 0
+		gl-research-cost += gl-cost-food
+		gl-research-cost += gl-cost-wood
+		gl-research-cost += gl-cost-gold
+		gl-research-cost += gl-cost-stone
+		
+		gl-research-cost %/= gl-unit-cost
+		;up-chat-data-to-self "Units per research: %d" g: gl-research-cost
+		
+		gl-units-for-upgrade = 100
+		gl-units-for-upgrade %/= gl-improvement
+		gl-units-for-upgrade %*= gl-research-cost
+		
+		#foreach $army in primary-unit secondary-unit tertiary-unit
+		
+			var gl-actual-unit
+			up-get-object-type-data s: sn-$army object-data-upgrade-type gl-actual-unit
+			
+			#if gl-actual-unit == $unit
+			
+				gl-units-for-upgrade /= 3
+				
+			#end-if
+			
+		#end-foreach
+		
+		gl-units-for-upgrade /= 100
+		;up-chat-data-to-self "Units for upgrade: %d" g: gl-units-for-upgrade
+
+		#if up-object-type-count-total c: $unit g:> gl-units-for-upgrade
+		
+			TryImportantResearch($ri-upgrade)
+			
+		#end-if
+		
+	#end-if
+	
+	#if unit-type-count $unit >= 10
+	
+		TryResearch($ri-upgrade)
+		
+	#end-if
+	
+#end-foreach
+
+; siege
+
+#foreach $unit:$upgrade:$ri-upgrade in battering-ram:capped-ram:ri-capped-ram capped-ram:siege-ram:ri-siege-ram mangonel:onager:ri-onager onager:siege-onager:ri-siege-onager scorpion:heavy-scorpion:ri-heavy-scorpion 
+	
+	#if unit-type-count-total $unit >= 5
+	
+		TryImportantResearch($ri-upgrade)
+		
+	#end-if
+	
+#end-foreach
+
+; Blacksmith stat upgrades
+
+var gl-ranged-attack = 0
+var gl-melee-attack = 0
+var gl-archer-armor = 0
+var gl-infantry-armor = 0
+var gl-cavalry-armor = 0
+
+var gl-current-amount = 0
+
+up-get-fact building-type-count-total town-center gl-current-amount
+gl-ranged-attack += gl-current-amount
+
+up-get-fact building-type-count-total watch-tower-line gl-current-amount
+gl-ranged-attack += gl-current-amount
+
+up-get-fact building-type-count-total castle gl-current-amount
+gl-current-amount *= 3
+gl-ranged-attack += gl-current-amount
+
+up-get-fact unit-type-count-total archery-class gl-current-amount
+gl-ranged-attack += gl-current-amount
+gl-archer-armor += gl-current-amount
+
+up-get-fact unit-type-count-total cavalry-archer-class gl-current-amount
+gl-ranged-attack += gl-current-amount
+gl-archer-armor += gl-current-amount
+
+up-get-fact unit-type-count-total archery-cannon-class gl-current-amount
+;gl-ranged-attack += gl-current-amount
+gl-archer-armor += gl-current-amount
+
+up-get-fact unit-type-count-total cavalry-cannon-class gl-current-amount
+;gl-ranged-attack += gl-current-amount
+gl-archer-armor += gl-current-amount
+
+up-get-fact unit-type-count-total infantry-class gl-current-amount
+gl-melee-attack += gl-current-amount
+gl-infantry-armor += gl-current-amount
+
+up-get-fact unit-type-count-total cavalry-class gl-current-amount
+gl-melee-attack += gl-current-amount
+gl-cavalry-armor += gl-current-amount
+
+up-get-fact unit-type-count-total scout-cavalry-class gl-current-amount
+gl-melee-attack += gl-current-amount
+gl-cavalry-armor += gl-current-amount
+
+#if building-type-count blacksmith > 0
+	
+	#if gl-cavalry-armor >= 5
+	
+		TryImportantResearch(ri-scale-barding)
+		TryImportantResearch(ri-chain-barding)
+		TryImportantResearch(ri-plate-barding)
+		
+	#end-if
+	
+	#if gl-ranged-attack >= 5
+		
+		TryImportantResearch(ri-fletching)
+		TryImportantResearch(ri-bodkin-arrow)
+		TryImportantResearch(ri-bracer)
+		
+	#end-if
+	
+	#if gl-archer-armor >= 5
+	
+		TryImportantResearch(ri-padded-archer-armor)
+		TryImportantResearch(ri-leather-archer-armor)
+		TryImportantResearch(ri-ring-archer-armor)
+		
+	#end-if
+
+	#if gl-infantry-armor >= 5
+	
+		TryImportantResearch(ri-scale-mail)
+		TryImportantResearch(ri-chain-mail)
+		TryImportantResearch(ri-plate-mail)
+		
+	#end-if
+	
+	#if gl-melee-attack >= 5
+	
+		TryImportantResearch(ri-forging)
+		TryImportantResearch(ri-iron-casting)
+		TryImportantResearch(ri-blast-furnace)
+		
+	#end-if
+	
+#end-if
+
+; various
+
+#if building-type-count castle > 0
+
+	TryImportantResearch(ri-conscription)
+	TryImportantResearch(ri-hoardings)
+	TryResearch(my-unique-research)
+	
+#end-if
+
+#if building-type-count stable > 0
+
+	var gl-cavalry = 0
+	
+	up-get-fact unit-type-count-total cavalry-class gl-current-amount
+	gl-cavalry += gl-current-amount
+	
+	up-get-fact unit-type-count-total scout-cavalry-class gl-current-amount
+	gl-cavalry += gl-current-amount
+	
+	up-get-fact unit-type-count-total cavalry-archer-class gl-current-amount
+	gl-cavalry += gl-current-amount
+	
+	up-get-fact unit-type-count-total cavalry-cannon-class gl-current-amount
+	gl-cavalry += gl-current-amount
+	
+	#if gl-cavalry >= 10
+	
+		TryImportantResearch(ri-bloodlines)
+		TryImportantResearch(ri-husbandry)
+		
+	#end-if
+	
+#end-if
+
+#if (building-type-count barracks > 0) (unit-type-count-total infantry-class >= 10)
+
+	TryImportantResearch(ri-squires)
+	TryResearch(ri-tracking)
+	TryResearch(ri-arson)
+	
+#end-if
+
+#if building-type-count archery-range > 0
+
+	var gl-archers = 0
+	up-get-fact unit-type-count-total archery-class gl-archers
+	up-get-fact unit-type-count-total cavalry-archer-class gl-current-amount
+	gl-archers += gl-current-amount
+	
+	#if gl-archers >= 10
+	
+		TryImportantResearch(ri-thumb-ring)
+		
+	#end-if
+	
+	#if unit-type-count-total cavalry-archer-class >= 10
+	
+		TryResearch(ri-parthian-tactics)
+		
+	#end-if
+	
+#end-if
+
+#if (building-type-count monastery > 0) (unit-type-count-total monastery-class >= 10)
+
+	TryImportantResearch(ri-sanctity)
+	TryImportantResearch(ri-fervor)
+	TryImportantResearch(ri-atonement)
+	TryImportantResearch(ri-redemption)
+	
+	TryResearch(ri-illumination)
+	TryResearch(ri-block-printing)
+	TryResearch(ri-theocracy)
+	TryResearch(ri-faith)
+	
+#end-if
+
+#if building-type-count university > 0
+
+	TryImportantResearch(ri-ballistics)
+	TryImportantResearch(ri-chemistry)
+	TryResearch(ri-masonry)
+	TryResearch(ri-architecture)
+	TryResearch(ri-stonecutting) ; threadmill crane
+	
+	#if or (building-type-count-total watch-tower-line > 0) (building-type-count-total castle > 0)
+	
+		TryResearch(ri-murder-holes)
+		
+		#if building-type-count-total watch-tower-line >= 5
+		
+			TryImportantResearch(ri-arrowslits)
+			TryImportantResearch(ri-guard-tower)
+			TryImportantResearch(ri-keep)
+			TryImportantResearch(ri-bombard-tower)
+		
+		#end-if
+		
+	#end-if
+	
+	#if unit-type-count-total siege-weapon-class >= 5
+	
+		TryResearch(ri-siege-engineers)
+		
+	#end-if
+	
+	#if building-type-count-total stone-wall-line >= 10
+	
+		TryImportantResearch(ri-fortified-wall)
+		
+	#end-if
+	
+#end-if

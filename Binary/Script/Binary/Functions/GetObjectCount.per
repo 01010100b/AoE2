@@ -1,0 +1,10 @@
+﻿#function GetObjectCount gl-object-id
+
+	var gl-count
+	
+	up-full-reset-search
+	up-find-local g: gl-object-id c: 200
+	up-get-search-state gl-search-state
+	gl-count = gl-local-total
+	
+#return gl-count

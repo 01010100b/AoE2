@@ -1,0 +1,135 @@
+﻿; PUBLIC INTERFACE
+
+(load "Binary\UserPatchConst")
+(load "Binary\Const")
+
+(defconst TRUE 1)
+(defconst FALSE 0)
+(defconst YES 1)
+(defconst NO 0)
+(defconst ON 1)
+(defconst OFF 0)
+
+(defconst LOW 1)
+(defconst MEDIUM 2)
+(defconst HIGH 3)
+
+(defconst BUILDING-NORMAL 0) ; place normal
+(defconst BUILDING-FORWARD 1) ; towards enemy
+(defconst BUILDING-MY-CAMP 2) ; near my gold/stone/lumber camp (use for defensive towers/castles)
+(defconst BUILDING-ENEMY-CAMP 3) ; near enemy gold/stone/lumber camp (use for offensive towers/castles)
+(defconst BUILDING-POINT 4) ; at a specific point
+
+; Timers
+
+; 1-9 repeating
+; 10-19 Reserved
+; 20+ Available
+
+#repeat-timer ti-repeat-3 1 3
+#repeat-timer ti-repeat-5 2 5
+#repeat-timer ti-repeat-7 3 7
+#repeat-timer ti-repeat-13 4 13
+#repeat-timer ti-repeat-23 5 23
+#repeat-timer ti-repeat-31 6 31
+#repeat-timer ti-repeat-1m 7 61
+#repeat-timer ti-repeat-3m 8 181
+#repeat-timer ti-repeat-10m 9 601
+
+; Special goals
+
+(defconst gl-cost-food 460) ; use for up-cost functions
+(defconst gl-cost-wood 461)
+(defconst gl-cost-stone 462)
+(defconst gl-cost-gold 463)
+
+(defconst gl-cost-delta-food 464)
+(defconst gl-cost-delta-wood 465)
+(defconst gl-cost-delta-stone 466)
+(defconst gl-cost-delta-gold 467)
+
+(defconst gl-local-total 468) ; use with up-search-state
+(defconst gl-local-last 469)
+(defconst gl-remote-total 470)
+(defconst gl-remote-last 471)
+
+(defconst gl-point1-x 472) ; use for up-point functions
+(defconst gl-point1-y 473)
+(defconst gl-point2-x 474)
+(defconst gl-point2-y 475)
+(defconst gl-point3-x 476)
+(defconst gl-point3-y 477)
+
+(defconst gl-cost gl-cost-food) ; cleaner
+(defconst gl-cost-delta gl-cost-delta-food)
+(defconst gl-search-state gl-local-total)
+(defconst gl-point1 gl-point1-x)
+(defconst gl-point2 gl-point2-x)
+(defconst gl-point3 gl-point3-x)
+
+; Economy
+
+#defstrategic sn-market-eco-balance = OFF; OFF or LOW or MEDIUM or HIGH, how strongly to use the market for eco balancing.
+#defstrategic sn-auto-balance-gatherers = ON ; ON or OFF, if ON will automatically set the following goals based on need
+
+#defstrategic sn-min-food-gatherer = 0 ; minimum number of food gatherers
+#defstrategic sn-min-wood-gatherer = 0 ; minimum number of wood gatherers
+#defstrategic sn-min-gold-gatherer = 0 ; minimum number of gold gatherers
+#defstrategic sn-min-stone-gatherer = 0 ; minimum number of stone gatherers
+#defstrategic sn-percentage-extra-food = 0 ; percentage of extra villagers (over the minima above) that gets sent to food
+#defstrategic sn-percentage-extra-wood = 0 ; same for wood
+#defstrategic sn-percentage-extra-gold = 0; same for gold
+#defstrategic sn-percentage-extra-stone = 0; same for stone
+
+; Research
+
+#defstrategic sn-important-research = OFF ; OFF or research id (with escrow), use TryImportantResearch() instead
+#defstrategic sn-auto-research-economy = ON ; ON or OFF, if ON research eco techs automatically, if OFF do not research eco techs automatically
+#defstrategic sn-auto-research-military = ON; ON or OFF, if ON research military techs automatically based on army composition, if OFF do not research military techs automatically
+
+; Buildings
+
+#defstrategic sn-important-building = OFF ; OFF or building id (with escrow), use TryImportantBuilding() instead
+#defstrategic sn-building-placement = BUILDING-NORMAL ; BUILDING-NORMAL or BUILDING-FORWARD or BUILDING-MY-CAMP or BUILDING-ENEMY-CAMP or BUILDING-POINT
+#defstrategic sn-building-placement-point-x = 0 ; x coordinate for BUILDING-POINT
+#defstrategic sn-building-placement-point-y = 0 ; y coordinate for BUILDING-POINT
+
+#defstrategic sn-min-town-center = 1 ; build this many town centers
+
+#defstrategic sn-auto-production-buildings = ON ; ON or OFF, if ON build production buildings (barracks, archery, stables, siege, dock, castle) automatically to maximize unit production based on desired army
+
+; Units
+
+#defstrategic sn-important-unit = OFF ; OFF or unit(-line) id, trained once with escrow
+#defstrategic sn-civilian-population-percentage = 60 ; percentage of population cap reserved for civilians
+#defstrategic sn-kill-excess-villagers = YES ; YES or NO
+
+#defstrategic sn-primary-unit = OFF ; OFF or unit(-line) id
+#defstrategic sn-secondary-unit = OFF ; OFF or unit(-line) id
+#defstrategic sn-tertiary-unit = OFF ; OFF or unit(-line) id
+#defstrategic sn-siege-unit = OFF ; OFF or unit(-line) id
+#defstrategic sn-min-primary-unit = 0 ; build this many primary units
+#defstrategic sn-min-secondary-unit = 0 ; build this many secondary units
+#defstrategic sn-min-tertiary-unit = 0 ; build this many tertiary units
+#defstrategic sn-min-siege-unit = 0 ; build this many siege units
+
+; Attacking
+
+#defstrategic sn-auto-attack = ON ; ON or OFF, launch attacks and retreats automatically
+#defstrategic sn-attack = NO ; YES or NO
+
+; SitRep 
+; these strategic numbers are set by the Main AI and are there to inform strategies, strategies should not set these. They will either be NO or LOW or MEDIUM or HIGH
+
+#defstrategic sn-gold-availability = HIGH
+#defstrategic sn-stone-availability = HIGH
+#defstrategic sn-superiority = NO ; NO = no data, MEDIUM = about equal
+#defstrategic sn-target-army = 0 ; size of target army
+#defstrategic sn-recent-target-army = 0 ; recently seen army size
+
+#defstrategic sn-town-threat = NO ; how threatened is my town?
+#defstrategic sn-infantry-threat = NO
+#defstrategic sn-archery-threat = NO
+#defstrategic sn-cavalry-threat = NO
+#defstrategic sn-monk-threat = NO
+#defstrategic sn-eagle-warrior-threat = NO

@@ -1,0 +1,109 @@
+﻿; AUTO RESEARCH ECONOMY
+
+var gl-should-research = NO
+
+#if sn-primary-unit == OFF
+
+	gl-should-research = YES
+	
+#else
+
+	var gl-train-site
+	up-get-object-type-data s: sn-primary-unit object-data-train-site gl-train-site
+	
+	#if up-object-type-count-total g: gl-train-site c:> 0
+	
+		gl-should-research = YES
+		
+	#end-if
+	
+#end-if
+
+#if (gl-should-research == YES) (current-age >= feudal-age)
+
+	#if (building-type-count town-center > 0) (up-research-status c: castle-age != research-pending)
+	
+		TryImportantResearch(ri-loom)
+	
+	#end-if
+	
+#end-if
+
+#if (current-age >= feudal-age) (goal gl-should-research YES)
+
+	#if building-type-count lumber-camp > 0
+	
+		TryImportantResearch(ri-double-bit-axe)
+		TryImportantResearch(ri-bow-saw)
+	
+	#end-if
+	
+	#if building-type-count mill > 0
+	
+		TryImportantResearch(ri-horse-collar)
+		TryImportantResearch(ri-heavy-plow)
+	
+	#end-if
+	
+	#if (building-type-count town-center > 0) (unit-type-count villager-farmer > 15) (up-research-status c: castle-age != research-pending)
+	
+		TryImportantResearch(ri-wheel-barrow)
+		TryImportantResearch(ri-hand-cart)
+		
+	#end-if
+	
+	#if (building-type-count mining-camp > 0) (unit-type-count villager-gold >= 10)
+	
+		TryImportantResearch(ri-gold-mining)
+	
+	#end-if
+	
+#end-if
+
+#if (up-research-status c: imperial-age >= research-pending) (goal gl-should-research YES)
+	
+	#if (building-type-count market > 0) (or (unit-type-count trade-cart > 2) (unit-type-count trade-cog > 2))
+	
+		TryImportantResearch(ri-caravan)
+		
+	#end-if
+	
+	#if (building-type-count mining-camp > 0) (unit-type-count villager-gold >= 10) (unit-type-count villager-stone >= 10)
+	
+		TryResearch(ri-gold-shaft-mining)
+	
+		TryResearch(ri-stone-mining)
+		TryResearch(ri-stone-shaft-mining)
+	
+	#end-if
+	
+#end-if
+
+#if (current-age >= imperial-age) (current-age-time >= 600) (goal gl-should-research YES)
+
+	#if (building-type-count lumber-camp > 0)
+	
+		TryResearch(ri-two-man-saw)
+	
+	#end-if
+	
+	#if (building-type-count mill > 0)
+	
+		TryResearch(ri-crop-rotation)
+	
+	#end-if
+	
+	#if (building-type-count market > 0) (sn-market-eco-balance != OFF)
+	
+		TryResearch(ri-guilds)
+		
+	#end-if
+	
+	#if (building-type-count town-center >= 3)
+	
+		TryResearch(ri-town-watch)
+		;TryResearch(ri-town-patrol)
+	
+	#end-if
+	
+#end-if

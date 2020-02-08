@@ -1,0 +1,334 @@
+﻿; STRATEGY BASIC
+
+; TODO all civs
+
+var gl-my-feudal-unit
+var gl-my-primary-unit
+var gl-my-secondary-unit
+var gl-my-siege-unit
+var gl-my-primary-trash-unit
+var gl-my-secondary-trash-unit
+var gl-my-infantry-counter
+var gl-my-archer-counter
+var gl-my-cavalry-counter
+var gl-my-monk-counter
+var gl-my-eagle-warrior-counter
+
+(load "Binary\Strategies\BasicStrategyCivs")
+
+sn-market-eco-balance = LOW
+
+#if or (sn-gold-availability <= LOW) (current-age >= imperial-age)
+
+	sn-market-eco-balance = HIGH
+	
+#end-if
+
+; age up
+
+#if (civilian-population >= 21)
+
+	TryImportantResearch(feudal-age)
+	
+#end-if
+
+#if (civilian-population >= 31)
+
+	var gl-age-up = YES
+	
+	#if (sn-primary-unit != OFF) (up-object-type-count-total s: sn-primary-unit s:< sn-min-primary-unit)
+	
+		;gl-age-up = NO
+		
+	#end-if
+	
+	#if can-research-with-escrow castle-age
+	
+		gl-age-up = YES
+		
+	#end-if
+	
+	#if gl-age-up == YES
+	
+		TryImportantResearch(castle-age)
+	
+	#end-if
+	
+#end-if
+
+#if (civilian-population >= 45)
+
+	var gl-age-up = YES
+	
+	#if (sn-primary-unit != OFF) (up-object-type-count-total s: sn-primary-unit s:< sn-min-primary-unit)
+	
+		;gl-age-up = NO
+		
+	#end-if
+	
+	#if can-research-with-escrow imperial-age
+	
+		gl-age-up = YES
+		
+	#end-if
+	
+	#if gl-age-up == YES
+	
+		TryImportantResearch(imperial-age)
+	
+	#end-if
+	
+#end-if
+
+#if (sn-town-threat == HIGH) (sn-important-research == castle-age)
+
+	sn-important-research = OFF
+	
+#end-if
+
+; buildings
+
+#if up-research-status c: castle-age c:>= research-pending
+
+	sn-min-town-center max= 3
+	
+#end-if
+
+var gl-unit
+up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
+
+#if (or (sn-primary-unit == OFF) (up-train-site-ready g: gl-unit)) (up-object-type-count-total c: town-center s:>= sn-min-town-center)
+
+	#if (current-age >= feudal-age) (building-type-count-total market == 0) 
+
+		TryImportantBuilding(market, BUILDING-NORMAL, -1, -1)
+	
+	#end-if
+
+	#if (current-age >= feudal-age) (building-type-count-total blacksmith == 0) (building-type-count market > 0)
+
+		TryImportantBuilding(blacksmith, BUILDING-NORMAL, -1, -1)
+	
+	#end-if
+
+	#if (current-age >= castle-age) (building-type-count-total monastery == 0)
+
+		TryImportantBuilding(monastery, BUILDING-NORMAL, -1, -1)
+	
+	#end-if
+
+	#if (current-age >= castle-age) (building-type-count-total university == 0) (building-type-count-total monastery > 0)
+
+		TryImportantBuilding(university, BUILDING-NORMAL, -1, -1)
+	
+	#end-if
+
+#end-if
+
+#if (current-age >= castle-age) (can-build castle)
+
+	TryImportantBuilding(castle, BUILDING-NORMAL, -1, -1)
+
+#end-if
+
+; units
+
+#if up-research-status c: feudal-age c:>= research-pending
+
+	sn-auto-attack = OFF
+	
+	sn-primary-unit = gl-my-feudal-unit
+	
+	var gl-biggest-threat = NO
+	
+	#if sn-monk-threat > gl-biggest-threat
+	
+		sn-primary-unit = gl-my-monk-counter
+		gl-biggest-threat = sn-monk-threat
+		
+	#end-if
+	
+	#if sn-cavalry-threat > gl-biggest-threat
+	
+		sn-primary-unit = gl-my-cavalry-counter
+		gl-biggest-threat = sn-cavalry-threat
+		
+	#end-if
+	
+	#if sn-eagle-warrior-threat > gl-biggest-threat
+	
+		sn-primary-unit = gl-my-eagle-warrior-counter
+		gl-biggest-threat = sn-eagle-warrior-threat
+		
+	#end-if
+	
+	#if sn-archery-threat > gl-biggest-threat
+	
+		sn-primary-unit = gl-my-archer-counter
+		gl-biggest-threat = sn-archery-threat
+		
+	#end-if
+	
+	#if sn-infantry-threat > gl-biggest-threat
+	
+		sn-primary-unit = gl-my-infantry-counter
+		gl-biggest-threat = sn-infantry-threat
+		
+	#end-if
+	
+	var gl-unit
+	up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
+	
+	var gl-train-site
+	up-get-object-type-data g: gl-unit object-data-train-site gl-train-site
+			
+	#if up-object-type-count g: gl-train-site c:== 0
+	
+		sn-primary-unit = gl-my-feudal-unit
+		sn-secondary-unit = gl-unit
+		
+	#end-if
+	
+	sn-min-primary-unit max= sn-target-army
+	sn-min-primary-unit max= 3
+	
+#end-if
+
+#if up-research-status c: castle-age c:>= research-pending
+	
+	sn-auto-attack = ON
+	
+	sn-primary-unit = gl-my-primary-unit
+	sn-secondary-unit = gl-my-secondary-unit
+	
+	#if up-object-type-count-total c: town-center s:>= sn-min-town-center
+	
+		sn-siege-unit = gl-my-siege-unit
+		sn-min-siege-unit = 5
+		
+		#if unit-available trebuchet
+	
+			sn-siege-unit = trebuchet
+		
+		#end-if
+	
+	#end-if
+	
+	sn-min-primary-unit = 20
+	sn-min-secondary-unit = 10
+	
+	#if sn-target-army > 10
+	
+		sn-min-primary-unit = 30
+		sn-min-secondary-unit = 15
+		
+	#end-if
+	
+	#if sn-target-army > 40
+	
+		sn-min-primary-unit = 50
+		sn-min-secondary-unit = 20
+		
+	#end-if
+
+	var gl-biggest-threat = NO
+	
+	#if sn-monk-threat > gl-biggest-threat
+	
+		sn-secondary-unit = gl-my-monk-counter
+		gl-biggest-threat = sn-monk-threat
+		
+	#end-if
+	
+	#if sn-cavalry-threat > gl-biggest-threat
+	
+		sn-secondary-unit = gl-my-cavalry-counter
+		gl-biggest-threat = sn-cavalry-threat
+		
+	#end-if
+	
+	#if sn-eagle-warrior-threat > gl-biggest-threat
+	
+		sn-secondary-unit = gl-my-eagle-warrior-counter
+		gl-biggest-threat = sn-eagle-warrior-threat
+		
+	#end-if
+	
+	#if sn-archery-threat > gl-biggest-threat
+	
+		sn-secondary-unit = gl-my-archer-counter
+		gl-biggest-threat = sn-archery-threat
+		
+	#end-if
+	
+	#if sn-infantry-threat > gl-biggest-threat
+	
+		sn-secondary-unit = gl-my-infantry-counter
+		gl-biggest-threat = sn-infantry-threat
+		
+	#end-if	
+	
+	#if gl-biggest-threat == HIGH
+	
+		var gl-prime = sn-min-primary-unit
+		sn-min-primary-unit = sn-min-secondary-unit
+		sn-min-secondary-unit = gl-prime
+		
+	#end-if
+	
+	#if sn-gold-availability <= LOW
+	
+		sn-primary-unit = gl-my-primary-trash-unit
+		sn-secondary-unit = gl-my-secondary-trash-unit
+		
+	#end-if
+	
+#end-if
+
+; TODO switch this condition to when civilian pop cap is near rather than when imperial age
+#if up-research-status c: imperial-age c:>= research-pending
+	
+	sn-auto-attack = ON
+	
+	var gl-pop-cap
+	up-get-fact population-cap 0 gl-pop-cap
+	
+	var gl-mil = 95
+	gl-mil -= sn-civilian-population-percentage
+	gl-mil %*= gl-pop-cap
+	
+	#if sn-siege-unit != OFF
+	
+		gl-mil -= 5
+		sn-min-siege-unit = 5
+		
+	#end-if
+	
+	#if sn-primary-unit != OFF
+	
+		sn-min-primary-unit = 60
+		sn-min-primary-unit %*= gl-mil
+		
+	#end-if
+	
+	#if sn-secondary-unit != OFF
+	
+		sn-min-secondary-unit = 30
+		sn-min-secondary-unit %*= gl-mil
+		
+	#end-if
+	
+	#if sn-tertiary-unit != OFF
+	
+		sn-min-tertiary-unit = 10
+		sn-min-tertiary-unit %*= gl-mil
+	
+	#end-if
+	
+#end-if
+
+#if (building-type-count monastery > 0) (unit-type-count-total monk == 0) (sn-important-unit == OFF)
+
+	sn-important-unit = monk
+	
+#end-if

@@ -1,0 +1,63 @@
+﻿v0.1
+
+Economy DONE
+Research DONE
+Buildings DONE
+Units DONE
+Attacking DONE
+BasicStrategy DONE
+AutoResearchEconomy DONE
+AutoProductionBuildings DONE
+AutoResearchMilitary DONE
+Units build army evenly DONE
+Buildings by TryImportantBuilding DONE
+Build houses properly DONE
+FoodEconomy DONE
+Units build army evenly by percentage DONE
+Units quaternary-unit -> siege-unit, train as last DONE
+Units build as possible rather than evenly DONE
+SitRep DONE
+AutoBalanceGatherers DONE
+Always trade food if needed for villager production or age up, irrespective of market settings DONE
+Attacking better local targeting/stance DONE
+Better attacking target selection, castle or tc DONE
+Auto attack when >90% of desired army or pop blocked or high superiority and >70% of desired army DONE
+Auto build mill DONE
+Build castles properly DONE
+
+v0.2
+
+Build camps properly DONE
+Improve basic strategy -> handle being flushed DONE
+Basic strategy all civs DONE
+AutoResearchEconomy tweak choices, less aggressive DONE
+AutoResearchMilitary tweak choices, unit upgrades -> formula based (SpiritOfTheLaw Paladin video) DONE
+Trade DONE
+Rewrite FoodEconomy properly DONE
+Handle stolen sheep DONE
+
+v0.3
+
+Team cooperation
+Buildings other than BUILDING-NORMAL
+Attacking sn-raid YES/NO, sn-auto-raid ON/OFF
+Scouting circle around TC
+Scouting push deer to TC
+Economy retasking
+
+v0.4
+
+AutoResearchEconomy Coinage & Banking
+Fishing ships
+AutoResearchEconomy Gillnets
+Transports
+Navy
+AutoResearchMilitary Naval
+Water maps
+Units queue up 2 per building, make sure we can do town center research
+Redo food economy again -> boar lure as per Max, sheep gather point as per Leif
+
+v0.5
+
+All maps
+Villager micro, retasking (don't lose resources)

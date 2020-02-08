@@ -1,0 +1,238 @@
+﻿; SITREP
+
+sn-focus-player-number = sn-target-player-number
+
+sn-gold-availability = NO
+
+#if up-resource-amount amount-relics >= 3
+
+	sn-gold-availability max= LOW
+	
+#end-if
+
+#if unit-type-count trade-cart > 10
+
+	sn-gold-availability max= MEDIUM
+	
+#end-if
+
+#if dropsite-min-distance gold <= 5
+
+	sn-gold-availability max= HIGH
+	
+#end-if
+
+#if gold-amount > 1000
+
+	sn-gold-availability max= HIGH
+	
+#end-if
+
+sn-stone-availability = NO
+
+#if dropsite-min-distance stone <= 5
+
+	sn-stone-availability max= HIGH
+	
+#end-if
+
+#if stone-amount > 1000
+
+	sn-stone-availability max= HIGH
+	
+#end-if
+
+; Superiority
+
+sn-superiority = NO
+
+var gl-my-score
+var gl-target-score
+
+up-get-fact current-score 0 gl-my-score
+up-get-target-fact current-score 0 gl-target-score
+
+sn-superiority = MEDIUM
+	
+var gl-percentage = gl-my-score
+gl-percentage %/= gl-target-score
+	
+var gl-difference = gl-my-score
+gl-difference -= gl-target-score
+	
+#if (gl-percentage < 90) (gl-difference < -100)
+	
+	sn-superiority = LOW
+		
+#end-if
+
+#if up-resource-amount amount-military-population s:< sn-target-army
+
+	sn-superiority = LOW
+	
+#end-if
+
+#if (gl-percentage > 125) (gl-difference > 250)
+	
+	sn-superiority = HIGH
+		
+#end-if
+
+; Target army
+
+sn-focus-player-number = sn-target-player-number
+up-full-reset-search
+up-filter-include cmdid-military -1 -1 -1
+up-find-remote c: all-units-class c: 100
+up-get-search-state gl-search-state
+
+sn-target-army max= gl-remote-total
+sn-recent-target-army max= gl-remote-total
+
+#if timer-triggered ti-repeat-23
+
+	sn-recent-target-army -= 1
+	
+#end-if
+
+; Threats
+
+; town
+
+sn-town-threat = NO
+
+var gl-enemies-in-town
+up-get-fact enemy-units-in-town 0 gl-enemies-in-town
+
+var gl-extra-in-town
+
+up-get-fact building-type-in-town watch-tower-line gl-extra-in-town
+gl-extra-in-town *= 5
+gl-enemies-in-town += gl-extra-in-town
+
+#if gl-enemies-in-town >= 5
+
+	sn-town-threat = LOW
+	
+#end-if
+
+#if gl-enemies-in-town >= 10
+
+	sn-town-threat = MEDIUM
+	
+#end-if
+
+var gl-military
+up-get-fact military-population 0 gl-military
+
+#if (gl-military < gl-enemies-in-town) (gl-enemies-in-town >= 3)
+
+	sn-town-threat = HIGH
+	
+#end-if
+
+#if sn-attack == YES
+
+	sn-town-threat = NO
+	
+#end-if
+
+; units
+
+#if timer-triggered ti-repeat-10m
+
+	sn-infantry-threat -= 1
+	sn-infantry-threat max= 0
+	sn-archery-threat -= 1
+	sn-archery-threat max= 0
+	sn-cavalry-threat -= 1
+	sn-cavalry-threat max= 0
+	sn-monk-threat -= 1
+	sn-monk-threat max= 0
+	sn-eagle-warrior-threat -= 1
+	sn-eagle-warrior-threat max= 0
+	
+#end-if
+
+var gl-infantry = 0
+var gl-archery = 0
+var gl-cavalry = 0
+var gl-monk = 0
+var gl-eagle-warrior = 0
+var gl-accum = 0
+
+up-full-reset-search
+up-find-remote c: infantry-class c: 100
+up-remove-objects search-remote object-data-type c:== eagle-scout
+up-remove-objects search-remote object-data-type c:== eagle-warrior
+up-remove-objects search-remote object-data-type c:== elite-eagle-warrior
+up-get-search-state gl-search-state
+gl-infantry = gl-remote-total
+
+up-get-point position-self gl-point1
+up-set-target-point gl-point1
+up-full-reset-search
+up-filter-distance c: -1 s: sn-maximum-town-size
+up-find-remote c: watch-tower-line c: 25
+up-get-search-state gl-search-state
+gl-archery = gl-remote-total
+gl-archery *= 5
+
+up-full-reset-search
+up-find-remote c: archery-class c: 100
+up-find-remote c: archery-cannon-class c: 100
+up-find-remote c: cavalry-archer-class c: 100
+up-find-remote c: cavalry-cannon-class c: 100
+;up-remove-objects search-remote object-data-type c:== skirmisher
+;up-remove-objects search-remote object-data-type c:== elite-skirmisher
+;up-remove-objects search-remote object-data-type c:== imperial-skirmisher
+up-clean-search search-remote -1 search-order-asc
+up-get-search-state gl-search-state
+gl-archery += gl-remote-total
+
+up-full-reset-search
+up-find-remote c: cavalry-class c: 100
+up-find-remote c: cavalry-archer-class c: 100
+up-find-remote c: cavalry-cannon-class c: 100
+up-find-remote c: scout-cavalry-class c: 100
+up-find-remote c: conquistador-class c: 100
+up-clean-search search-remote -1 search-order-asc
+up-get-search-state gl-search-state
+gl-cavalry = gl-remote-total
+gl-cavalry *= 2
+
+up-full-reset-search
+up-find-remote c: monastery-class c: 100
+up-get-search-state gl-search-state
+gl-monk = gl-remote-total
+gl-monk *= 2
+
+up-full-reset-search
+up-find-remote c: eagle-warrior-line c: 100
+up-get-search-state gl-search-state
+gl-eagle-warrior = gl-remote-total
+gl-eagle-warrior *= 2
+
+#foreach $class in infantry archery cavalry monk eagle-warrior
+
+	;up-chat-data-to-self "Enemy $class: %d" g: gl-$class
+
+	#if gl-$class >= 3
+	
+		sn-$class-threat max= LOW
+		
+	#end-if
+	
+	#if gl-$class >= 10
+	
+		sn-$class-threat max= MEDIUM
+		
+	#end-if
+	
+	#if gl-$class >= 20
+	
+		sn-$class-threat max= HIGH
+		
+	#end-if
+	
+#end-foreach

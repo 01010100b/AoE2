@@ -1,0 +1,163 @@
+﻿; UNITS
+
+;region Important unit
+
+; important unit has changed, cancel current important unit
+#if (gl-current-important-unit != OFF) (gl-current-important-unit != sn-important-unit) 
+
+	up-setup-cost-data 1 gl-cost
+	up-add-object-cost g: gl-current-important-unit c: 1
+	
+	#foreach $resource in food wood gold stone
+	
+		gl-escrow-$resource -= gl-cost-$resource
+		
+	#end-foreach
+	
+	gl-current-important-unit = OFF
+	
+#end-if
+
+; new important unit
+#if (gl-current-important-unit == OFF) (sn-important-unit != OFF)
+
+	gl-current-important-unit = sn-important-unit
+	
+	up-setup-cost-data 1 gl-cost
+	up-add-object-cost g: gl-current-important-unit c: 1
+	
+	#foreach $resource in food wood gold stone
+	
+		gl-escrow-$resource += gl-cost-$resource
+		
+	#end-foreach
+	
+	up-store-type-name g: gl-current-important-unit
+	up-chat-data-to-self "Saving up for unit: %s" c: 7031232
+	
+#end-if
+
+; train it
+#if (gl-current-important-unit != OFF) (up-can-train gl-with-escrow g: gl-current-important-unit)
+
+	up-setup-cost-data 1 gl-cost
+	up-add-object-cost g: gl-current-important-unit c: 1
+	
+	#foreach $resource in food wood gold stone
+	
+		gl-escrow-$resource -= gl-cost-$resource
+		
+	#end-foreach
+	
+	up-train gl-with-escrow g: gl-current-important-unit
+	
+	;up-store-type-name g: gl-current-important-unit
+	;up-chat-data-to-self "Training: %s" c: 7031232
+	
+	gl-current-important-unit = OFF
+	sn-important-unit = OFF
+	
+#end-if
+
+;endregion
+
+; Villagers & trade
+
+var gl-pop-cap
+up-get-fact population-cap 0 gl-pop-cap
+gl-pop-cap %*= sn-civilian-population-percentage
+gl-pop-cap -= gl-min-trade-carts
+gl-pop-cap max= 0
+
+#if (up-object-type-count-total c: villager g:< gl-pop-cap) (can-train-with-escrow villager)
+
+	up-train gl-with-escrow c: villager
+	
+	disable-timer ti-next-villager
+	enable-timer ti-next-villager 22
+	
+#else
+
+	#if (can-research ri-loom) (civilian-population > 5)
+	
+		TryResearch(ri-loom)
+		chat-local-to-self "Researching early loom"
+		
+		disable-timer ti-next-villager
+		enable-timer ti-next-villager 22
+		
+	#end-if
+	
+	#if (sn-kill-excess-villagers == YES) (up-object-type-count c: villager g:> gl-pop-cap)
+	
+		delete-unit villager
+		
+		chat-local-to-self "Killing villager"
+		
+	#end-if
+	
+#end-if
+
+#if (timer-triggered ti-next-villager) (food-amount < 50)
+
+	#if (current-age == dark-age)
+	
+		up-drop-resources food c: 3
+		
+	#else
+	
+		up-drop-resources food c: 10
+		
+	#end-if
+	
+	disable-timer ti-next-villager
+	enable-timer ti-next-villager 5
+	
+#end-if
+
+#if (up-object-type-count-total c: trade-cart g:< gl-min-trade-carts) (can-train-with-escrow trade-cart)
+
+	up-train gl-with-escrow c: trade-cart
+	
+#end-if
+
+; Normal units
+
+#foreach $unit in primary-unit secondary-unit tertiary-unit
+
+	#if (sn-$unit != OFF) (up-object-type-count-total s: sn-$unit s:< sn-min-$unit)
+		
+		var gl-unit
+		up-get-object-type-data s: sn-$unit object-data-type gl-unit
+		up-store-type-name g: gl-unit
+		
+		#if up-can-train gl-without-escrow g: gl-unit
+		
+			up-train gl-without-escrow g: gl-unit
+			
+			;up-chat-data-to-self "Training unit: %s" c: 7031232
+			
+		#else
+		
+			var gl-min = sn-min-$unit
+			gl-min /= 4
+			#if (up-can-train gl-with-escrow g: gl-unit) (or (up-object-type-count-total s: sn-$unit g:< gl-min) (or (sn-town-threat == HIGH) (sn-superiority == LOW)))
+			
+				up-train gl-with-escrow g: gl-unit
+				
+				;up-chat-data-to-self "Training unit urgently: %s" c: 7031232
+				
+			#end-if
+			
+		#end-if
+			
+	#end-if
+		
+#end-foreach
+
+#if (sn-siege-unit != OFF) (up-object-type-count-total s: sn-siege-unit s:< sn-min-siege-unit) (up-object-type-count c: trebuchet-set s:< sn-min-siege-unit) (up-can-train gl-without-escrow s: sn-siege-unit)
+
+	up-train gl-without-escrow s: sn-siege-unit
+	;chat-local-to-self "Training siege unit"
+	
+#end-if

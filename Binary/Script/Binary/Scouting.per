@@ -1,0 +1,78 @@
+﻿(defrule
+	(true)
+=>
+	(set-strategic-number sn-home-exploration-time 600)
+	(disable-self)
+)
+
+#if timer-triggered ti-repeat-3
+
+	#if gl-scout != OFF
+	
+		var gl-exists
+		gl-exists = ObjectExists(gl-scout)
+		
+		#if gl-exists == NO
+		
+			gl-scout = OFF
+			
+		#end-if
+		
+	#end-if
+	
+	#if gl-scout == OFF
+		
+		up-full-reset-search
+		up-find-local c: scout-cavalry-line c: 1
+		up-find-local c: eagle-warrior-line c: 1
+		up-find-local c: cavalry-class c: 1
+		up-find-local c: infantry-class c: 1
+		up-get-search-state gl-search-state
+		
+		#if gl-local-total > 0
+		
+			up-set-target-object search-local c: 0
+			up-get-object-data object-data-id gl-scout
+			
+			up-chat-data-to-self "New scout: %d" g: gl-scout
+			
+		#end-if
+		
+	#end-if
+	
+	#if (gl-scout != OFF)
+	
+		; get sighted livestock
+
+		sn-focus-player-number = 0
+		up-full-reset-search
+		up-find-remote c: livestock-class c: 10
+		up-get-search-state gl-search-state
+
+		; get scout and target sighted livestock
+	
+		#if gl-remote-total > 0 ; if there is any sighted livestock
+	
+			up-remove-objects search-remote object-data-index c:> 0
+			up-find-local c: scout-cavalry-line c: 10
+			up-find-local c: eagle-warrior-line c: 10
+			up-find-local c: cavalry-class c: 10
+			up-find-local c: infantry-class c: 10
+			up-remove-objects search-local object-data-id g:!= gl-scout
+			up-target-objects 0 action-move -1 -1
+		
+			chat-local-to-self "Sending scout to sighted sheep."
+		
+		#else
+		
+			#if (timer-triggered ti-repeat-31) (current-age >= feudal-age)
+			
+				up-send-scout group-type-land-explore scout-enemy
+			
+			#end-if
+			
+		#end-if
+		
+	#end-if
+	
+#end-if

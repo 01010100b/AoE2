@@ -1,0 +1,28 @@
+﻿#function ObjectExists gl-object-id
+
+	var gl-exists = NO
+	var gl-test-object-id
+
+	up-full-reset-search
+	up-find-local c: all-units-class c: 1
+	up-set-target-object search-local c: 0
+	up-get-object-data object-data-id gl-test-object-id
+
+	#if gl-object-id == gl-test-object-id
+
+		gl-exists = YES
+	
+	#else
+
+		up-set-target-by-id g: gl-object-id
+		up-get-object-data object-data-id gl-test-object-id
+	
+		#if gl-object-id == gl-test-object-id
+	
+			gl-exists = YES
+		
+		#end-if
+	
+	#end-if
+
+#return gl-exists
