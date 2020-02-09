@@ -93,7 +93,6 @@
     <None Include="Script\Binary\Const.per" />
     <None Include="Script\Binary\Economy.per" />
     <None Include="Script\Binary\FoodEconomy.per" />
-    <None Include="Script\Binary\FoodEconomy2.per" />
     <None Include="Script\Binary\Functions\GetObjectCount.per" />
     <None Include="Script\Binary\Functions\GetObjectMovementDistance.per" />
     <None Include="Script\Binary\Functions\GetRandomNumber.per" />
