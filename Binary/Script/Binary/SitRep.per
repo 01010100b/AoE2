@@ -1,7 +1,5 @@
 ﻿; SITREP
 
-sn-focus-player-number = sn-target-player-number
-
 sn-gold-availability = NO
 
 #if up-resource-amount amount-relics >= 3
@@ -66,16 +64,16 @@ gl-difference -= gl-target-score
 		
 #end-if
 
-#if up-resource-amount amount-military-population s:< sn-target-army
-
-	sn-superiority = LOW
-	
-#end-if
-
 #if (gl-percentage > 125) (gl-difference > 250)
 	
 	sn-superiority = HIGH
 		
+#end-if
+
+#if up-resource-amount amount-military-population s:< sn-target-army
+
+	sn-superiority = LOW
+	
 #end-if
 
 ; Target army
@@ -92,6 +90,7 @@ sn-recent-target-army max= gl-remote-total
 #if timer-triggered ti-repeat-23
 
 	sn-recent-target-army -= 1
+	sn-recent-target-army max= 0
 	
 #end-if
 
@@ -166,6 +165,9 @@ up-find-remote c: infantry-class c: 100
 up-remove-objects search-remote object-data-type c:== eagle-scout
 up-remove-objects search-remote object-data-type c:== eagle-warrior
 up-remove-objects search-remote object-data-type c:== elite-eagle-warrior
+up-remove-objects search-remote object-data-type c:== heavy-eagle-warrior
+up-remove-objects search-remote object-data-type c:== huskarl
+up-remove-objects search-remote object-data-type c:== elite-huskarl
 up-get-search-state gl-search-state
 gl-infantry = gl-remote-total
 
@@ -209,6 +211,7 @@ gl-monk *= 2
 
 up-full-reset-search
 up-find-remote c: eagle-warrior-line c: 100
+up-find-remote c: huskarl-line c: 100
 up-get-search-state gl-search-state
 gl-eagle-warrior = gl-remote-total
 gl-eagle-warrior *= 2

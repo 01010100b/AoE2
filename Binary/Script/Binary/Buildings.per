@@ -58,6 +58,13 @@
 				
 			#end-if
 			
+			#if gl-building == watch-tower
+			
+				gl-lerp-tiles = sn-minimum-town-size
+				gl-zone-size = 5
+				
+			#end-if
+			
 			up-get-point position-self gl-point1
 			up-get-point position-center gl-point2
 			
@@ -118,18 +125,6 @@
 )
 
 (defrule
-	(true)
-=>
-	(up-assign-builders c: town-center-foundation c: 6)
-	(up-assign-builders c: castle c: 10)
-	(up-assign-builders c: stable c: 2)
-	(up-assign-builders c: archery-range c: 2)
-	(up-assign-builders c: market c: 3)
-	(up-assign-builders c: siege-workshop c: 3)
-	(disable-self)
-)
-
-(defrule
 	(current-age == feudal-age)
 =>
 	(set-strategic-number sn-cap-civilian-builders 8)
@@ -150,9 +145,17 @@
 	(set-strategic-number sn-minimum-town-size 35)
 )
 
+up-assign-builders c: town-center-foundation c: 6
+up-assign-builders c: castle c: 10
+up-assign-builders c: stable c: 2
+up-assign-builders c: archery-range c: 2
+up-assign-builders c: market c: 2
+up-assign-builders c: siege-workshop c: 2
+	
 #if sn-town-threat == HIGH
 
-	sn-cap-civilian-builders = 1
+	up-assign-builders c: town-center-foundation c: 1
+	up-assign-builders c: castle c: 1
 	
 #end-if
 

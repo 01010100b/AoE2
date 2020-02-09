@@ -36,9 +36,9 @@ sn-market-eco-balance = LOW
 
 	var gl-age-up = YES
 	
-	#if (sn-primary-unit != OFF) (up-object-type-count-total s: sn-primary-unit s:< sn-min-primary-unit)
+	#if (sn-primary-unit != OFF) (up-resource-amount amount-military-population s:< sn-recent-target-army)
 	
-		;gl-age-up = NO
+		gl-age-up = NO
 		
 	#end-if
 	
@@ -60,9 +60,9 @@ sn-market-eco-balance = LOW
 
 	var gl-age-up = YES
 	
-	#if (sn-primary-unit != OFF) (up-object-type-count-total s: sn-primary-unit s:< sn-min-primary-unit)
+	#if (sn-primary-unit != OFF) (up-resource-amount amount-military-population s:< sn-recent-target-army)
 	
-		;gl-age-up = NO
+		gl-age-up = NO
 		
 	#end-if
 	
@@ -91,6 +91,12 @@ sn-market-eco-balance = LOW
 #if up-research-status c: castle-age c:>= research-pending
 
 	sn-min-town-center max= 3
+	
+#end-if
+
+#if (current-age >= feudal-age) (building-type-count-total watch-tower == 0)
+
+	TryImportantBuilding(watch-tower)
 	
 #end-if
 

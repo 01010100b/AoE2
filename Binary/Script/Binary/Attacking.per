@@ -20,6 +20,7 @@
 	(set-strategic-number sn-number-civilian-militia 0)
 	(set-strategic-number sn-consecutive-idle-unit-limit 1)
 	(set-strategic-number sn-wall-targeting-mode 1)
+	(set-strategic-number sn-gather-defense-units 1)
 	(disable-self)
 )
 
@@ -51,13 +52,13 @@
 
 #if gl-currently-attacking == YES
 	
-	#if (sn-maximum-town-size < 500) (up-building-type-in-town c: town-center == 0) (up-building-type-in-town c: castle == 0)
+	#if (sn-maximum-town-size < 250) (up-building-type-in-town c: town-center == 0) (up-building-type-in-town c: castle == 0)
 
 		sn-maximum-town-size += 3
 	
 	#end-if
 	
-	#if (sn-maximum-town-size >= 500) (up-players-in-game enemy == 1) (military-population > 50) (sn-recent-target-army < 5) (timer-triggered ti-repeat-3m)
+	#if (sn-maximum-town-size >= 250) (up-players-in-game enemy == 1) (military-population > 50) (sn-recent-target-army < 5) (timer-triggered ti-repeat-3m)
 	
 		sn-total-number-explorers = 10
 		sn-number-explore-groups = 10
@@ -103,13 +104,7 @@
 	
 	var gl-min = sn-min-primary-unit
 	gl-min /= 2
-	
-	#if (timer-triggered ti-repeat-3m) (up-enemy-units-in-town < 3) (or (up-object-type-count s: sn-primary-unit g:< gl-min) (sn-superiority < HIGH))
-		
-		up-retreat-now
-		
-	#end-if
-	
+
 	#if timer-triggered ti-repeat-13
 	
 		up-full-reset-search
@@ -120,6 +115,22 @@
 		up-remove-objects search-local object-data-distance c:< 10
 		
 		up-target-point gl-point1 action-move -1 -1
+		
+		#if (sn-primary-unit != OFF) (up-object-type-count s: sn-primary-unit c:>= 3) (sn-target-army < 20)
+		
+			sn-number-attack-groups = 1
+			
+		#else
+		
+			sn-number-attack-groups = 0
+			
+		#end-if
+		
+	#end-if
+	
+	#if (timer-triggered ti-repeat-3m) (up-enemy-units-in-town < 3) (sn-number-attack-groups == 0) (or (up-object-type-count s: sn-primary-unit g:< gl-min) (sn-superiority < HIGH))
+		
+		up-retreat-now
 		
 	#end-if
 	

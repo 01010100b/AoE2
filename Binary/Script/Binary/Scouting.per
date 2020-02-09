@@ -51,7 +51,7 @@
 
 		; get scout and target sighted livestock
 	
-		#if gl-remote-total > 0 ; if there is any sighted livestock
+		#if (gl-remote-total > 0) (current-age <= feudal-age) ; if there is any sighted livestock
 	
 			up-remove-objects search-remote object-data-index c:> 0
 			up-find-local c: scout-cavalry-line c: 10
@@ -67,7 +67,7 @@
 		
 			#if (timer-triggered ti-repeat-31) (current-age >= feudal-age)
 			
-				up-send-scout group-type-land-explore scout-enemy
+				;up-send-scout group-type-land-explore scout-enemy
 			
 			#end-if
 			
