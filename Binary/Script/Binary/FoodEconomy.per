@@ -1,7 +1,6 @@
 ﻿#defglobal gl-current-meat = OFF
 #defglobal gl-next-meat = OFF
 #defglobal gl-next-boar = OFF
-#defglobal gl-boar-lurer = OFF
 
 (defrule
 	(true)
@@ -96,50 +95,21 @@ var gl-exists
 		#if gl-current-meat == gl-next-boar
 		
 			gl-next-boar = OFF
-			gl-boar-lurer = OFF
 			chat-local-to-self "Next boar off"
 			
 		#end-if
-	
-	#end-if
-	
-#end-if
-
-#if gl-boar-lurer != OFF
-
-	gl-exists = ObjectExists(gl-boar-lurer)
-	
-	#if gl-exists == NO
-	
-		gl-boar-lurer = OFF
-		chat-local-to-self "Boar lurer is gone"
 		
-	#end-if
-	
-	#if gl-next-boar != OFF
-	
 		var gl-hp
 		up-set-target-by-id g: gl-next-boar
 		up-get-object-data object-data-hitpoints gl-hp
 		
 		#if gl-hp == 0
-	
-			gl-boar-lurer = OFF
-			chat-local-to-self "Boar lurer off"
 		
+			gl-next-boar = OFF
+			chat-local-to-self "Next boar off"
+			
 		#end-if
-		
-	#end-if
 	
-	var gl-target
-	up-set-target-by-id g: gl-boar-lurer
-	up-get-object-data object-data-target-id gl-target
-	
-	#if gl-target == gl-current-meat
-	
-		gl-boar-lurer = OFF
-		chat-local-to-self "Boar lurer off"
-		
 	#end-if
 	
 #end-if
@@ -211,6 +181,15 @@ var gl-exists
 		up-get-object-data object-data-carry gl-meat-remaining
 		
 	#end-if
+	
+	#if gl-next-meat != OFF
+	
+		var gl-meat
+		up-set-target-by-id g: gl-next-meat
+		up-get-object-data object-data-carry gl-meat
+		gl-meat-remaining += gl-meat
+		
+	#end-if
 		
 	#if gl-meat-remaining < 210
 		
@@ -240,49 +219,54 @@ var gl-exists
 	
 #end-if
 
-; get new boar lurer
+#if gl-next-boar != OFF
 
-#if (gl-boar-lurer == OFF) (gl-next-boar != OFF) (gl-next-meat != gl-next-boar)
-
-	up-get-point position-self gl-point1
-	up-set-target-point gl-point1
-	up-full-reset-search
+	var gl-tasks
+	var gl-target
+	up-set-target-by-id g: gl-next-boar
+	up-get-object-data object-data-tasks-count gl-tasks
+	up-get-object-data object-data-target-id gl-target
 	
-	up-find-local c: villager-class c: 40
-	up-remove-objects search-local object-data-language-id c:== lid-villager-farmer
-	up-remove-objects search-local object-data-language-id c:== lid-villager-forager
-	up-remove-objects search-local object-data-language-id c:== lid-villager-fisherman
-	up-remove-objects search-local object-data-language-id c:== lid-villager-lumberjack
-	up-remove-objects search-local object-data-language-id c:== lid-villager-gold-miner
-	up-remove-objects search-local object-data-language-id c:== lid-villager-stone-miner
-	up-remove-objects search-local object-data-language-id c:== lid-villager-builder
-	up-remove-objects search-local object-data-language-id c:== lid-villager-repairer
-	up-get-search-state gl-search-state
+	#if (gl-tasks == 0) (gl-target == -1)
 	
-	#if gl-local-total == 0
-	
-		up-full-reset-search
-		up-find-local c: villager-class c: 20
-		
-	#end-if
-	
-	up-remove-objects search-local object-data-hitpoints c:< 25
-	up-get-search-state gl-search-state
-	
-	#if gl-local-total > 0
-	
-		up-set-target-by-id g: gl-next-boar
-		up-get-point position-object gl-point1
+		up-get-point position-self gl-point1
 		up-set-target-point gl-point1
+		up-full-reset-search
+	
+		up-find-local c: villager-class c: 40
+		up-remove-objects search-local object-data-language-id c:== lid-villager-farmer
+		up-remove-objects search-local object-data-language-id c:== lid-villager-forager
+		up-remove-objects search-local object-data-language-id c:== lid-villager-fisherman
+		up-remove-objects search-local object-data-language-id c:== lid-villager-lumberjack
+		up-remove-objects search-local object-data-language-id c:== lid-villager-gold-miner
+		up-remove-objects search-local object-data-language-id c:== lid-villager-stone-miner
+		up-remove-objects search-local object-data-language-id c:== lid-villager-builder
+		up-remove-objects search-local object-data-language-id c:== lid-villager-repairer
+		up-get-search-state gl-search-state
+	
+		#if gl-local-total == 0
+	
+			up-full-reset-search
+			up-find-local c: villager-class c: 20
 		
-		up-clean-search search-local object-data-distance search-order-asc
-		up-remove-objects search-local object-data-index c:> 0
-		up-target-objects 1 action-default -1 -1
+		#end-if
+	
+		up-remove-objects search-local object-data-hitpoints c:< 25
+		up-get-search-state gl-search-state
+	
+		#if gl-local-total > 0
+	
+			up-set-target-by-id g: gl-next-boar
+			up-get-point position-object gl-point1
+			up-set-target-point gl-point1
 		
-		up-set-target-object search-local c: 0
-		up-get-object-data object-data-id gl-boar-lurer
+			up-clean-search search-local object-data-distance search-order-asc
+			up-remove-objects search-local object-data-index c:> 0
+			up-target-objects 1 action-default -1 -1
 		
-		up-chat-data-to-self "Luring boar with villager %d" g: gl-boar-lurer
+			up-chat-data-to-self "Luring boar %d" g: gl-next-boar
+		
+		#end-if
 		
 	#end-if
 	
@@ -333,7 +317,7 @@ up-find-local c: male-hunter c: 10
 up-find-local c: female-hunter c: 10
 up-find-local c: male-shepherd c: 10
 up-find-local c: female-shepherd c: 10
-up-remove-objects search-local object-data-id g:== gl-boar-lurer
+up-remove-objects search-local object-data-target-id g:== gl-next-boar
 up-get-search-state gl-search-state
 
 #if gl-local-total < 6
@@ -387,10 +371,8 @@ up-get-search-state gl-search-state
 	
 #end-if
 
-up-remove-objects search-local object-data-id g:== gl-boar-lurer
-
 sn-focus-player-number = 0
-up-filter-distance c: -1 s: sn-maximum-food-drop-distance
+up-filter-distance c: -1 c: 7
 	
 up-find-remote c: boar c: 10
 up-find-remote c: javelina c: 10
@@ -407,6 +389,7 @@ up-get-search-state gl-search-state
 	up-set-target-object search-remote c: 0
 	up-get-object-data object-data-id gl-next-meat
 	up-remove-objects search-local object-data-target-id g:== gl-next-meat
+	up-remove-objects search-local object-data-hitpoints c:<= 10
 
 	up-target-objects 1 action-default -1 -1
 	
@@ -416,6 +399,7 @@ up-get-search-state gl-search-state
 	
 		up-remove-objects search-local object-data-target-id g:== gl-current-meat
 		;up-remove-objects search-local object-data-target-id g:== gl-next-meat
+		;up-remove-objects search-local object-data-target-id g:== gl-next-boar
 		up-set-target-by-id g: gl-current-meat
 		up-target-objects 1 action-default -1 -1
 		

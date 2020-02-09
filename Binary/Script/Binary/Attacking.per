@@ -102,9 +102,6 @@
 	sn-maximum-town-size = gl-safe-distance
 	sn-maximum-town-size += 1
 	
-	var gl-min = sn-min-primary-unit
-	gl-min /= 2
-
 	#if timer-triggered ti-repeat-13
 	
 		up-full-reset-search
@@ -127,6 +124,9 @@
 		#end-if
 		
 	#end-if
+	
+	var gl-min = sn-min-primary-unit
+	gl-min /= 2
 	
 	#if (timer-triggered ti-repeat-3m) (up-enemy-units-in-town < 3) (sn-number-attack-groups == 0) (or (up-object-type-count s: sn-primary-unit g:< gl-min) (sn-superiority < HIGH))
 		

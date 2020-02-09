@@ -118,9 +118,10 @@
 	(set-strategic-number sn-defer-dropsite-update 1)
 	(set-strategic-number sn-dropsite-separation-distance 3)
 	(set-strategic-number sn-mill-max-distance 20)
-	(set-strategic-number sn-camp-max-distance 20)
+	(set-strategic-number sn-camp-max-distance 25)
 	(set-strategic-number sn-cap-civilian-builders 4)
 	(set-strategic-number sn-minimum-town-size 20)
+	(up-modify-sn sn-object-repair-level c:+ 4096) ; repair towers
 	(disable-self)
 )
 
@@ -566,7 +567,7 @@ up-assign-builders c: siege-workshop c: 2
 		
 		#end-foreach
 	
-		#if (gl-farm-boom == YES) (can-build-with-escrow farm) (dropsite-min-distance wood <= 4) (sn-important-building != town-center) (sn-important-building != market) (sn-important-building != blacksmith)
+		#if (gl-farm-boom == YES) (can-build-with-escrow farm) (dropsite-min-distance wood <= 4) (building-type-count lumber-camp > 0) (sn-important-building != town-center) (sn-important-building != market) (sn-important-building != blacksmith)
 	
 			BuildNormal(gl-with-escrow, farm)
 		

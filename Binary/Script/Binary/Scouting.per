@@ -1,7 +1,7 @@
 ﻿(defrule
 	(true)
 =>
-	(set-strategic-number sn-home-exploration-time 600)
+	(set-strategic-number sn-home-exploration-time 300)
 	(disable-self)
 )
 
@@ -64,11 +64,30 @@
 			chat-local-to-self "Sending scout to sighted sheep."
 		
 		#else
-		
-			#if (timer-triggered ti-repeat-31) (current-age >= feudal-age)
 			
-				;up-send-scout group-type-land-explore scout-enemy
+			var gl-time
+			up-get-fact game-time 0 gl-time
 			
+			#if (timer-triggered ti-repeat-31) (gl-time > sn-home-exploration-time)
+			
+				(defrule
+					(true)
+				=>
+					(up-send-scout group-type-land-explore scout-enemy)
+					(disable-self)
+				)
+				
+				sn-focus-player-number = sn-target-player-number
+				up-full-reset-search
+				up-find-remote c: building-class c: 1
+				up-get-search-state gl-search-state
+				
+				#if gl-remote-total > 0
+				
+					up-send-scout group-type-land-explore scout-enemy
+				
+				#end-if
+				
 			#end-if
 			
 		#end-if
