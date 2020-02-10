@@ -17,12 +17,26 @@
 	(set-strategic-number sn-minimum-attack-group-size 1)
 	(set-strategic-number sn-maximum-attack-group-size 1)
 	(set-strategic-number sn-disable-defend-groups 9)
-	(set-strategic-number sn-number-civilian-militia 0)
 	(set-strategic-number sn-consecutive-idle-unit-limit 1)
 	(set-strategic-number sn-wall-targeting-mode 1)
 	(set-strategic-number sn-gather-defense-units 1)
 	(disable-self)
 )
+
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-number-civilian-militia 0)
+	;(set-strategic-number sn-allow-civilian-defense 0)
+	;(set-strategic-number sn-allow-civilian-offense 1)
+	(disable-self)
+)
+
+#if current-age >= feudal-age
+
+	;sn-allow-civilian-offense = 0
+	
+#end-if
 
 ; switch attack state
 
@@ -84,6 +98,7 @@
 	#end-if
 
 	var gl-safe-distance = sn-minimum-town-size
+	gl-safe-distance += 5
 	
 	#if building-type-count castle > 0
 
@@ -96,11 +111,10 @@
 
 	#end-if
 
-	gl-safe-distance += 10
 	gl-safe-distance max= sn-minimum-town-size
 
 	sn-maximum-town-size = gl-safe-distance
-	sn-maximum-town-size += 1
+	sn-maximum-town-size += 5
 	
 	#if timer-triggered ti-repeat-13
 	
@@ -113,7 +127,7 @@
 		
 		up-target-point gl-point1 action-move -1 -1
 		
-		#if (sn-primary-unit != OFF) (up-object-type-count s: sn-primary-unit c:>= 3) (sn-target-army < 20)
+		#if (sn-primary-unit != OFF) (up-object-type-count s: sn-primary-unit c:>= 3) (sn-target-army < 10)
 		
 			sn-number-attack-groups = 1
 			

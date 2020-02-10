@@ -315,6 +315,8 @@ up-full-reset-search
 
 up-find-local c: male-hunter c: 10
 up-find-local c: female-hunter c: 10
+up-clean-search search-local object-data-distance search-order-desc
+up-remove-objects search-local object-data-index c:== 0
 up-find-local c: male-shepherd c: 10
 up-find-local c: female-shepherd c: 10
 up-remove-objects search-local object-data-target-id g:== gl-next-boar
@@ -361,6 +363,8 @@ up-get-search-state gl-search-state
 		up-full-reset-search
 		up-find-local c: male-hunter c: 10
 		up-find-local c: female-hunter c: 10
+		up-clean-search search-local object-data-distance search-order-desc
+		up-remove-objects search-local object-data-index c:== 0
 		up-find-local c: male-shepherd c: 10
 		up-find-local c: female-shepherd c: 10
 		

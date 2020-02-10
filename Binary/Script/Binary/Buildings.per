@@ -438,13 +438,13 @@ up-assign-builders c: siege-workshop c: 2
 		#if (gl-should-build == YES) (gl-remote-total < 20)
 		
 			gl-should-build = NO
+			sn-camp-max-distance += 3
 			
 		#end-if
 		
 		#if gl-should-build == YES
 		
 			BuildNormal(gl-with-escrow, lumber-camp)
-			sn-camp-max-distance += 3
 		
 		#end-if
 	
@@ -484,17 +484,17 @@ up-assign-builders c: siege-workshop c: 2
 			up-find-resource c: $ore c: 20
 			up-get-search-state gl-search-state
 		
-			#if (gl-should-build == YES) (gl-remote-total == 0)
+			#if (gl-should-build == YES) (gl-remote-total < 2)
 		
 				gl-should-build = NO
+				sn-camp-max-distance += 2
 			
 			#end-if
 		
 			#if gl-should-build == YES
 		
 				BuildNormal(gl-with-escrow, mining-camp)
-				sn-camp-max-distance += 2
-		
+
 			#end-if
 	
 		#end-if
