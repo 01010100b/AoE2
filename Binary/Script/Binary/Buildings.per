@@ -1,6 +1,7 @@
 ﻿; BUILDINGS
 
 (defconst CAMP-DELETION-DISTANCE 6)
+(defconst MAX-CAMP-DISTANCE 70)
 
 #function BuildPoint gl-escrow gl-building gl-point-x gl-point-y gl-zone-size
 
@@ -118,7 +119,7 @@
 	(set-strategic-number sn-defer-dropsite-update 1)
 	(set-strategic-number sn-dropsite-separation-distance 3)
 	(set-strategic-number sn-mill-max-distance 20)
-	(set-strategic-number sn-camp-max-distance 25)
+	(set-strategic-number sn-camp-max-distance 20)
 	(set-strategic-number sn-cap-civilian-builders 4)
 	(set-strategic-number sn-minimum-town-size 20)
 	(up-modify-sn sn-object-repair-level c:+ 4096) ; repair towers
@@ -159,6 +160,10 @@ up-assign-builders c: siege-workshop c: 2
 	up-assign-builders c: castle c: 1
 	
 #end-if
+
+sn-camp-max-distance min= MAX-CAMP-DISTANCE
+
+;up-chat-data-to-self "Camp distance %d" s: sn-camp-max-distance
 
 ; Important building
 
@@ -439,12 +444,14 @@ up-assign-builders c: siege-workshop c: 2
 		
 			gl-should-build = NO
 			sn-camp-max-distance += 3
+			;up-chat-data-to-self "Camp distance %d" s: sn-camp-max-distance
 			
 		#end-if
 		
 		#if gl-should-build == YES
 		
 			BuildNormal(gl-with-escrow, lumber-camp)
+			;sn-camp-max-distance += 3
 		
 		#end-if
 	
@@ -488,12 +495,14 @@ up-assign-builders c: siege-workshop c: 2
 		
 				gl-should-build = NO
 				sn-camp-max-distance += 2
+				;up-chat-data-to-self "Camp distance %d" s: sn-camp-max-distance
 			
 			#end-if
 		
 			#if gl-should-build == YES
 		
 				BuildNormal(gl-with-escrow, mining-camp)
+				;sn-camp-max-distance += 2
 
 			#end-if
 	

@@ -6,9 +6,9 @@
 	(set-strategic-number sn-intelligent-gathering 1)
 	(set-strategic-number sn-use-by-type-max-gathering 1)
 	
-	(set-strategic-number sn-maximum-wood-drop-distance 5)
-	(set-strategic-number sn-maximum-gold-drop-distance 5)
-	(set-strategic-number sn-maximum-stone-drop-distance 5)
+	(set-strategic-number sn-maximum-wood-drop-distance 7)
+	(set-strategic-number sn-maximum-gold-drop-distance 7)
+	(set-strategic-number sn-maximum-stone-drop-distance 7)
 	;(set-strategic-number sn-retask-gather-amount 200)
 	;(set-strategic-number sn-max-retask-gather-amount 500)
 	(disable-self)
@@ -104,7 +104,7 @@ var gl-update = NO
 	up-find-resource c: gold c: 10
 	up-get-search-state gl-search-state
 	
-	#if gl-remote-total < 2
+	#if gl-remote-total < 3
 	
 		gl-min-trade-carts = gl-total-gatherers
 		

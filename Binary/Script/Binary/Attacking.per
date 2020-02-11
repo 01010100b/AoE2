@@ -27,14 +27,15 @@
 	(true)
 =>
 	(set-strategic-number sn-number-civilian-militia 0)
-	;(set-strategic-number sn-allow-civilian-defense 0)
-	;(set-strategic-number sn-allow-civilian-offense 1)
+	(set-strategic-number sn-allow-civilian-defense 0)
 	(disable-self)
 )
 
-#if current-age >= feudal-age
+sn-allow-civilian-offense = 0
 
-	;sn-allow-civilian-offense = 0
+#if (current-age <= feudal-age) (sn-infantry-threat == NO) (sn-archery-threat == NO) (sn-cavalry-threat == NO) (sn-eagle-warrior-threat == NO)
+
+	sn-allow-civilian-offense = 1
 	
 #end-if
 
