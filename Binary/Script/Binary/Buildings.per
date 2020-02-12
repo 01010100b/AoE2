@@ -382,7 +382,7 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 		
 		#if building-type-count mill == 0
 		
-			#if (resource-found food) (or (civilian-population > 10) (and (unit-type-count livestock-class < 2) (game-time > 180)))
+			#if (or (resource-found food) (civilian-population > 15)) (or (civilian-population > 10) (and (unit-type-count livestock-class < 2) (game-time > 180)))
 			
 				gl-min-mill = 1
 				chat-local-to-self "Mill"
