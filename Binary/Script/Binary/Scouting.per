@@ -53,15 +53,25 @@
 	
 		#if (gl-remote-total > 0) (current-age <= feudal-age) ; if there is any sighted livestock
 	
-			up-remove-objects search-remote object-data-index c:> 0
-			up-find-local c: scout-cavalry-line c: 10
-			up-find-local c: eagle-warrior-line c: 10
-			up-find-local c: cavalry-class c: 10
-			up-find-local c: infantry-class c: 10
-			up-remove-objects search-local object-data-id g:!= gl-scout
-			up-target-objects 0 action-move -1 -1
+			up-set-target-object search-remote c: 0
+			up-get-point position-self gl-point1
+			up-set-target-point gl-point1
+			
+			var gl-distance
+			up-get-object-data object-data-distance gl-distance
+			
+			#if gl-distance < 35
+			
+				up-find-local c: scout-cavalry-line c: 10
+				up-find-local c: eagle-warrior-line c: 10
+				up-find-local c: cavalry-class c: 10
+				up-find-local c: infantry-class c: 10
+				up-remove-objects search-local object-data-id g:!= gl-scout
+				up-target-objects 1 action-move -1 -1
 		
-			chat-local-to-self "Sending scout to sighted sheep."
+				chat-local-to-self "Sending scout to sighted sheep."
+				
+			#end-if
 		
 		#else
 			
