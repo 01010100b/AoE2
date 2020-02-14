@@ -9,8 +9,8 @@
 	(true)
 =>
 	(set-strategic-number sn-percent-enemy-sighted-response 100)
-	(set-strategic-number sn-enemy-sighted-response-distance 50)
-	(set-strategic-number sn-zero-priority-distance 50)
+	(set-strategic-number sn-enemy-sighted-response-distance 100)
+	(set-strategic-number sn-zero-priority-distance 100)
 	(set-strategic-number sn-enable-offensive-priority 1)
 	(set-strategic-number sn-enable-patrol-attack 1)
 	(set-strategic-number sn-local-targeting-mode 1)
@@ -19,7 +19,7 @@
 	(set-strategic-number sn-disable-defend-groups 9)
 	(set-strategic-number sn-consecutive-idle-unit-limit 1)
 	(set-strategic-number sn-wall-targeting-mode 1)
-	(set-strategic-number sn-gather-defense-units 1)
+	;(set-strategic-number sn-gather-defense-units 1)
 	(disable-self)
 )
 
@@ -115,7 +115,7 @@ sn-allow-civilian-offense = 0
 	gl-safe-distance max= sn-minimum-town-size
 
 	sn-maximum-town-size = gl-safe-distance
-	sn-maximum-town-size += 5
+	sn-maximum-town-size += 1
 	
 	#if timer-triggered ti-repeat-13
 	
@@ -128,7 +128,7 @@ sn-allow-civilian-offense = 0
 		
 		up-target-point gl-point1 action-move -1 -1
 		
-		#if (sn-primary-unit != OFF) (up-object-type-count s: sn-primary-unit c:>= 3) (sn-target-army < 10)
+		#if (sn-primary-unit != OFF) (up-object-type-count s: sn-primary-unit c:>= 3) (sn-target-army < 20)
 		
 			sn-number-attack-groups = 1
 			
@@ -143,7 +143,7 @@ sn-allow-civilian-offense = 0
 	var gl-min = sn-min-primary-unit
 	gl-min /= 2
 	
-	#if (timer-triggered ti-repeat-3m) (up-enemy-units-in-town < 3) (sn-number-attack-groups == 0) (or (up-object-type-count s: sn-primary-unit g:< gl-min) (sn-superiority < HIGH))
+	#if (timer-triggered ti-repeat-3m) (up-enemy-units-in-town < 3) (or (up-object-type-count s: sn-primary-unit g:< gl-min) (sn-superiority < HIGH))
 		
 		up-retreat-now
 		

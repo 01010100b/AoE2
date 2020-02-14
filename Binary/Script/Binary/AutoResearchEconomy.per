@@ -19,7 +19,7 @@ var gl-should-research = NO
 	
 #end-if
 
-#if (gl-should-research == YES) (current-age >= feudal-age)
+#if (gl-should-research == YES) (civilian-population >= 10)
 
 	#if (building-type-count town-center > 0) (up-research-status c: castle-age != research-pending)
 	

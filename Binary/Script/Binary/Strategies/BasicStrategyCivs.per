@@ -17,10 +17,6 @@ gl-my-eagle-warrior-counter = militiaman-line
 ;civ grouping
 var gl-meso-civ = NO
 
-;target civs
-var gl-meso-civ-target-primary = militiaman-line
-var gl-meso-civ-target-secondary = knight-line
-
 ;-----------CIV GROUPS
 
 #load-if-defined AZTEC-CIV
@@ -46,7 +42,6 @@ var gl-meso-civ-target-secondary = knight-line
 	gl-my-primary-unit = eagle-warrior-line
 	gl-my-secondary-unit = spearman-line
 	gl-my-monk-counter = eagle-warrior-line
-	gl-meso-civ-target-secondary = eagle-warrior-line
 		
 #end-if
 
@@ -60,8 +55,6 @@ var gl-meso-civ-target-secondary = knight-line
 		gl-my-eagle-warrior-counter = jaguar-man-line
 		gl-my-primary-unit = jaguar-man-line
 		gl-my-secondary-unit = eagle-warrior-line
-		gl-meso-civ-target-primary = jaguar-man-line
-		gl-meso-civ-target-secondary = militiaman-line
 		
 		TryImportantResearch(ri-garland-wars)
 		
@@ -110,8 +103,6 @@ var gl-meso-civ-target-secondary = knight-line
 	
 		gl-my-infantry-counter = cataphract-line
 		gl-my-eagle-warrior-counter = cataphract-line
-		gl-meso-civ-target-primary = cataphract-line
-		gl-meso-civ-target-secondary = militiaman-line
 		
 		TryImportantResearch(ri-logistica)
 		
@@ -123,7 +114,6 @@ var gl-meso-civ-target-secondary = knight-line
 
 	#if (building-type-count castle > 0)
 	
-		gl-meso-civ-target-secondary = woad-raider-line	
 		gl-my-primary-unit = woad-raider-line
 		gl-my-secondary-unit = knight-line
 		
@@ -212,14 +202,8 @@ var gl-meso-civ-target-secondary = knight-line
 	
 #end-if
 
-;-----------TARGET CIVS
+#load-if-defined PERSIAN-CIV
 
-var gl-target-civ
-up-get-target-fact civilization 0 gl-target-civ
-
-#if or (gl-target-civ == aztecs) (or (gl-target-civ == incans) (gl-target-civ == mayans))
-
-	gl-my-primary-unit = gl-meso-civ-target-primary
-	gl-my-secondary-unit = gl-meso-civ-target-secondary	
+	TryImportantResearch(ri-boiling-oil)
 	
 #end-if
