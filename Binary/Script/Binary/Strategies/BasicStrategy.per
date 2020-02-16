@@ -26,13 +26,13 @@ sn-market-eco-balance = LOW
 
 ; age up
 
-#if (civilian-population >= 21)
+#if (civilian-population >= 25)
 
 	TryImportantResearch(feudal-age)
 	
 #end-if
 
-#if (civilian-population >= 31)
+#if (civilian-population >= 27)
 
 	var gl-age-up = YES
 	
@@ -88,15 +88,9 @@ sn-market-eco-balance = LOW
 
 ; buildings
 
-#if up-research-status c: castle-age c:>= research-pending
+#if (current-age >= castle-age) (building-type-count-total castle > 0)
 
 	sn-min-town-center max= 3
-	
-#end-if
-
-#if (current-age >= feudal-age) (building-type-count-total watch-tower == 0)
-
-	TryImportantBuilding(watch-tower)
 	
 #end-if
 
@@ -143,8 +137,6 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 
 	sn-auto-attack = OFF
 	
-	sn-primary-unit = gl-my-feudal-unit
-	
 	var gl-biggest-threat = NO
 	
 	#if sn-monk-threat > gl-biggest-threat
@@ -187,16 +179,8 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 	
 	var gl-train-site
 	up-get-object-type-data g: gl-unit object-data-train-site gl-train-site
-			
-	#if up-object-type-count g: gl-train-site c:== 0
-	
-		sn-primary-unit = gl-my-feudal-unit
-		sn-secondary-unit = gl-unit
-		
-	#end-if
 	
 	sn-min-primary-unit max= sn-target-army
-	sn-min-primary-unit max= 3
 	
 #end-if
 
@@ -220,15 +204,8 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 	
 	#end-if
 	
-	sn-min-primary-unit = 20
-	sn-min-secondary-unit = 10
-	
-	#if sn-target-army > 10
-	
-		sn-min-primary-unit = 30
-		sn-min-secondary-unit = 15
-		
-	#end-if
+	sn-min-primary-unit = 30
+	sn-min-secondary-unit = 15
 	
 	#if sn-target-army > 40
 	

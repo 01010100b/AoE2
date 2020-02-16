@@ -113,7 +113,7 @@
 	(true)
 =>
 	(set-strategic-number sn-enable-new-building-system 1)
-	(set-strategic-number sn-percent-building-cancellation 10)
+	(set-strategic-number sn-percent-building-cancellation 0)
 	(set-strategic-number sn-disable-builder-assistance 1)
 	(set-strategic-number sn-town-center-placement mining-camp)
 	(set-strategic-number sn-defer-dropsite-update 1)
@@ -125,6 +125,17 @@
 	(up-modify-sn sn-object-repair-level c:+ 4096) ; repair towers
 	(disable-self)
 )
+
+#load-if-defined REVEAL-NORMAL
+
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-unexplored-construction 1)
+	(disable-self)
+)
+
+#end-if
 
 (defrule
 	(current-age == feudal-age)
@@ -151,8 +162,8 @@ up-assign-builders c: town-center-foundation c: 6
 up-assign-builders c: castle c: 10
 ;up-assign-builders c: stable c: 2
 ;up-assign-builders c: archery-range c: 2
-up-assign-builders c: market c: 2
-up-assign-builders c: siege-workshop c: 2
+;up-assign-builders c: market c: 2
+;up-assign-builders c: siege-workshop c: 2
 	
 #if sn-town-threat == HIGH
 

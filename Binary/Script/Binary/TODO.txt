@@ -44,6 +44,7 @@ Attacking sn-raid YES/NO, sn-auto-raid ON/OFF
 Scouting circle around TC
 Scouting push deer to TC
 Economy retasking
+Start trade earlier
 
 v0.4
 

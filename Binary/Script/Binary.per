@@ -14,7 +14,7 @@
 	(true)
 =>
 	(set-goal gl-team-id BINARY-ID)
-	(chat-to-all "Binary v0.2i")
+	(chat-to-all "Binary v0.2")
 	(disable-self)
 )
 
@@ -111,16 +111,15 @@ gl-team-attacking = sn-attack
 
 (load "Binary\FoodEconomy")
 
+#if sn-auto-research-military == ON
+
+	(load "Binary\AutoResearchMilitary")
+
+#end-if
 
 #if sn-auto-research-economy == ON
 
 	(load "Binary\AutoResearchEconomy")
-
-#end-if
-
-#if sn-auto-research-military == ON
-
-	(load "Binary\AutoResearchMilitary")
 
 #end-if
 
