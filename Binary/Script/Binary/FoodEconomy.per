@@ -342,6 +342,8 @@ up-get-search-state gl-search-state
 	up-find-local c: male-shepherd c: 10
 	up-find-local c: female-shepherd c: 10
 	
+	up-remove-objects search-local object-data-target-id g:== gl-next-boar
+	
 #end-if
 
 #if gl-local-total > 8
@@ -376,7 +378,7 @@ up-get-search-state gl-search-state
 #end-if
 
 sn-focus-player-number = 0
-up-filter-distance c: -1 c: 7
+up-filter-distance c: -1 c: 5
 	
 up-find-remote c: boar c: 10
 up-find-remote c: javelina c: 10

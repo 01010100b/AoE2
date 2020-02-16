@@ -26,19 +26,19 @@ sn-market-eco-balance = LOW
 
 ; age up
 
-#if (civilian-population >= 25)
+#if (civilian-population >= 27)
 
 	TryImportantResearch(feudal-age)
 	
 #end-if
 
-#if (civilian-population >= 27)
+#if (civilian-population >= 29)
 
 	var gl-age-up = YES
 	
 	#if (sn-primary-unit != OFF) (up-resource-amount amount-military-population s:< sn-recent-target-army)
 	
-		gl-age-up = NO
+		;gl-age-up = NO
 		
 	#end-if
 	
@@ -105,7 +105,7 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 	
 	#end-if
 
-	#if (current-age >= feudal-age) (building-type-count-total blacksmith == 0) (building-type-count market > 0)
+	#if (current-age >= feudal-age) (building-type-count-total blacksmith == 0) (building-type-count-total market > 0)
 
 		TryImportantBuilding(blacksmith, BUILDING-NORMAL, -1, -1)
 	
