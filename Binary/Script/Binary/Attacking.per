@@ -181,7 +181,7 @@ sn-allow-civilian-offense = 0
 	up-get-fact population-cap 0 gl-pop-cap
 	gl-pop-cap -= 5
 		
-	#if (sn-attack == NO) (sn-primary-unit != OFF) (sn-min-primary-unit >= 5)
+	#if (sn-attack == NO) (sn-primary-unit != OFF) (sn-min-primary-unit >= 5) (sn-important-research != imperial-age)
 		
 		var gl-should-attack = NO
 		gl-target-army = sn-recent-target-army
@@ -210,7 +210,7 @@ sn-allow-civilian-offense = 0
 		gl-target-army = sn-recent-target-army
 		gl-target-army -= 5
 		
-		#if up-resource-amount amount-military-population g:< gl-target-army
+		#if or (up-resource-amount amount-military-population g:< gl-target-army) (sn-important-research == imperial-age)
 		
 			sn-attack = NO
 			
