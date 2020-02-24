@@ -83,6 +83,7 @@
     <None Include="App.config" />
     <None Include="Releases\Binary 0.1.zip" />
     <None Include="Releases\Binary 0.2.zip" />
+    <None Include="Releases\LanguageExtension 1.0.zip" />
     <None Include="Script\Binary.ai" />
     <None Include="Script\Binary.per" />
     <None Include="Script\Binary\Attacking.per" />

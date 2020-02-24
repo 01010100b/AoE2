@@ -128,7 +128,7 @@ sn-allow-civilian-offense = 0
 		
 		up-target-point gl-point1 action-move -1 -1
 		
-		#if (sn-primary-unit != OFF) (up-object-type-count s: sn-primary-unit c:>= 3) (sn-target-army < 20)
+		#if (sn-primary-unit != OFF) (up-object-type-count s: sn-primary-unit c:>= 3) (sn-target-army < 20) (current-age <= feudal-age)
 		
 			sn-number-attack-groups = 1
 			

@@ -31,6 +31,41 @@
 	
 #return gl-built
 
+#function BuildEnemyCamp gl-escrow gl-building
+
+	var gl-built = NO
+	
+	#if (gl-currently-placing-building == OFF) (up-can-build gl-escrow g: gl-building)
+	
+		var gl-target
+		up-find-player enemy find-closest gl-target
+		sn-focus-player-number = gl-target
+		
+		up-full-reset-search
+		up-find-remote c: mining-camp c: 10
+		up-find-remote c: lumber-camp c: 10
+		up-get-search-state gl-search-state
+		
+		#if gl-remote-total > 0
+		
+			up-get-point position-self gl-point1
+			up-set-target-point gl-point1
+			up-clean-search search-remote object-data-distance search-order-asc
+			up-set-target-object search-remote c: 0
+			up-get-point position-object gl-point1
+			
+			gl-built = BuildPoint(gl-escrow, gl-building, gl-point1-x, gl-point1-y, 5)
+			
+		#else
+		
+			gl-built = BuildNormal(gl-escrow, gl-building)
+			
+		#end-if
+		
+	#end-if
+			
+#return gl-built
+
 #function BuildNormal gl-escrow gl-building
 
 	var gl-built = NO
@@ -44,6 +79,12 @@
 			gl-zone-size = sn-minimum-town-size
 			gl-zone-size -= 10
 			gl-lerp-tiles = -10
+			
+			var gl-target
+			up-find-player enemy find-closest gl-target
+			sn-focus-player-number = gl-target
+			up-get-point position-self gl-point1
+			up-get-point position-center gl-point2
 
 			#if or (gl-building == town-center) (gl-building == house)
 			
@@ -56,7 +97,7 @@
 				gl-lerp-tiles = sn-minimum-town-size
 				gl-lerp-tiles += 5
 				gl-zone-size = 5
-				
+					
 			#end-if
 			
 			#if gl-building == watch-tower
@@ -66,12 +107,6 @@
 				
 			#end-if
 			
-			up-get-point position-self gl-point1
-			up-get-point position-center gl-point2
-			
-			var gl-target
-			up-find-player enemy find-closest gl-target
-			sn-focus-player-number = gl-target
 			up-full-reset-search
 			up-find-remote c: town-center c: 1
 			up-get-search-state gl-search-state
@@ -219,7 +254,16 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 	#if (gl-current-important-building != OFF) (up-can-build gl-with-escrow g: gl-current-important-building)
 
 		var gl-built
-		gl-built = BuildNormal(gl-with-escrow, gl-current-important-building)
+		
+		#if sn-building-placement == BUILDING-ENEMY-CAMP
+		
+			gl-built = BuildEnemyCamp(gl-with-escrow, gl-current-important-building)
+			
+		#else
+		
+			gl-built = BuildNormal(gl-with-escrow, gl-current-important-building)
+		
+		#end-if
 		
 		#if gl-built == YES
 		

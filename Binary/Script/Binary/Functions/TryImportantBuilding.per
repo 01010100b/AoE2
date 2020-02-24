@@ -1,9 +1,16 @@
 ﻿#function TryImportantBuilding gl-building-id gl-placement-type gl-point-x gl-point-y
 
 	var gl-built = NO
-	gl-built = BuildNormal(gl-without-escrow, gl-building-id)
-	;up-chat-data-to-self "TryImportantBuilding: %d" g: gl-building-id
-	;up-log-data 0 "TryImportantBuilding: %d" g: gl-building-id
+	
+	#if gl-placement-type == BUILDING-ENEMY-CAMP
+		
+		gl-built = BuildEnemyCamp(gl-with-escrow, gl-building-id)
+			
+	#else
+		
+		gl-built = BuildNormal(gl-with-escrow, gl-building-id)
+		
+	#end-if
 	
 	#if (gl-built == NO) (sn-important-building == OFF)
 

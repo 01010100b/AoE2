@@ -140,7 +140,7 @@ gl-pop-cap max= 0
 		#else
 		
 			var gl-min = sn-min-$unit
-			gl-min /= 4
+			gl-min /= 8
 			#if (up-can-train gl-with-escrow g: gl-unit) (or (up-object-type-count-total s: sn-$unit g:< gl-min) (or (sn-town-threat == HIGH) (sn-superiority == LOW)))
 			
 				up-train gl-with-escrow g: gl-unit
@@ -159,5 +159,23 @@ gl-pop-cap max= 0
 
 	up-train gl-without-escrow s: sn-siege-unit
 	;chat-local-to-self "Training siege unit"
+	
+#end-if
+
+up-get-point position-self gl-point1
+up-set-target-point gl-point1
+
+var gl-focus
+up-find-player enemy find-closest gl-focus
+sn-focus-player-numer = gl-focus
+
+up-full-reset-search
+up-filter-distance c: -1 s: sn-maximum-town-size
+up-find-remote c: castle c: 1
+up-get-search-state gl-search-state
+
+#if (gl-remote-total > 0) (unit-type-count-total battering-ram-line < 3) (building-type-count siege-workshop > 0) (sn-important-unit == OFF)
+
+	sn-important-unit = battering-ram-line
 	
 #end-if
