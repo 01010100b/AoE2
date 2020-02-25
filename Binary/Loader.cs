@@ -31,10 +31,12 @@ namespace Binary
             var loaded = true;
             while (loaded)
             {
-                Loads();
-
                 loaded = false;
 
+                Trace.WriteLine("Do loads");
+                Loads();
+
+                Trace.WriteLine("Do function calls");
                 if (FunctionCalls())
                 {
                     loaded = true;
@@ -280,7 +282,7 @@ namespace Binary
 
                     Assert.That(Functions.ContainsKey(name), "Function not found: " + element.Code);
 
-                    Debug.WriteLine("Inline function call: " + code);
+                    //Debug.WriteLine("Inline function call: " + code);
 
                     var setup = $"(defrule ; set params for {name}\n\t(true)\n=>";
                     for (int p = 3; p < pieces.Count; p++)
@@ -396,7 +398,7 @@ namespace Binary
                     new_goal = goal + suffix;
                 }
 
-                Debug.WriteLine("Changed known goal " + goal + " to " + new_goal);
+                //Debug.WriteLine("Changed known goal " + goal + " to " + new_goal);
 
                 for (int j = 0; j < child_elements.Count; j++)
                 {

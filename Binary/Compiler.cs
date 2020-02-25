@@ -279,7 +279,7 @@ namespace Binary
 
             var deflocals = new List<DefLocalElement>();
 
-            Debug.WriteLine("Getting local variable indices");
+            Debug.WriteLine("Getting local variables");
 
             for (int i = 0; i < elements.Count; i++)
             {
@@ -318,7 +318,7 @@ namespace Binary
                     var name = local.Name;
                     var new_name = name + "-" + local.Index.ToString().Trim();
                     
-                    Debug.WriteLine("Renaming local var " + name + " to " + new_name);
+                    //Debug.WriteLine("Renaming local var " + name + " to " + new_name);
                     local.SetName(new_name);
 
                     for (int j = local.Index + 1; j < local.FreeIndex; j++)
@@ -435,10 +435,10 @@ namespace Binary
                     }
                 }
 
-                Debug.WriteLine("Assigned: " + local.Name);
+                // Debug.WriteLine("Assigned: " + local.Name);
             }
 
-            Debug.WriteLine("Used " + max_in_use + " temporary ids");
+            Debug.WriteLine($"Used {max_in_use} temporary ids for {deflocals.Count} local vars");
         }
 
         private void ConstantShadowing(List<Element> elements)
@@ -590,7 +590,7 @@ namespace Binary
 
             block.Flatten();
 
-            var elements = block.GetElements().ToList();
+            var elements = block.GetElements();
             var code = elements[0].ActualCode;
 
             if (elements[0] is LoadIfDefinedElement element)
@@ -834,54 +834,6 @@ namespace Binary
             new_elements.Add(Element.Create(backwards));
             new_elements.Add(Element.Create(""));
             new_elements.Add(Element.Create(";end while"));
-
-            elements.Clear();
-            elements.AddRange(new_elements);
-        }
-
-        private void TransformForeach(List<Element> elements)
-        {
-            // #foreach $wildcard-array in string1-array string2-array ...
-            // #end-foreach
-
-            var range = elements[0].Pieces;
-            range.RemoveAt(0);
-            
-            var wildcard = range[0].Split(':');
-            range.RemoveAt(0);
-
-            Assert.That(range[0].Equals("in"), "invalid #foreach syntax: " + elements[0].Code);
-            Assert.That(range.Count(s => s.Contains("{") || s.Contains("}")) == 0, "Curly braces not allowed in foreach: " + elements[0].Code);
-            range.RemoveAt(0);
-
-            // remove preprocessor directives and possible empty line at top
-            elements.RemoveAt(0);
-            elements.RemoveAt(elements.Count - 1);
-            if (elements[0].ActualCode.Equals(""))
-            {
-                elements.RemoveAt(0);
-            }
-
-            var new_elements = new List<Element>();
-            new_elements.Add(Element.Create(";foreach " + wildcard));
-            new_elements.Add(Element.Create(""));
-
-            foreach (var val in range.Select(v => v.Split(':')))
-            {
-                foreach (var element in elements)
-                {
-                    var code = element.Code;
-
-                    for (int i = 0; i < wildcard.Length; i++)
-                    {
-                        code = code.Replace(wildcard[i], val[i]);
-                    }
-                    
-                    new_elements.Add(Element.Create(code));
-                }
-            }
-
-            new_elements.Add(Element.Create(";end foreach"));
 
             elements.Clear();
             elements.AddRange(new_elements);

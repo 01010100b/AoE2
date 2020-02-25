@@ -254,11 +254,11 @@ namespace Binary
 
                     if (code.StartsWith("#defstrategic"))
                     {
-                        Assert.That(name.StartsWith("sn-"), $"invalid name (use sn-*): {elements[i].Code}");
+                        Assert.That(name.StartsWith("sn-"), $"invalid name (use sn-*): {code}");
                     }
                     else
                     {
-                        Assert.That(name.StartsWith("gl-"), $"invalid name (use gl-*): {elements[i].Code}");
+                        Assert.That(name.StartsWith("gl-"), $"invalid name (use gl-*): {code}");
                     }
                 }
             }
