@@ -82,11 +82,17 @@ sn-market-eco-balance = LOW
 
 #if (sn-town-threat == HIGH) (sn-important-research == castle-age)
 
-	sn-important-research = OFF
+	;sn-important-research = OFF
 	
 #end-if
 
 ; buildings
+
+#if (current-age >= castle-age) (can-build castle)
+
+	TryImportantBuilding(castle, BUILDING-NORMAL, -1, -1)
+
+#end-if
 
 #if (current-age >= castle-age) (building-type-count-total castle > 0)
 
@@ -122,12 +128,6 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 		TryImportantBuilding(university, BUILDING-NORMAL, -1, -1)
 	
 	#end-if
-
-#end-if
-
-#if (current-age >= castle-age) (can-build castle)
-
-	TryImportantBuilding(castle, BUILDING-NORMAL, -1, -1)
 
 #end-if
 

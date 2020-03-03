@@ -183,11 +183,8 @@ namespace Binary
 
         private void StrategicNumbers(List<Element> elements)
         {
-            const int FIRST = 296;
-            const int LAST = 511;
-
             var available = new HashSet<int>();
-            for (int i = FIRST; i <= LAST; i++)
+            for (int i = Program.MIN_STRATEGIC_NUMBER; i <= Program.MAX_STRATEGIC_NUMBER; i++)
             {
                 available.Add(i);
             }

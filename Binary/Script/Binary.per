@@ -2,13 +2,7 @@
 
 (load "Binary\PublicInterface")
 
-(defconst BINARY-ID 1754)
-(defconst gl-team-id 420)
-(defconst gl-team-town-under-attack 11)
-(defconst gl-team-target 12)
-(defconst gl-team-self-x 478)
-(defconst gl-team-self-y 479)
-(defconst gl-team-attacking 392)
+
 
 (defrule
 	(true)
@@ -111,11 +105,6 @@ gl-team-attacking = sn-attack
 
 (load "Binary\FoodEconomy")
 
-#if sn-auto-research-military == ON
-
-	(load "Binary\AutoResearchMilitary")
-
-#end-if
 
 #if sn-auto-research-economy == ON
 
@@ -123,6 +112,11 @@ gl-team-attacking = sn-attack
 
 #end-if
 
+#if sn-auto-research-military == ON
+
+	(load "Binary\AutoResearchMilitary")
+
+#end-if
 
 (load "Binary\Research")
 

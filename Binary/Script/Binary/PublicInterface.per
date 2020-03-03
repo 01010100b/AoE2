@@ -1,5 +1,7 @@
 ﻿; PUBLIC INTERFACE
 
+(defconst BINARY-ID 1754)
+
 (load "Binary\UserPatchConst")
 (load "Binary\Const")
 
@@ -37,6 +39,13 @@
 #repeat-timer ti-repeat-10m 9 601
 
 ; Special goals
+
+(defconst gl-team-id 420)
+(defconst gl-team-town-under-attack 11)
+(defconst gl-team-target 12)
+(defconst gl-team-self-x 478)
+(defconst gl-team-self-y 479)
+(defconst gl-team-attacking 392)
 
 (defconst gl-cost-food 460) ; use for up-cost functions
 (defconst gl-cost-wood 461)
@@ -95,7 +104,6 @@
 #defstrategic sn-building-placement-point-y = 0 ; y coordinate for BUILDING-POINT
 
 #defstrategic sn-min-town-center = 1 ; build this many town centers
-
 #defstrategic sn-auto-production-buildings = ON ; ON or OFF, if ON build production buildings (barracks, archery, stables, siege, dock, castle) automatically to maximize unit production based on desired army
 
 ; Units
