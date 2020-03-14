@@ -161,17 +161,6 @@
 	(disable-self)
 )
 
-#load-if-defined REVEAL-NORMAL
-
-(defrule
-	(true)
-=>
-	(set-strategic-number sn-unexplored-construction 1)
-	(disable-self)
-)
-
-#end-if
-
 (defrule
 	(current-age == feudal-age)
 =>

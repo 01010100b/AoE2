@@ -94,7 +94,7 @@ sn-market-eco-balance = LOW
 
 #end-if
 
-#if (current-age >= castle-age) (building-type-count-total castle > 0)
+#if (current-age >= castle-age)
 
 	sn-min-town-center max= 3
 	
@@ -135,10 +135,13 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 
 #if up-research-status c: feudal-age c:>= research-pending
 
+	sn-primary-unit = gl-my-feudal-unit
+	sn-min-primary-unit max= sn-target-army
+
 	sn-auto-attack = OFF
 	
 	var gl-biggest-threat = NO
-	
+
 	#if sn-monk-threat > gl-biggest-threat
 	
 		sn-primary-unit = gl-my-monk-counter
@@ -174,17 +177,9 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 		
 	#end-if
 	
-	var gl-unit
-	up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
-	
-	var gl-train-site
-	up-get-object-type-data g: gl-unit object-data-train-site gl-train-site
-	
-	sn-min-primary-unit max= sn-target-army
-	
 #end-if
 
-#if up-research-status c: castle-age c:>= research-pending
+#if current-age >= castle-age
 	
 	sn-auto-attack = ON
 	
