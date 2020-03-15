@@ -185,6 +185,12 @@ sn-allow-civilian-offense = 0
 			
 		#end-if
 		
+		#if (unit-type-count trebuchet-class == 0) (unit-type-count battering-ram-line == 0)
+		
+			gl-should-attack = NO
+			
+		#end-if
+		
 		#if gl-pop >= gl-pop-cap
 		
 			gl-should-attack = YES
@@ -203,7 +209,21 @@ sn-allow-civilian-offense = 0
 		gl-target-army -= 5
 		gl-target-army max= 10
 		
-		#if (or (up-resource-amount amount-military-population g:< gl-target-army) (sn-important-research == imperial-age)) (gl-pop < gl-pop-cap)
+		var gl-should-retreat = NO
+		
+		#if or (up-resource-amount amount-military-population g:< gl-target-army) (sn-important-research == imperial-age)
+		
+			gl-should-retreat = YES
+			
+		#end-if
+		
+		#if (unit-type-count trebuchet-class == 0) (unit-type-count battering-ram-line == 0)
+		
+			gl-should-retreat = YES
+			
+		#end-if
+		
+		#if (gl-should-retreat == YES) (gl-pop < gl-pop-cap)
 		
 			sn-attack = NO
 			
