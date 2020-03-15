@@ -79,23 +79,11 @@ gl-difference -= gl-target-score
 ; Target army
 
 sn-focus-player-number = sn-target-player-number
-up-full-reset-search
-up-filter-include cmdid-military -1 -1 -1
-up-find-remote c: all-units-class c: 100
-up-get-search-state gl-search-state
-
-sn-recent-target-army max= gl-remote-total
-
-#if timer-triggered ti-repeat-1m
-
-	sn-recent-target-army -= 1
-	sn-recent-target-army max= 0
-	
-#end-if
 
 var gl-pop
 up-get-focus-fact military-population 0 gl-pop
-sn-target-army = gl-pop
+sn-target-army max= gl-pop
+sn-recent-target-army = gl-pop
 
 ; Threats
 

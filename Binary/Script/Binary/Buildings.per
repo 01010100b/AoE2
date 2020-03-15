@@ -587,6 +587,12 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 	
 		var gl-farm-boom = YES
 		
+		#if or (sn-important-building == town-center) (sn-important-building == monastery)
+		
+			gl-farm-boom = NO
+			
+		#end-if
+		
 		#if sn-primary-unit != OFF
 		
 			var gl-train-site
@@ -620,7 +626,7 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 		
 		#end-foreach
 	
-		#if (gl-farm-boom == YES) (can-build-with-escrow farm) (dropsite-min-distance wood <= 4) (building-type-count lumber-camp > 0) (sn-important-building != town-center) (sn-important-building != market) (sn-important-building != blacksmith)
+		#if (gl-farm-boom == YES) (can-build-with-escrow farm) (dropsite-min-distance wood <= 4) (building-type-count lumber-camp > 0) (sn-important-building != market) (sn-important-building != blacksmith)
 	
 			BuildNormal(gl-with-escrow, farm)
 		

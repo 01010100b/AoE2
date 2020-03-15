@@ -90,6 +90,8 @@ sn-allow-civilian-offense = 0
 	
 #else
 
+	sn-number-attack-groups = 0
+	
 	up-get-point position-self gl-point1
 	up-get-point position-target gl-point2
 	#if gl-point2 == -1
@@ -127,16 +129,6 @@ sn-allow-civilian-offense = 0
 		up-remove-objects search-local object-data-distance c:< 10
 		
 		up-target-point gl-point1 action-move -1 -1
-		
-		#if (sn-primary-unit != OFF) (up-object-type-count s: sn-primary-unit c:>= 3) (sn-target-army < 20) (current-age <= feudal-age)
-		
-			sn-number-attack-groups = 1
-			
-		#else
-		
-			sn-number-attack-groups = 0
-			
-		#end-if
 		
 	#end-if
 	
@@ -211,7 +203,7 @@ sn-allow-civilian-offense = 0
 		gl-target-army -= 5
 		gl-target-army max= 10
 		
-		#if or (up-resource-amount amount-military-population g:< gl-target-army) (sn-important-research == imperial-age)
+		#if (or (up-resource-amount amount-military-population g:< gl-target-army) (sn-important-research == imperial-age)) (gl-pop < gl-pop-cap)
 		
 			sn-attack = NO
 			

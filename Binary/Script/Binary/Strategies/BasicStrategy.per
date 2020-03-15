@@ -94,7 +94,7 @@ sn-market-eco-balance = LOW
 
 #end-if
 
-#if (current-age >= castle-age)
+#if (up-research-status c: castle-age c:>= research-pending)
 
 	sn-min-town-center max= 3
 	
