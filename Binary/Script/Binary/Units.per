@@ -141,7 +141,13 @@ gl-pop-cap max= 0
 		
 			var gl-min = sn-min-$unit
 			gl-min /= 8
-			#if (up-can-train gl-with-escrow g: gl-unit) (or (up-object-type-count-total s: sn-$unit g:< gl-min) (or (sn-town-threat == HIGH) (sn-superiority == LOW)))
+			
+			sn-focus-player-number = sn-target-player-number
+			var gl-pop
+			up-get-focus-fact military-population 0 gl-pop
+			gl-pop %*= 75
+			
+			#if (up-can-train gl-with-escrow g: gl-unit) (or (up-object-type-count-total s: sn-$unit g:< gl-min) (or (sn-town-threat == HIGH) (military-population g:< gl-pop)))
 			
 				up-train gl-with-escrow g: gl-unit
 				

@@ -26,7 +26,7 @@ sn-market-eco-balance = LOW
 
 ; age up
 
-#if (civilian-population >= 27)
+#if (civilian-population >= 23)
 
 	TryImportantResearch(feudal-age)
 	
@@ -88,6 +88,12 @@ sn-market-eco-balance = LOW
 
 ; buildings
 
+#if (research-available ri-stone-mining)
+
+	TryImportantResearch(ri-stone-mining)
+	
+#end-if
+
 #if (current-age >= castle-age) (can-build castle)
 
 	TryImportantBuilding(castle, BUILDING-NORMAL, -1, -1)
@@ -136,7 +142,7 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 #if up-research-status c: feudal-age c:>= research-pending
 
 	sn-primary-unit = gl-my-feudal-unit
-	sn-min-primary-unit max= sn-target-army
+	sn-min-primary-unit = sn-recent-target-army
 
 	sn-auto-attack = OFF
 	
@@ -199,12 +205,12 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 	
 	#end-if
 	
-	sn-min-primary-unit = 30
-	sn-min-secondary-unit = 15
+	sn-min-primary-unit = 20
+	sn-min-secondary-unit = 10
 	
-	#if sn-target-army > 40
+	#if sn-recent-target-army > 40
 	
-		sn-min-primary-unit = 50
+		sn-min-primary-unit = 40
 		sn-min-secondary-unit = 20
 		
 	#end-if

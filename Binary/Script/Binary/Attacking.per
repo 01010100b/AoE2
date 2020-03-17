@@ -19,7 +19,7 @@
 	(set-strategic-number sn-disable-defend-groups 9)
 	(set-strategic-number sn-consecutive-idle-unit-limit 1)
 	(set-strategic-number sn-wall-targeting-mode 1)
-	;(set-strategic-number sn-gather-defense-units 1)
+	(set-strategic-number sn-gather-defense-units 1)
 	(disable-self)
 )
 
@@ -185,7 +185,7 @@ sn-allow-civilian-offense = 0
 			
 		#end-if
 		
-		#if (unit-type-count trebuchet-class == 0) (unit-type-count battering-ram-line == 0)
+		#if (unit-type-count trebuchet-set == 0) (unit-type-count battering-ram-line == 0)
 		
 			gl-should-attack = NO
 			
@@ -217,7 +217,7 @@ sn-allow-civilian-offense = 0
 			
 		#end-if
 		
-		#if (unit-type-count trebuchet-class == 0) (unit-type-count battering-ram-line == 0)
+		#if (unit-type-count trebuchet-set == 0) (unit-type-count battering-ram-line == 0)
 		
 			gl-should-retreat = YES
 			
