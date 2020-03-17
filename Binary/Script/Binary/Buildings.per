@@ -96,7 +96,7 @@
 			
 				gl-lerp-tiles = sn-minimum-town-size
 				gl-lerp-tiles += 5
-				gl-zone-size = 5
+				gl-zone-size = 7
 					
 			#end-if
 			
@@ -324,19 +324,19 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 			
 			#if (gl-need-barracks == YES) (building-type-count-total barracks == 0)
 				
-				TryImportantBuilding(barracks)
+				TryImportantBuilding(barracks, BUILDING-NORMAL, -1, -1)
 				
 			#end-if
 			
 			#if (gl-need-blacksmith == YES) (building-type-count-total blacksmith == 0)
 			
-				TryImportantBuilding(blacksmith)
+				TryImportantBuilding(blacksmith, BUILDING-NORMAL, -1, -1)
 				
 			#end-if
 			
 			#if up-object-type-count-total g: gl-train-site c:== 0
 			
-				TryImportantBuilding(gl-train-site)
+				TryImportantBuilding(gl-train-site, BUILDING-NORMAL, -1, -1)
 				
 			#end-if
 			
@@ -349,14 +349,14 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 		#if sn-$unit != OFF
 			
 			var gl-unit
-			up-get-object-type-data s: sn-$unit object-data-type gl-unit
+			up-get-object-type-data s: sn-$unit object-data-base-type gl-unit
 			
 			var gl-train-site
 			up-get-object-type-data g: gl-unit object-data-train-site gl-train-site
 			
 			#if (not (up-train-site-ready g: gl-unit)) (up-pending-objects g: gl-train-site c:== 0)
 			
-				TryImportantBuilding(gl-train-site)
+				TryImportantBuilding(gl-train-site, BUILDING-NORMAL, -1, -1)
 				
 			#end-if
 			
@@ -368,7 +368,7 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 	
 		TryImportantBuilding(blacksmith, BUILDING-NORMAL, -1, -1)
 		
-		#if (building-type-count-total blacksmith == 1) (current-age >= castle-age)
+		#if (building-type-count-total blacksmith == 1) (current-age >= imperial-age)
 		
 			TryImportantBuilding(blacksmith, BUILDING-NORMAL, -1, -1)
 			
@@ -777,6 +777,7 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 		#if gl-time > 30
 		
 			up-reset-placement g: gl-currently-placing-building
+			chat-local-to-self "Reseting building placement"
 			
 		#end-if
 		

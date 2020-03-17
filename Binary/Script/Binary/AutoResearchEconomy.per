@@ -58,12 +58,18 @@ var gl-should-research = NO
 	
 	#end-if
 	
+	#if building-type-count market > 0
+	
+		TryImportantResearch(ri-cartography)
+		
+	#end-if
+	
 #end-if
 
 #if (up-research-status c: imperial-age >= research-pending) (goal gl-should-research YES)
 	
 	#if (building-type-count market > 0) (or (unit-type-count trade-cart > 2) (unit-type-count trade-cog > 2))
-	
+		
 		TryImportantResearch(ri-caravan)
 		
 	#end-if

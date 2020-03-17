@@ -2,6 +2,11 @@
 
 (load "Binary\PublicInterface")
 
+up-chat-data-to-self "Skirm: %d" c: skirmisher-line
+
+var gl-unit
+up-get-object-type-data c: skirmisher-line object-data-base-type gl-unit
+up-chat-data-to-self "type: %d" g: gl-unit
 
 
 (defrule
