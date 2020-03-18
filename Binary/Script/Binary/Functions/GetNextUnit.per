@@ -6,18 +6,17 @@
 	#while gl-found == NO
 	
 		gl-current-unit += 1
+		#if gl-current-unit >= 1000
+		
+			gl-current-unit = 0
+			
+		#end-if
 		
 		up-get-object-type-data g: gl-current-unit object-data-cmdid gl-id
 		
 		#if gl-id == cmdid-military
 		
 			gl-found = YES
-			
-		#end-if
-		
-		#if gl-current-unit == 1600
-		
-			gl-current-unit = 0
 			
 		#end-if
 		

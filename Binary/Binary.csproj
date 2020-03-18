@@ -90,6 +90,7 @@
     <None Include="Script\Binary\AutoBalanceGatherers.per" />
     <None Include="Script\Binary\AutoResearchEconomy.per" />
     <None Include="Script\Binary\AutoResearchMilitary.per" />
+    <None Include="Script\Binary\Available.per" />
     <None Include="Script\Binary\Buildings.per" />
     <None Include="Script\Binary\Const.per" />
     <None Include="Script\Binary\Economy.per" />

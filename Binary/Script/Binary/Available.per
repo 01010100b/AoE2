@@ -1,0 +1,48 @@
+﻿#defglobal gl-available-address
+#defglobal gl-available-return
+#defglobal gl-available-unit
+
+#function UnitAvailable gl-unit
+
+	var gl-index
+	gl-available-unit = NO
+	
+	(defrule
+		(true)
+	=>
+		(up-get-rule-id gl-available-return)
+		(up-modify-goal gl-available-return c:+ 1)
+		(up-modify-goal gl-index g:= gl-unit)
+		(up-modify-goal gl-index c:* 2) ; rules per unit id
+		(up-modify-goal gl-index c:- 1)
+		(up-modify-goal gl-index g:+ gl-available-address)
+		;(up-chat-data-to-self "jumping: %d" g: gl-index)
+		(up-jump-direct g: gl-index)
+	)
+	
+#return gl-available-unit
+
+(defrule
+	(true)
+=>
+	(up-get-rule-id gl-available-address)
+	(up-jump-rule 2000) ; total number of rules
+)
+
+#foreach $i in {1000}
+
+	(defrule
+		(unit-available $i)
+	=>
+		(set-goal gl-available-unit YES)
+	)
+	
+	(defrule
+		(true)
+	=>
+		(up-store-type-name c: $i)
+		;(up-chat-data-to-self "checking: %s" c: 7031232)
+		(up-jump-direct g: gl-available-return)
+	)
+	
+#end-foreach

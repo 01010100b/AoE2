@@ -70,6 +70,8 @@ namespace Binary
                 
                 results.Add(kvp.Key, elements);
 
+                
+
                 Trace.WriteLine("Parsed: " + kvp.Key);
             }
 
@@ -188,8 +190,19 @@ namespace Binary
                         range.RemoveAt(0);
 
                         Assert.That(range[0].Equals("in"), "invalid #foreach syntax: " + lines[start_foreach]);
-                        Assert.That(range.Count(s => s.Contains("{") || s.Contains("}")) == 0, "Curly braces not allowed in foreach: " + lines[start_foreach]);
+                        //Assert.That(range.Count(s => s.Contains("{") || s.Contains("}")) == 0, "Curly braces not allowed in foreach: " + lines[start_foreach]);
                         range.RemoveAt(0);
+
+                        if (range.Count(s => s.Contains("{")) > 0)
+                        {
+                            int num = int.Parse(range[0].Replace("{", "").Replace("}", ""));
+                            range.Clear();
+
+                            for (int j = 1; j <= num; j++)
+                            {
+                                range.Add(j.ToString());
+                            }
+                        }
 
                         foreach (var val in range.Select(v => v.Split(':')))
                         {
