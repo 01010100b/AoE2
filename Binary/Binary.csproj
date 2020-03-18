@@ -94,6 +94,7 @@
     <None Include="Script\Binary\Const.per" />
     <None Include="Script\Binary\Economy.per" />
     <None Include="Script\Binary\FoodEconomy.per" />
+    <None Include="Script\Binary\Functions\GetNextUnit.per" />
     <None Include="Script\Binary\Functions\GetObjectCount.per" />
     <None Include="Script\Binary\Functions\GetObjectMovementDistance.per" />
     <None Include="Script\Binary\Functions\GetRandomNumber.per" />
@@ -110,6 +111,7 @@
     <None Include="Script\Binary\Strategies\BasicStrategyCivs.per" />
     <None Include="Script\Binary\Strategy.per" />
     <None Include="Script\Binary\Team.per" />
+    <None Include="Script\Binary\Test.per" />
     <None Include="Script\Binary\Units.per" />
     <None Include="Script\Binary\UserPatchConst.per" />
     <Content Include="Script\Binary\Tests.txt" />
