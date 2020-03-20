@@ -1,0 +1,46 @@
+﻿#defglobal gl-memory-address
+#defglobal gl-memory-return
+#defglobal gl-memory-value
+
+#function GetMemoryValue gl-index
+
+	(defrule
+		(true)
+	=>
+		(up-get-rule-id gl-memory-return)
+		(up-modify-goal gl-memory-return c:+ 1)
+		(up-modify-goal gl-index g:+ gl-memory-address)
+		(up-jump-rule g: gl-index)
+	)
+	
+#return gl-memory-value
+
+; start of memory block
+(defrule
+	(true)
+=>
+	(up-get-rule-id gl-memory-address)
+	(up-modify-goal gl-memory-address c:+ 1)
+	(up-jump-dynamic c: 3) ; memory size
+)
+
+(defrule
+	(true)
+=>
+	(set-goal gl-memory-value 5)
+	(up-jump-rule g: gl-memory-return)
+)
+
+(defrule
+	(true)
+=>
+	(set-goal gl-memory-value 7)
+	(up-jump-rule g: gl-memory-return)
+)
+
+(defrule
+	(true)
+=>
+	(set-goal gl-memory-value 12)
+	(up-jump-rule g: gl-memory-return)
+)

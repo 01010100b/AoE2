@@ -93,6 +93,7 @@
     <None Include="Script\Binary\Available.per" />
     <None Include="Script\Binary\Buildings.per" />
     <None Include="Script\Binary\Const.per" />
+    <None Include="Script\Binary\ConstantMemory.per" />
     <None Include="Script\Binary\Economy.per" />
     <None Include="Script\Binary\FoodEconomy.per" />
     <None Include="Script\Binary\Functions\GetNextUnit.per" />
