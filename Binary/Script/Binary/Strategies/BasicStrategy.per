@@ -183,6 +183,18 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 		
 	#end-if
 	
+	#if (false) (current-age == feudal-age) (gl-biggest-threat < MEDIUM)
+	
+		sn-allow-civilian-defense = 3
+		sn-allow-civilian-offense = 1
+		
+	#else
+	
+		sn-allow-civilian-defense = 0
+		sn-allow-civilian-offense = 0
+		
+	#end-if
+	
 #end-if
 
 #if current-age >= castle-age

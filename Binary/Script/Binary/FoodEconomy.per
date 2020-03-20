@@ -319,7 +319,7 @@ up-clean-search search-local object-data-distance search-order-desc
 up-remove-objects search-local object-data-index c:== 0
 up-find-local c: male-shepherd c: 10
 up-find-local c: female-shepherd c: 10
-up-remove-objects search-local object-data-target-id g:== gl-next-boar
+;up-remove-objects search-local object-data-target-id g:== gl-next-boar
 up-get-search-state gl-search-state
 
 #if gl-local-total < 6
@@ -378,6 +378,7 @@ up-get-search-state gl-search-state
 #end-if
 
 sn-focus-player-number = 0
+up-reset-filters
 up-filter-distance c: -1 c: 5
 	
 up-find-remote c: boar c: 10
@@ -398,6 +399,7 @@ up-get-search-state gl-search-state
 	up-remove-objects search-local object-data-hitpoints c:<= 20
 
 	up-target-objects 1 action-default -1 -1
+	chat-local-to-self "Killing animal"
 	
 #else 
 

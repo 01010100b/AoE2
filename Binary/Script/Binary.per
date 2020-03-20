@@ -1,23 +1,6 @@
 ﻿; BINARY
 
 (load "Binary\PublicInterface")
-(load "Binary\Available")
-
-#defglobal gl-current-unit = 0
-var gl-available
-#for 0 8 gl-i
-
-	gl-current-unit = GetNextUnit(gl-current-unit)
-	gl-available = UnitAvailable(gl-current-unit)
-	
-	#if gl-available == YES
-	
-		up-store-type-name g: gl-current-unit
-		up-chat-data-to-self "unit: %s" c: 7031232
-	
-	#end-if
-	
-#end-for
 
 (defrule
 	(true)
