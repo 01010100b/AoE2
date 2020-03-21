@@ -1,4 +1,16 @@
-﻿Aztecs
-Incas*
-Indians
-Mayans
+﻿(defconst knight 0)
+(defconst archer 1)
+(defconst spear 2)
+(defconst mangonel 3)
+
+inputs[knight] = 60
+inputs[archer] = 20
+inputs[spear] = 10
+inputs[mangonel] = 10
+
+outputs = evaluate(inputs)
+
+train_percentage[knight] = outputs[knight]
+train_percentage[archer] = outputs[archer]
+train_percentage[spear] = outputs[spear]
+train_percentage[mangonel] = outputs[mangonel]

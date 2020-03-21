@@ -11,6 +11,9 @@
     <OutputPath>.</OutputPath>
     <Name>GameRunner</Name>
     <RootNamespace>GameRunner</RootNamespace>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <CommandLineArguments>3 0 9 0 Barbarian 0 19 AT_Empire 0 19 Closed 0 0 Closed 0 0 Closed 0 0 Closed 0 0 Closed 0 0 Closed 0 0</CommandLineArguments>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
