@@ -141,3 +141,4 @@ if not draw:
 autogame.call('QuitGame')
 print("Result: " + str(win1) + " " + str(win2) + " " + str(win3) + " " + str(win4) + " " + str(win5) + " " + str(win6) + " " + str(win7) + " " + str(win8), flush = True)
 
+time.sleep(3.0)

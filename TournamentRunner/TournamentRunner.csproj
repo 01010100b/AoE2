@@ -86,7 +86,6 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Game.cs" />
-    <Compile Include="Launcher.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -114,6 +113,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <None Include="Releases\Tournament Runner 1.0.zip" />
+    <None Include="Releases\Tournament Runner 2.0.zip" />
     <None Include="runner\base_library.zip" />
     <None Include="runner\GameRunner.exe.manifest" />
     <None Include="runner\pyexpat.pyd" />
