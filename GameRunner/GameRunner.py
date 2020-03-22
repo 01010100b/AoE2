@@ -2,50 +2,98 @@ import msgpackrpc
 import time
 import sys
 
-# GameRunner number_of_games game_type map_type map_size player1_name player1_team player1_civ player2_name ... 
+# GameRunner port game_type map_type map_size player1_name player1_team player1_civ player2_name ... 
 
-print('Number of arguments:', len(sys.argv), 'arguments.')
-print('Argument List:', str(sys.argv))
+teams = [0, 0, 0, 0, 0, 0, 0, 0]
 
-# this script repeatedly plays games and marks down the winners
-autogame = msgpackrpc.Client(msgpackrpc.Address("127.0.0.1", 64720))
+def game_running():
 
-def launch_game():
-    autogame.call('ResetGameSettings')                    # usually reset the settings to make sure everything is valid
-
-    autogame.call('SetRunFullSpeed', False)                # run the game logic as fast as possible
-    autogame.call('SetRunUnfocused', True)                # allow the game to run while minimized
-    autogame.call('SetWindowMinimized', True)
-    autogame.call('SetUseInGameResolution', False)
-
-    autogame.call('SetGameRevealMap', 0)
-    autogame.call('SetGameDifficulty', 1)
-    autogame.call('SetGameStartingAge', 0)
-    autogame.call('SetGameTeamsLocked', True)
-
-    autogame.call('SetGameType', int(sys.argv[2]))
-    autogame.call('SetGameMapType', int(sys.argv[3]))
-    autogame.call('SetGameMapSize', int(sys.argv[4]))
-
+    team0 = 0
+    team1 = 0
+    team2 = 0
+    team3 = 0
+    team4 = 0
+    team_sum = 0
+    team_max = 0
+    
     for i in range(8):
-        index = 5 + (i * 3)
-        name = sys.argv[index]
-        team = int(sys.argv[index + 1])
-        civ = int(sys.argv[index + 2])
 
-        if name == "Closed":
-            autogame.call('SetPlayerClosed', i + 1)
+        if not autogame.call('GetPlayerAlive', i + 1):
+
+            teams[i] = -1
 
         else:
-            autogame.call('SetPlayerComputer', i + 1, name)
-            autogame.call('SetPlayerTeam', i + 1, team)
-            autogame.call('SetPlayerCivilization', i + 1, civ)
+            team_sum += 1
+
+            if teams[i] == 0:
+                team0 += 1
+
+            if teams[i] == 1:
+                team1 += 1
+                if team1 > team_max:
+                    team_max = team1
+
+            if teams[i] == 2:
+                team2 += 1
+                if team2 > team_max:
+                    team_max = team2
+
+            if teams[i] == 3:
+                team3 += 1
+                if team3 > team_max:
+                    team_max = team3
+
+            if teams[i] == 4:
+                team4 += 1
+                if team4 > team_max:
+                    team_max = team4
+
+    finished = True
+
+    if team0 > 1:
+        finished = False
+
+    if team_sum > team_max:
+        finished = False
+
+    return not finished
+
+autogame = msgpackrpc.Client(msgpackrpc.Address("127.0.0.1", int(sys.argv[1])))
+
+autogame.call('ResetGameSettings')                    # usually reset the settings to make sure everything is valid
+
+autogame.call('SetRunFullSpeed', False)                # run the game logic as fast as possible
+autogame.call('SetRunUnfocused', True)                # allow the game to run while minimized
+autogame.call('SetWindowMinimized', True)
+autogame.call('SetUseInGameResolution', False)
+autogame.call('SetGameRevealMap', 0)
+autogame.call('SetGameDifficulty', 1)
+autogame.call('SetGameStartingAge', 0)
+autogame.call('SetGameTeamsLocked', True)
+autogame.call('SetGameTeamsTogether', True)
+autogame.call('SetGameRecorded', True)
+
+autogame.call('SetGameType', int(sys.argv[2]))
+autogame.call('SetGameMapType', int(sys.argv[3]))
+autogame.call('SetGameMapSize', int(sys.argv[4]))
+
+for i in range(8):
+    index = 5 + (i * 3)
+    name = sys.argv[index]
+    team = int(sys.argv[index + 1])
+    teams[i] = team
+    civ = int(sys.argv[index + 2])
+
+    if name == "Closed":
+        autogame.call('SetPlayerClosed', i + 1)
+
+    else:
+        autogame.call('SetPlayerComputer', i + 1, name)
+        autogame.call('SetPlayerTeam', i + 1, team)
+        autogame.call('SetPlayerCivilization', i + 1, civ)
     
-    return autogame.call('StartGame')                     # start the match
+autogame.call('StartGame')                     # start the match
 
-
-max_games = int(sys.argv[1])
-num_games = 0
 win1 = 0
 win2 = 0
 win3 = 0
@@ -56,48 +104,40 @@ win7 = 0
 win8 = 0
 draws = 0
 
-while num_games < max_games:
+print("Started game", flush = True)
 
-    if not launch_game():
+draw = False
+while game_running():  # wait until the game has finished
+    time.sleep(3.0)
+    if autogame.call('GetGameTime') > 120 * 60:	# if a game has been running for 2 hours, declare it a draw
+        draws += 1
+        draw = True
+        print("Finished game: draw", flush = True)
         break
 
-    num_games += 1
-    print("Started game " + str(num_games))
+if not draw:
+    winner = autogame.call('GetWinningPlayer')
+    winners = autogame.call('GetWinningPlayers')
 
-    seconds_passed = 0
-    draw = False
-    while autogame.call('GetGameInProgress'):  # wait until the game has finished
-        time.sleep(1.0)
-        seconds_passed += 1
-        if seconds_passed > 600:	# if a game has been simulated for more than 10 minutes, declare it a draw
-            draws += 1
-            draw = True
-            print("Finished game " + str(num_games) + ": draw.")
-            break
+    if 1 in winners:
+        win1 += 1
+    if 2 in winners:
+        win2 += 1
+    if 3 in winners:
+        win3 += 1
+    if 4 in winners:
+        win4 += 1
+    if 5 in winners:
+        win5 += 1
+    if 6 in winners:
+        win6 += 1
+    if 7 in winners:
+        win7 += 1
+    if 8 in winners:
+        win8 += 1
 
-    if not draw:
-        winner = autogame.call('GetWinningPlayer')
-        winners = autogame.call('GetWinningPlayers')
+    print("Finished game, winner: " + str(winner), flush = True)
 
-        if 1 in winners:
-            win1 += 1
-        if 2 in winners:
-            win2 += 1
-        if 3 in winners:
-            win3 += 1
-        if 4 in winners:
-            win4 += 1
-        if 5 in winners:
-            win5 += 1
-        if 6 in winners:
-            win6 += 1
-        if 7 in winners:
-            win7 += 1
-        if 8 in winners:
-            win8 += 1
-
-        print("Finished game " + str(num_games) + ", winner: " + str(winner))
-
-    autogame.call('QuitGame')
-    print("Result: " + str(num_games) + "/ " + str(win1) + " " + str(win2) + " " + str(win3) + " " + str(win4) + " " + str(win5) + " " + str(win6) + " " + str(win7) + " " + str(win8))
+autogame.call('QuitGame')
+print("Result: " + str(win1) + " " + str(win2) + " " + str(win3) + " " + str(win4) + " " + str(win5) + " " + str(win6) + " " + str(win7) + " " + str(win8), flush = True)
 

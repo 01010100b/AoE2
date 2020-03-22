@@ -1,0 +1,3 @@
+﻿check here for the values of the parameters: https://github.com/FLWL/aoc-auto-game
+all fields must have values, if a player slot isn't used then set it to "Closed" "0" "0"
+results are given as: "Result n/ g1 g2 g3 g4 g5 g6 g7 g8" with n being the number of games played and g1, g2, ... the number of games won for player1, player2, ...
