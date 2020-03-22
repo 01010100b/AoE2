@@ -13,7 +13,7 @@ namespace TournamentRunner
         public readonly int MapType;
         public readonly int MapSize;
         public readonly List<Player> Players;
-        public List<int> Winners { get; internal set; }
+        public readonly List<int> Winners = new List<int>();
 
         public Game(int game_type, int map_type, int map_size, List<Player> players)
         {

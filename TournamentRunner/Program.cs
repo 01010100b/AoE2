@@ -24,7 +24,7 @@ namespace TournamentRunner
         static void MyHandler(object sender, UnhandledExceptionEventArgs args)
         {
             Exception e = (Exception)args.ExceptionObject;
-            MessageBox.Show(e.Message, "Error");
+            MessageBox.Show(e.Message + "\n\n" + e.StackTrace, "Error");
             Console.WriteLine("MyHandler caught : " + e.Message);
             Console.WriteLine("Runtime terminating: {0}", args.IsTerminating);
         }

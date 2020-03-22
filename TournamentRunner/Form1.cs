@@ -25,17 +25,30 @@ namespace TournamentRunner
         private void ButtonLaunch_Click(object sender, EventArgs e)
         {
             ButtonLaunch.Enabled = false;
+            var folder = Path.Combine(Environment.GetEnvironmentVariable("APPDATA"), "Microsoft Games", "Age of Empires ii", "Age2_x1");
+            if (!Directory.Exists(folder))
+            {
+                var diag = new OpenFileDialog
+                {
+                    Filter = "aoe2|age2_x1.exe"
+                };
+                diag.ShowDialog();
+
+                var file = diag.FileName;
+                folder = Path.GetDirectoryName(file);
+            }
+
             RichOutput.Clear();
             RichOutput.AppendText("Running games...\n");
 
-            RunThread = new Thread(() => Run())
+            RunThread = new Thread(() => Run(folder))
             {
                 IsBackground = true
             };
             RunThread.Start();
         }
 
-        private void Run()
+        private void Run(string folder)
         {
             var sw = new Stopwatch();
             sw.Start();
@@ -65,7 +78,7 @@ namespace TournamentRunner
                 games.Add(game);
             }
 
-            var runner = new Thread(() => Runner.Run(games))
+            var runner = new Thread(() => Runner.Run(folder, games))
             {
                 IsBackground = true
             };

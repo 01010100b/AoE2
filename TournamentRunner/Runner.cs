@@ -15,7 +15,7 @@ namespace TournamentRunner
     {
         private static readonly Queue<Game> Games = new Queue<Game>();
 
-        public static void Run(List<Game> games)
+        public static void Run(string folder, List<Game> games)
         {
             Games.Clear();
 
@@ -25,7 +25,7 @@ namespace TournamentRunner
             }
 
             var speed = GetSpeed();
-            SetSpeed(150);
+            SetSpeed(140);
             Debug.WriteLine("speed: " + speed);
 
             var rng = new Random();
@@ -34,7 +34,7 @@ namespace TournamentRunner
             for (int i = 0; i < Math.Min(6, games.Count); i++)
             {
                 var port = rng.Next(40000, 65000);
-                var aoc = Launch(port);
+                var aoc = Launch(folder, port);
                 var inst = new Thread(() => RunInstance(aoc, port))
                 {
                     IsBackground = true
@@ -93,6 +93,11 @@ namespace TournamentRunner
         private static void RunGame(Game game, int port)
         {
             var cmd = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "runner", "GameRunner.exe");
+            if (!File.Exists(cmd))
+            {
+                throw new Exception("File not found: " + cmd);
+            }
+
             var args = port.ToString();
 
             lock (game)
@@ -146,7 +151,7 @@ namespace TournamentRunner
 
                     lock (game)
                     {
-                        game.Winners = winners.ToList();
+                        game.Winners.AddRange(winners);
                     }
                 }
             }
@@ -159,12 +164,27 @@ namespace TournamentRunner
             Debug.WriteLine("done running");
         }
 
-        private static Process Launch(int port)
+        private static Process Launch(string folder, int port)
         {
             Debug.WriteLine("start launching");
+
             var dll = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "aoc-auto-game.dll");
+            if (!File.Exists(dll))
+            {
+                throw new Exception("File not found: " + dll);
+            }
+            
             var aoc_name = "age2_x1.5.exe";
-            var exe = Path.Combine(Environment.GetEnvironmentVariable("APPDATA"), "Microsoft Games", "Age of Empires ii", "Age2_x1", aoc_name);
+            var exe = Path.Combine(folder, aoc_name);
+            if (!File.Exists(exe))
+            {
+                aoc_name = "age2_x1.exe";
+                exe = Path.Combine(folder, aoc_name);
+            }
+            if (!File.Exists(exe))
+            {
+                throw new Exception("File not found: " + exe);
+            }
 
             var process = Process.Start(exe, "-multipleinstances -autogameport " + port);
             while (!process.Responding)
