@@ -80,7 +80,7 @@ autogame.call('SetGameMapSize', int(sys.argv[4]))
 
 for i in range(8):
     index = 5 + (i * 3)
-    name = sys.argv[index]
+    name = sys.argv[index].replace("%20", " ")
     team = int(sys.argv[index + 1])
     teams[i] = team
     civ = int(sys.argv[index + 2])

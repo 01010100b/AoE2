@@ -108,7 +108,7 @@ namespace TournamentRunner
 
                 foreach (var player in game.Players)
                 {
-                    args += " " + player.Name;
+                    args += " " + player.Name.Replace(" ", "%20");
                     args += " " + player.Team;
                     args += " " + player.Civ;
                 }
