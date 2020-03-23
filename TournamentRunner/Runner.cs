@@ -46,12 +46,12 @@ namespace TournamentRunner
                 Thread.Sleep(2 * 1000);
             }
 
+            SetSpeed(speed);
+
             foreach (var inst in instances)
             {
                 inst.Join();
             }
-
-            SetSpeed(speed);
         }
 
         private static void RunInstance(Process aoc, int port)

@@ -90,6 +90,7 @@ namespace TournamentRunner
             {
                 var current_finished = 0;
                 var wins = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+                var teams = new int[] { 0, 0, 0, 0 };
 
                 foreach (var game in games)
                 {
@@ -103,6 +104,11 @@ namespace TournamentRunner
                             {
                                 wins[winner - 1]++;
                             }
+
+                            foreach (var team in game.WinningTeams)
+                            {
+                                teams[team - 1]++;
+                            }
                         }
                     }
                 }
@@ -111,9 +117,15 @@ namespace TournamentRunner
                 {
                     finished = current_finished;
                     var result = "Result after game " + finished + "/" + games.Count + ":";
-                    for (int i = 0; i < 8; i++)
+                    for (int i = 0; i < wins.Length; i++)
                     {
                         result += " " + wins[i];
+                    }
+
+                    result += " -";
+                    for (int i = 0; i < teams.Length; i++)
+                    {
+                        result += " " + teams[i];
                     }
 
                     Invoke(new Action(() => RichOutput.AppendText(result + "\n")));

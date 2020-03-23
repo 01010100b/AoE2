@@ -14,6 +14,7 @@ namespace TournamentRunner
         public readonly int MapSize;
         public readonly List<Player> Players;
         public readonly List<int> Winners = new List<int>();
+        public List<int> WinningTeams { get { return GetWinningTeams(); } }
 
         public Game(int game_type, int map_type, int map_size, List<Player> players)
         {
@@ -21,6 +22,23 @@ namespace TournamentRunner
             MapType = map_type;
             MapSize = map_size;
             Players = players.ToList();
+        }
+
+        private List<int> GetWinningTeams()
+        {
+            var teams = new List<int>();
+
+            foreach (var w in Winners)
+            {
+                var p = Players[w - 1];
+
+                if (p.Team > 0 && !teams.Contains(p.Team))
+                {
+                    teams.Add(p.Team);
+                }
+            }
+
+            return teams;
         }
     }
 }

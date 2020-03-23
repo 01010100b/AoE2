@@ -72,6 +72,7 @@ autogame.call('SetGameStartingAge', 0)
 autogame.call('SetGameTeamsLocked', True)
 autogame.call('SetGameTeamsTogether', True)
 autogame.call('SetGameRecorded', True)
+autogame.call('SetGameVictoryType', 1, 0)
 
 autogame.call('SetGameType', int(sys.argv[2]))
 autogame.call('SetGameMapType', int(sys.argv[3]))
