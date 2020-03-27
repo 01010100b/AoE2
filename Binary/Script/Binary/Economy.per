@@ -100,15 +100,17 @@ var gl-update = NO
 	up-set-target-point gl-point1
 	up-full-reset-search
 	up-filter-status c: status-resource c: list-active
-	up-filter-distance c: -1 s: sn-maximum-town-size
+	up-filter-distance c: -1 s: sn-minimum-town-size
 	up-find-resource c: gold c: 10
 	up-get-search-state gl-search-state
 	
-	#if gl-remote-total < 4
+	#if gl-remote-total < 6
 	
-		gl-min-trade-carts = gl-total-gatherers
+		gl-min-trade-carts max= gl-total-gatherers
 		
 	#end-if
+	
+	gl-min-trade-carts max= 10
 	
 	#if or (up-players-in-game ally < 2) (building-type-count market == 0)
 	

@@ -15,7 +15,7 @@ namespace TournamentRunner
     {
         private static readonly Queue<Game> Games = new Queue<Game>();
 
-        public static void Run(string folder, List<Game> games)
+        public static void Run(string exe, int speed, List<Game> games)
         {
             Games.Clear();
 
@@ -24,9 +24,8 @@ namespace TournamentRunner
                 Games.Enqueue(game);
             }
 
-            var speed = GetSpeed();
-            SetSpeed(140);
-            Debug.WriteLine("speed: " + speed);
+            var old_speed = GetSpeed();
+            SetSpeed(speed);
 
             var rng = new Random();
             var instances = new List<Thread>();
@@ -34,7 +33,7 @@ namespace TournamentRunner
             for (int i = 0; i < Math.Min(6, games.Count); i++)
             {
                 var port = rng.Next(40000, 65000);
-                var aoc = Launch(folder, port);
+                var aoc = Launch(exe, port);
                 var inst = new Thread(() => RunInstance(aoc, port))
                 {
                     IsBackground = true
@@ -46,7 +45,7 @@ namespace TournamentRunner
                 Thread.Sleep(2 * 1000);
             }
 
-            SetSpeed(speed);
+            SetSpeed(old_speed);
 
             foreach (var inst in instances)
             {
@@ -164,7 +163,7 @@ namespace TournamentRunner
             Debug.WriteLine("done running");
         }
 
-        private static Process Launch(string folder, int port)
+        private static Process Launch(string exe, int port)
         {
             Debug.WriteLine("start launching");
 
@@ -174,13 +173,6 @@ namespace TournamentRunner
                 throw new Exception("File not found: " + dll);
             }
             
-            var aoc_name = "age2_x1.5.exe";
-            var exe = Path.Combine(folder, aoc_name);
-            if (!File.Exists(exe))
-            {
-                aoc_name = "age2_x1.exe";
-                exe = Path.Combine(folder, aoc_name);
-            }
             if (!File.Exists(exe))
             {
                 throw new Exception("File not found: " + exe);

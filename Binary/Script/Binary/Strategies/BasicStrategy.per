@@ -88,12 +88,6 @@ sn-market-eco-balance = LOW
 
 ; buildings
 
-#if (up-research-status c: castle-age c:>= research-pending)
-
-	TryImportantResearch(ri-stone-mining)
-	
-#end-if
-
 #if (current-age >= castle-age) (can-build castle)
 
 	TryImportantBuilding(castle, BUILDING-NORMAL, -1, -1)

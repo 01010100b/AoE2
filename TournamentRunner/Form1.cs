@@ -25,30 +25,34 @@ namespace TournamentRunner
         private void ButtonLaunch_Click(object sender, EventArgs e)
         {
             ButtonLaunch.Enabled = false;
-            var folder = Path.Combine(Environment.GetEnvironmentVariable("APPDATA"), "Microsoft Games", "Age of Empires ii", "Age2_x1");
-            if (!Directory.Exists(folder))
+            var exe = Path.Combine(Environment.GetEnvironmentVariable("APPDATA"), "Microsoft Games", "Age of Empires ii", "Age2_x1", "age2_x1.5.exe");
+            if (!File.Exists(exe))
             {
                 var diag = new OpenFileDialog
                 {
-                    Filter = "aoe2|age2_x1.exe"
+                    Filter = "aoe2|age2_x1*.exe"
                 };
                 diag.ShowDialog();
 
-                var file = diag.FileName;
-                folder = Path.GetDirectoryName(file);
+                exe = diag.FileName;
+            }
+
+            foreach (var ai in Player.GetPlayers(exe))
+            {
+                Debug.WriteLine(ai);
             }
 
             RichOutput.Clear();
             RichOutput.AppendText("Running games...\n");
 
-            RunThread = new Thread(() => Run(folder))
+            RunThread = new Thread(() => Run(exe))
             {
                 IsBackground = true
             };
             RunThread.Start();
         }
 
-        private void Run(string folder)
+        private void Run(string exe)
         {
             var sw = new Stopwatch();
             sw.Start();
@@ -57,6 +61,7 @@ namespace TournamentRunner
             var game_type = int.Parse(TextGameType.Text);
             var map_type = int.Parse(TextMapType.Text);
             var map_size = int.Parse(TextMapSize.Text);
+            var speed = int.Parse(TextSpeed.Text);
 
             var players = new List<Tuple<string, int, int>>()
             {
@@ -78,7 +83,7 @@ namespace TournamentRunner
                 games.Add(game);
             }
 
-            var runner = new Thread(() => Runner.Run(folder, games))
+            var runner = new Thread(() => Runner.Run(exe, speed, games))
             {
                 IsBackground = true
             };
@@ -132,7 +137,7 @@ namespace TournamentRunner
 
                 }
 
-                Thread.Sleep(5 * 1000);
+                Thread.Sleep(1 * 1000);
             }
 
             runner.Join();
