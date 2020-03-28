@@ -29,8 +29,9 @@ namespace TournamentRunner
 
             var rng = new Random();
             var instances = new List<Thread>();
+            var num_instances = Math.Min(6, Games.Count);
 
-            for (int i = 0; i < Math.Min(6, games.Count); i++)
+            for (int i = 0; i < num_instances; i++)
             {
                 var port = rng.Next(40000, 65000);
                 var aoc = Launch(exe, port);
