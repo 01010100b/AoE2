@@ -6,12 +6,9 @@
 	(true)
 =>
 	(set-goal gl-team-id BINARY-ID)
-	(chat-to-all "Binary v0.2")
+	(chat-to-all "Binary v0.3")
 	(disable-self)
 )
-
-gl-team-target = sn-target-player-number
-gl-team-attacking = sn-attack
 
 (defconst ti-next-villager 10)
 (defconst ti-sheep-found 11)
@@ -48,6 +45,10 @@ gl-team-attacking = sn-attack
 
 #if (game-time > 1800) (civilian-population < 5) (building-type-count town-center == 0) (military-population < 5)
 
+	tribute-to-player any-ally food 5000
+	tribute-to-player any-ally wood 5000
+	tribute-to-player any-ally gold 5000
+	tribute-to-player any-ally stone 5000
 	chat-to-all "gg"
 	resign
 	
@@ -87,6 +88,8 @@ gl-team-attacking = sn-attack
 	(disable-timer ti-sheep-found)
 	(disable-self)
 )
+
+
 
 (load "Binary\Team")
 

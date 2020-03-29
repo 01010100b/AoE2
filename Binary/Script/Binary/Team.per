@@ -1,4 +1,13 @@
 ﻿sn-coop-share-information = 1
 
-up-find-player enemy find-closest gl-team-target
-sn-target-player-number = gl-team-target
+#load-if-defined UP-POCKET-POSITION
+
+	gl-team-position = 2
+
+#else
+
+	gl-team-position = 1
+	
+#end-if
+
+gl-team-attacking = sn-attack
