@@ -1,4 +1,5 @@
 ﻿; TODO all civs
+;Laatst geupdate door Bambi @ 31/03/2020 17u43
 
 ;-----------START
 ;defaults
@@ -55,16 +56,21 @@ var gl-meso-civ = NO
 		gl-my-eagle-warrior-counter = jaguar-man-line
 		gl-my-primary-unit = jaguar-man-line
 		gl-my-secondary-unit = eagle-warrior-line
-		
+	
+	#end-if
+
+	#if (unit-type-count infantry-class > 0)
+	
 		TryImportantResearch(ri-garland-wars)
 		
 	#end-if
 
 #end-if
 
+
 #load-if-defined BERBERS-CIV
 
-	#if (building-type-count stable > 0) (gold-amount > 200) (current-age >= castle-age)
+	#if (current-age >= castle-age)
 	
 		gl-my-cavalry-counter = camel-line
 		
@@ -84,16 +90,20 @@ var gl-meso-civ = NO
 	
 		gl-my-primary-unit = longbowman-line
 		gl-my-secondary-unit = knight-line
-		
+	
+	#end-if
+
+	#if (unit-type-count archery-class > 0)
+	
 		TryImportantResearch(ri-yeomen)
-				
+	
 	#end-if
 
 #end-if
 
 #load-if-defined BYZANTINE-CIV
 
-	#if (building-type-count stable > 0) (gold-amount > 200) (current-age >= castle-age)
+	#if (current-age >= castle-age)
 	
 		gl-my-cavalry-counter = camel-line
 			
@@ -103,7 +113,11 @@ var gl-meso-civ = NO
 	
 		gl-my-infantry-counter = cataphract-line
 		gl-my-eagle-warrior-counter = cataphract-line
-		
+	
+	#end-if
+
+	#if (unit-type-count cataphract-line > 0)
+	
 		TryImportantResearch(ri-logistica)
 		
 	#end-if
@@ -116,7 +130,11 @@ var gl-meso-civ = NO
 	
 		gl-my-primary-unit = woad-raider-line
 		gl-my-secondary-unit = knight-line
-		
+	
+	#end-if
+
+	#if (unit-type-count siege-weapon-class > 0)
+	
 		TryImportantResearch(ri-furor-celtica)
 		
 	#end-if
@@ -128,17 +146,21 @@ var gl-meso-civ = NO
 	gl-my-primary-unit = archer-line
 	gl-my-secondary-unit = knight-line
 	
-	#if (building-type-count stable > 0) (gold-amount > 200) (current-age >= castle-age)
+	#if (current-age >= castle-age)
 	
 		gl-my-cavalry-counter = camel-line
-			
+	
 	#end-if
 
 	#if (building-type-count castle > 0)
 	
 		gl-my-primary-unit = chu-ko-nu-line
 		gl-my-secondary-unit = knight-line
-		
+	
+	#end-if
+	
+	#if or (unit-type-count chu-ko-nu-line > 0) (unit-type-count scorpion-line > 0)
+	
 		TryImportantResearch(ri-rocketry)
 		
 	#end-if
@@ -150,7 +172,11 @@ var gl-meso-civ = NO
 	#if (building-type-count castle > 0)
 	
 		gl-my-secondary-unit = throwing-axeman-line
-		
+	
+	#end-if
+	
+	#if (unit-type-count throwing-axeman-line > 0)
+	
 		TryImportantResearch(ri-bearded-axe)
 		
 	#end-if
@@ -159,22 +185,41 @@ var gl-meso-civ = NO
 
 #load-if-defined GOTHIC-CIV
 	
-	gl-my-primary-unit = huskarl-line
-	gl-my-secondary-unit = militiaman-line
-	gl-my-archer-counter = huskarl-line
-	
-	#if not (research-completed ri-anarchy)
-	
-		gl-my-primary-unit = militiaman-line
-		gl-my-secondary-unit = knight-line
-		gl-my-archer-counter = skirmisher-line
-		
-	#end-if
-
 	#if (building-type-count castle > 0)
 	
 		TryImportantResearch(ri-anarchy)		
 		
+	#end-if
+
+	#if (research-completed ri-anarchy)
+	
+		gl-my-primary-unit = huskarl-line
+		gl-my-secondary-unit = militiaman-line
+		gl-my-archer-counter = huskarl-line
+		
+	#end-if
+
+#end-if
+
+#load-if-defined JAPANESE-CIV
+
+	#if (building-type-count castle > 0)
+	
+		gl-my-primary-unit = samurai-line
+		gl-my-secondary-unit = militiaman-line
+		
+	#end-if
+	
+	#if (building-type-count watch-tower-line > 0)
+	
+		TryImportantResearch(ri-yasama)
+	
+	#end-if
+	
+	#if (unit-type-count trebuchet > 0)
+	
+		TryImportantResearch(ri-kataparuto)
+	
 	#end-if
 
 #end-if
@@ -186,13 +231,10 @@ var gl-meso-civ = NO
 
 #end-if
 
+
 #load-if-defined MALAY-CIV
 
-	#if (research-available ri-forced-levy)
-	
-		TryImportantResearch(ri-forced-levy)
-		
-	#end-if
+	TryImportantResearch(ri-forced-levy)
 	
 	#if (research-completed ri-forced-levy)
 	
@@ -202,8 +244,48 @@ var gl-meso-civ = NO
 	
 #end-if
 
+#load-if-defined MONGOL-CIV
+
+	#if (current-age >= castle-age)
+	
+		gl-my-cavalry-counter = camel-line
+			
+	#end-if
+	
+	#if (building-type-count castle > 0)
+	
+		gl-my-infantry-counter = mangudai-line
+		gl-my-monk-counter = mangudai-line
+		gl-my-secondary-unit = mangudai-line
+		
+	#end-if
+
+	#if (unit-type-count siege-weapon-class > 0)
+	
+		TryImportantResearch(ri-drill)
+	
+	#end-if
+
+#end-if
+
 #load-if-defined PERSIAN-CIV
 
-	TryImportantResearch(ri-boiling-oil)
+	#if (current-age >= castle-age)
+	
+		gl-my-cavalry-counter = camel-line
+	
+	#end-if
+	
+	#if (building-type-count castle > 0)
+	
+		gl-my-siege-unit = war-elephant-line
+	
+	#end-if
+	
+	#if (unit-type-count war-elephant-line > 0)
+	
+		TryImportantResearch(ri-mahouts)
+	
+	#end-if
 	
 #end-if

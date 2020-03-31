@@ -15,6 +15,7 @@ namespace TournamentRunner
         public readonly List<Player> Players;
         public readonly List<int> Winners = new List<int>();
         public List<int> WinningTeams { get { return GetWinningTeams(); } }
+        public bool Draw { get { return Winners.Count == 0; } }
 
         public Game(int game_type, int map_type, int map_size, List<Player> players)
         {

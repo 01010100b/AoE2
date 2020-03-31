@@ -110,7 +110,7 @@ print("Started game", flush = True)
 draw = False
 while game_running():  # wait until the game has finished
     time.sleep(3.0)
-    if autogame.call('GetGameTime') > 120 * 60:	# if a game has been running for 2 hours, declare it a draw
+    if autogame.call('GetGameTime') > 180 * 60:	# if a game has been running for 3 hours, declare it a draw
         draws += 1
         draw = True
         print("Finished game: draw", flush = True)
