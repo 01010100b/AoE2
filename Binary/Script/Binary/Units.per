@@ -142,14 +142,13 @@ gl-pop-cap max= 0
 		#else
 		
 			var gl-min = sn-min-$unit
-			gl-min /= 8
+			gl-min /= 4
 			
-			sn-focus-player-number = sn-target-player-number
 			var gl-pop
-			up-get-focus-fact military-population 0 gl-pop
+			gl-pop = sn-recent-target-army
 			gl-pop %*= 75
 			
-			#if (up-can-train gl-with-escrow g: gl-unit) (or (up-object-type-count-total s: sn-$unit g:< gl-min) (or (sn-town-threat == HIGH) (military-population g:< gl-pop)))
+			#if (up-can-train gl-with-escrow g: gl-unit) (or (up-object-type-count-total s: sn-$unit g:< gl-min) (or (sn-town-threat == HIGH) (up-resource-amount amount-military-population g:< gl-pop)))
 			
 				up-train gl-with-escrow g: gl-unit
 				
@@ -178,7 +177,7 @@ up-find-player enemy find-closest gl-focus
 sn-focus-player-number = gl-focus
 
 up-full-reset-search
-up-filter-distance c: -1 s: sn-maximum-town-size
+up-filter-distance c: -1 s: sn-minimum-town-size
 up-find-remote c: castle c: 1
 up-get-search-state gl-search-state
 

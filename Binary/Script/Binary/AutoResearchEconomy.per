@@ -58,7 +58,7 @@ var gl-should-research = NO
 	
 	#end-if
 	
-	#if building-type-count market > 0
+	#if (building-type-count market > 0) (player-in-game any-ally)
 	
 		TryImportantResearch(ri-cartography)
 		

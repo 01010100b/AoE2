@@ -86,6 +86,13 @@ sn-market-eco-balance = LOW
 	
 #end-if
 
+#if (sn-town-threat < MEDIUM) (up-research-status c: castle-age c:>= research-pending) (research-completed ri-double-bit-axe) (research-completed ri-horse-collar)
+
+	TryImportantResearch(ri-gold-mining)
+	TryImportantResearch(ri-stone-mining)
+	
+#end-if
+
 ; buildings
 
 #if (current-age >= castle-age) (can-build castle)
