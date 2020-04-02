@@ -198,7 +198,7 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 	
 #end-if
 
-#if current-age >= castle-age
+#if up-research-status c: castle-age c:>= research-pending
 	
 	sn-auto-attack = ON
 	
