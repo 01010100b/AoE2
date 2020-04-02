@@ -1,5 +1,5 @@
 ﻿; TODO all civs
-;Laatst geupdate door Bambi @ 31/03/2020 17u43
+;Laatst geupdate door Bambi @ 02/04/2020 18u31
 
 ;-----------START
 ;defaults
@@ -41,9 +41,21 @@ var gl-meso-civ = NO
 #if gl-meso-civ == YES
 
 	gl-my-primary-unit = eagle-warrior-line
-	gl-my-secondary-unit = spearman-line
 	gl-my-monk-counter = eagle-warrior-line
+	gl-my-archer-counter = eagle-warrior-line
 		
+#end-if
+;-----------GENERAL COUNTERS
+#if (gl-meso-civ == NO) (current-age >= castle-age)
+
+	gl-my-infantry-counter = cavalry-archer-line
+
+#end-if
+
+#if (current-age == imperial-age) (can-train hand-cannoneer)  ;not all civs have hand-cannoneer, and you need chemistry. its a powerful unit but its not worth researching chemistry specially for it, but if you have it then...
+
+	gl-my-infantry-counter = hand-cannoneer
+
 #end-if
 
 ;-----------CIVS
@@ -54,8 +66,7 @@ var gl-meso-civ = NO
 	
 		gl-my-infantry-counter = jaguar-man-line
 		gl-my-eagle-warrior-counter = jaguar-man-line
-		gl-my-primary-unit = jaguar-man-line
-		gl-my-secondary-unit = eagle-warrior-line
+		gl-my-secondary-unit = jaguar-man-line
 	
 	#end-if
 
@@ -201,6 +212,10 @@ var gl-meso-civ = NO
 
 #end-if
 
+#load-if-defined HUN-CIV
+
+#end-if
+
 #load-if-defined JAPANESE-CIV
 
 	#if (building-type-count castle > 0)
@@ -231,6 +246,9 @@ var gl-meso-civ = NO
 
 #end-if
 
+#load-if-defined  KOREAN-CIV
+
+#end-if
 
 #load-if-defined MALAY-CIV
 
@@ -242,6 +260,10 @@ var gl-meso-civ = NO
 		
 	#end-if
 	
+#end-if
+
+#load-if-defined MAYAN-CIV
+
 #end-if
 
 #load-if-defined MONGOL-CIV
@@ -288,4 +310,41 @@ var gl-meso-civ = NO
 	
 	#end-if
 	
+#end-if
+
+#load-if-defined SARACEN-CIV
+
+	#if (current-age >= castle-age)
+	
+		gl-my-cavalry-counter = camel-line
+	
+	#end-if
+	
+	#if (building-type-count castle > 0)
+	
+		TryImportantResearch(ri-zealotry)
+		gl-my-secondary-unit = mameluke-line
+	
+	#end-if
+	
+#end-if
+
+#load-if-defined TEUTONIC-CIV
+
+	#if (building-type-count castle > 0)
+	
+		TryImportantResearch(ri-crenellations )
+		gl-my-primary-unit = teutonic-knight-line
+		gl-my-secondary-unit = knight-line
+		
+	#end-if
+
+#end-if
+
+#load-if-defined TURKISH-CIV
+
+#end-if
+
+#load-if-defined VIKING-CIV 
+
 #end-if
