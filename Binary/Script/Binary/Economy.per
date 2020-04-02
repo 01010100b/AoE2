@@ -104,13 +104,11 @@ var gl-update = NO
 	up-find-resource c: gold c: 10
 	up-get-search-state gl-search-state
 	
-	#if gl-remote-total < 6
+	#if (gl-remote-total < 6) (current-age >= castle-age)
 	
 		gl-min-trade-carts max= gl-total-gatherers
 		
 	#end-if
-	
-	gl-min-trade-carts max= 10
 	
 	#if or (up-players-in-game ally < 2) (building-type-count market == 0)
 	
