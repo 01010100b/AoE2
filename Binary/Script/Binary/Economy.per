@@ -100,11 +100,17 @@ var gl-update = NO
 	up-set-target-point gl-point1
 	up-full-reset-search
 	up-filter-status c: status-resource c: list-active
-	up-filter-distance c: -1 s: sn-minimum-town-size
+	up-filter-distance c: -1 c: 40
 	up-find-resource c: gold c: 10
 	up-get-search-state gl-search-state
 	
-	#if (gl-remote-total < 6) (current-age >= castle-age)
+	#if current-age >= imperial-age
+	
+		gl-min-trade-carts max= 10
+		
+	#end-if
+	
+	#if (gl-remote-total < 6) (current-age >= imperial-age)
 	
 		gl-min-trade-carts max= gl-total-gatherers
 		

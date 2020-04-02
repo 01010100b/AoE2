@@ -44,7 +44,7 @@ sn-market-eco-balance = LOW
 	
 	#if can-research-with-escrow castle-age
 	
-		gl-age-up = YES
+		up-research gl-with-escrow c: castle-age
 		
 	#end-if
 	
@@ -68,7 +68,7 @@ sn-market-eco-balance = LOW
 	
 	#if can-research-with-escrow imperial-age
 	
-		gl-age-up = YES
+		up-research gl-with-escrow c: imperial-age
 		
 	#end-if
 	
@@ -210,7 +210,7 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 		sn-siege-unit = gl-my-siege-unit
 		sn-min-siege-unit = 5
 		
-		#if unit-available trebuchet
+		#if (unit-available trebuchet) (unit-type-count-total trebuchet-set < 5)
 	
 			sn-siege-unit = trebuchet
 		
