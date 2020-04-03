@@ -101,7 +101,7 @@ sn-market-eco-balance = LOW
 
 #end-if
 
-#if (up-research-status c: castle-age c:>= research-pending)
+#if (up-research-status c: castle-age c:>= research-pending) (building-type-count-total castle > 0)
 
 	sn-min-town-center max= 3
 	
@@ -200,7 +200,7 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 
 #if up-research-status c: castle-age c:>= research-pending
 	
-	sn-auto-attack = OFF
+	sn-auto-attack = ON
 	
 	sn-primary-unit = gl-my-primary-unit
 	sn-secondary-unit = gl-my-secondary-unit

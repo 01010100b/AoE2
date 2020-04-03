@@ -170,7 +170,6 @@
 		
 		var gl-should-attack = NO
 		gl-target-army = sn-recent-target-army
-		gl-target-army += 5
 		
 		#if (up-resource-amount amount-military-population g:> gl-target-army) (military-population > 20)
 		
@@ -178,7 +177,7 @@
 			
 		#end-if
 		
-		#if (unit-type-count trebuchet-set == 0) (unit-type-count battering-ram-line == 0)
+		#if (unit-type-count trebuchet-set == 0) (up-object-type-count s: sn-siege-unit c:== 0)
 		
 			gl-should-attack = NO
 			
@@ -199,7 +198,7 @@
 	#else
 	
 		gl-target-army = sn-recent-target-army
-		gl-target-army -= 5
+		gl-target-army -= 10
 		gl-target-army max= 10
 		
 		var gl-should-retreat = NO
@@ -210,7 +209,7 @@
 			
 		#end-if
 		
-		#if (unit-type-count trebuchet-set == 0) (unit-type-count battering-ram-line == 0)
+		#if (unit-type-count trebuchet-set == 0) (up-object-type-count s: sn-siege-unit c:== 0)
 		
 			gl-should-retreat = YES
 			

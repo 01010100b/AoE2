@@ -24,11 +24,11 @@ sn-min-wood-gatherer += 6
 
 sn-min-gold-gatherer = 5 ; get at least some gold to trade with
 	
-#if up-research-status c: castle-age c:>= research-pending
+#if current-age >= feudal-age
 	
 	sn-min-stone-gatherer = 6
 	
-	#if building-type-count castle == 0
+	#if (up-research-status c: castle-age c:>= research-pending) (building-type-count-total castle == 0)
 	
 		sn-min-gold-gatherer = 2
 		sn-min-stone-gatherer = 9
