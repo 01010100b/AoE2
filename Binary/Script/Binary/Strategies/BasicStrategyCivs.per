@@ -40,10 +40,11 @@ var gl-meso-civ = NO
 
 #if gl-meso-civ == YES
 
-	gl-my-primary-unit = eagle-warrior-line
-	gl-my-secondary-unit = archer-line
+	gl-my-primary-unit = archer-line
+	gl-my-secondary-unit = eagle-warrior-line
 	gl-my-monk-counter = eagle-warrior-line
 	gl-my-archer-counter = eagle-warrior-line
+	gl-my-cavalry-counter = eagle-warrior-line
 		
 #end-if
 ;-----------GENERAL COUNTERS
@@ -53,7 +54,7 @@ var gl-meso-civ = NO
 
 #end-if
 
-#if (current-age == imperial-age) (can-train hand-cannoneer)  ;not all civs have hand-cannoneer, and you need chemistry. its a powerful unit but its not worth researching chemistry specially for it, but if you have it then...
+#if (current-age == imperial-age) (unit-available hand-cannoneer)  ;not all civs have hand-cannoneer, and you need chemistry. its a powerful unit but its not worth researching chemistry specially for it, but if you have it then...
 
 	gl-my-infantry-counter = hand-cannoneer
 
@@ -215,6 +216,15 @@ var gl-meso-civ = NO
 
 #load-if-defined HUN-CIV
 
+	#if (building-type-count castle > 0)
+	
+		gl-my-primary-unit = tarkan-line
+		gl-my-secondary-unit = knight-line
+		gl-my-infantry-counter = knight-line
+		gl-my-archer-counter = knight-line
+		
+	#end-if
+
 #end-if
 
 #load-if-defined JAPANESE-CIV
@@ -249,6 +259,12 @@ var gl-meso-civ = NO
 
 #load-if-defined  KOREAN-CIV
 
+	#if (building-type-count castle > 0)
+		
+		gl-my-primary-unit = war-wagon-line
+		
+	#end-if	
+	
 #end-if
 
 #load-if-defined MALAY-CIV
@@ -264,6 +280,13 @@ var gl-meso-civ = NO
 #end-if
 
 #load-if-defined MAYAN-CIV
+
+	#if (building-type-count castle > 0)
+		
+		gl-my-infantry-counter = plumed-archer-line
+		gl-my-primary-unit = plumed-archer-line
+	
+	#end-if
 
 #end-if
 
@@ -339,13 +362,47 @@ var gl-meso-civ = NO
 		gl-my-secondary-unit = knight-line
 		
 	#end-if
+	
+	#if (building-type-count castle > 0) (or (players-unit-type-count any-enemy archer-line >= 10) (sn-archery-threat > LOW)) ;about the archers, not 100% "sluitend" but better than before
+	
+		gl-my-primary-unit = knight-line
+		gl-my-secondary-unit = skirmisher-line
+	
+	#end-if
 
 #end-if
 
-#load-if-defined TURKISH-CIV
+#load-if-defined TURKISH-CIV ;turkish unique unit and techs aren't relevant for Binary's tactics
+
+	#if (current-age >= castle-age)
+	
+		gl-my-cavalry-counter = camel-line
+	
+	#end-if
 
 #end-if
 
 #load-if-defined VIKING-CIV 
+
+	#if (current-age == castle-age)
+	
+		gl-my-eagle-warrior-counter = berserk-line
+		gl-my-secondary-unit = berserk-line ;berserks are "slightly weak" in castle => secondary unit while in imperial they really start to kick in
+	
+	#end-if
+	
+	#if (current-age == imperial-age)
+	
+		gl-my-eagle-warrior-counter = berserk-line
+		gl-my-primary-unit = berserk-line
+		gl-my-secondary-unit = archer-line ;doubting to use either knights or archers for vikings. i would go for archers as they counter the berserks' counter and the archers can be fully upgraded :-)
+	
+	#end-if
+	
+	#if (unit-type-count-total berserk-line > 0)
+	
+		TryImportantResearch(my-unique-research) ;here is the only exception i use my-unique-unit-research as the correct name doesn't work => general bug known to the community
+	
+	#end-if
 
 #end-if
