@@ -13,15 +13,15 @@ namespace TournamentRunner
 {
     public static class Runner
     {
-        private static readonly Queue<Game> Games = new Queue<Game>();
+        private static readonly Queue<Match> Matches = new Queue<Match>();
 
-        public static void Run(string exe, int speed, List<Game> games)
+        public static void Run(string exe, int speed, List<Match> games)
         {
-            Games.Clear();
+            Matches.Clear();
 
             foreach (var game in games)
             {
-                Games.Enqueue(game);
+                Matches.Enqueue(game);
             }
 
             var old_speed = GetSpeed();
@@ -29,7 +29,7 @@ namespace TournamentRunner
 
             var rng = new Random();
             var instances = new List<Thread>();
-            var num_instances = Math.Min(6, Games.Count);
+            var num_instances = Math.Min(6, Matches.Count);
 
             for (int i = 0; i < num_instances; i++)
             {
@@ -56,9 +56,9 @@ namespace TournamentRunner
 
         private static void RunInstance(Process aoc, int port)
         {
-            lock (Games)
+            lock (Matches)
             {
-                if (Games.Count == 0)
+                if (Matches.Count == 0)
                 {
                     aoc.Kill();
                     return;
@@ -67,12 +67,12 @@ namespace TournamentRunner
 
             while (true)
             {
-                Game game = null;
-                lock (Games)
+                Match game = null;
+                lock (Matches)
                 {
-                    if (Games.Count > 0)
+                    if (Matches.Count > 0)
                     {
-                        game = Games.Dequeue();
+                        game = Matches.Dequeue();
                     }
                 }
 
@@ -90,7 +90,7 @@ namespace TournamentRunner
             }
         }
 
-        private static void RunGame(Game game, int port)
+        private static void RunGame(Match game, int port)
         {
             var cmd = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "runner", "GameRunner.exe");
             if (!File.Exists(cmd))

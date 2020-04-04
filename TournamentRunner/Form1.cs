@@ -57,7 +57,7 @@ namespace TournamentRunner
             var sw = new Stopwatch();
             sw.Start();
 
-            var number_of_games = int.Parse(TextNumberGames.Text);
+            var number_of_matches = int.Parse(TextNumberGames.Text);
             var game_type = int.Parse(TextGameType.Text);
             var map_type = int.Parse(TextMapType.Text);
             var map_size = int.Parse(TextMapSize.Text);
@@ -75,15 +75,15 @@ namespace TournamentRunner
                 new Tuple<string, int, int>(TextName8.Text, int.Parse(TextTeam8.Text), int.Parse(TextCiv8.Text)),
             };
 
-            var games = new List<Game>();
+            var matches = new List<Match>();
 
-            for (int i = 0; i < number_of_games; i++)
+            for (int i = 0; i < number_of_matches; i++)
             {
-                var game = new Game(game_type, map_type, map_size, players.Select(t => new Player(t.Item1, t.Item2, t.Item3)).ToList());
-                games.Add(game);
+                var match = new Match(game_type, map_type, map_size, players.Select(t => new Player(t.Item1, t.Item2, t.Item3)).ToList());
+                matches.Add(match);
             }
 
-            var runner = new Thread(() => Runner.Run(exe, speed, games))
+            var runner = new Thread(() => Runner.Run(exe, speed, matches))
             {
                 IsBackground = true
             };
@@ -91,26 +91,26 @@ namespace TournamentRunner
 
             var finished = 0;
 
-            while (finished < games.Count)
+            while (finished < matches.Count)
             {
                 var current_finished = 0;
                 var wins = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
                 var teams = new int[] { 0, 0, 0, 0 };
 
-                foreach (var game in games)
+                foreach (var match in matches)
                 {
-                    lock (game)
+                    lock (match)
                     {
-                        if (game.Finished)
+                        if (match.Finished)
                         {
                             current_finished++;
 
-                            foreach (var winner in game.Winners)
+                            foreach (var winner in match.Winners)
                             {
                                 wins[winner - 1]++;
                             }
 
-                            foreach (var team in game.WinningTeams)
+                            foreach (var team in match.WinningTeams)
                             {
                                 teams[team - 1]++;
                             }
@@ -121,7 +121,7 @@ namespace TournamentRunner
                 if (current_finished > finished)
                 {
                     finished = current_finished;
-                    var result = "Result after game " + finished + "/" + games.Count + ":";
+                    var result = "Result after game " + finished + "/" + matches.Count + ":";
                     for (int i = 0; i < wins.Length; i++)
                     {
                         result += " " + wins[i];
@@ -143,7 +143,7 @@ namespace TournamentRunner
             runner.Join();
             
             sw.Stop();
-            var time = "Took " + sw.Elapsed.TotalMinutes.ToString("N2") + " m, " + (sw.Elapsed.TotalMinutes / games.Count).ToString("N2") + " m/game";
+            var time = "Took " + sw.Elapsed.TotalMinutes.ToString("N2") + " m, " + (sw.Elapsed.TotalMinutes / matches.Count).ToString("N2") + " m/game";
             Invoke(new Action(() => RichOutput.AppendText(time + "\n")));
 
             Invoke(new Action(() => ButtonLaunch.Enabled = true));
