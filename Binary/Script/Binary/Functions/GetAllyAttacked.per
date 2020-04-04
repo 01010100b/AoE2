@@ -1,0 +1,16 @@
+﻿#function GetAllyAttacked
+
+	var gl-attacked-ally = -1
+	
+	#foreach $player in 1 2 3 4 5 6 7 8
+	
+		#if (player-in-game $player) (players-stance $player ally) (up-allied-goal $player gl-team-town-under-attack == YES)
+		
+			gl-attacked-ally = $player
+			
+		#end-if
+		
+	#end-foreach
+	
+#return gl-attacked-ally
+			

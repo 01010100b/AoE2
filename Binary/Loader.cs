@@ -228,6 +228,11 @@ namespace Binary
                         {
                             setup.AppendLine($"\t(up-modify-goal {pieces[j]} g:= glx-param-{(j - 1).ToString().Trim()})");
                         }
+
+                        if (pieces.Count == 2)
+                        {
+                            setup.AppendLine($"\t(do-nothing)");
+                        }
                         setup.Append(")");
 
                         function_elements.Add(Element.Create(setup.ToString()));
@@ -299,6 +304,10 @@ namespace Binary
                         }
 
                         setup += par;
+                    }
+                    if (pieces.Count == 3)
+                    {
+                        setup += $"\n\t(do-nothing)";
                     }
                     setup += "\n)";
 

@@ -144,6 +144,14 @@ var gl-update = NO
 		
 	#end-if
 	
+	#if (sn-important-research == imperial-age) (food-amount < 1000) (gold-amount > 700)
+	
+		buy-commodity food
+		
+		chat-local-to-self "Buying food for imperial age"
+		
+	#end-if
+	
 #end-if
 
 #if sn-market-eco-balance != OFF

@@ -121,9 +121,11 @@ up-get-fact military-population 0 gl-military
 	
 #end-if
 
-#if sn-attack == YES
+gl-team-town-under-attack = NO
 
-	sn-town-threat = NO
+#if sn-town-threat == HIGH
+
+	gl-team-town-under-attack = YES
 	
 #end-if
 
@@ -160,15 +162,6 @@ up-remove-objects search-remote object-data-type c:== huskarl
 up-remove-objects search-remote object-data-type c:== elite-huskarl
 up-get-search-state gl-search-state
 gl-infantry = gl-remote-total
-
-up-get-point position-self gl-point1
-up-set-target-point gl-point1
-up-full-reset-search
-up-filter-distance c: -1 s: sn-maximum-town-size
-up-find-remote c: watch-tower-line c: 25
-up-get-search-state gl-search-state
-gl-archery = gl-remote-total
-gl-archery *= 5
 
 up-full-reset-search
 up-find-remote c: archery-class c: 100

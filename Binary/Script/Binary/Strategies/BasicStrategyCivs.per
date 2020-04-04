@@ -40,17 +40,15 @@ var gl-meso-civ = NO
 
 #if gl-meso-civ == YES
 
-	gl-my-primary-unit = archer-line
-	gl-my-secondary-unit = eagle-warrior-line
+	gl-my-primary-unit = eagle-warrior-line
+	gl-my-secondary-unit = archer-line
 	gl-my-monk-counter = eagle-warrior-line
-	gl-my-archer-counter = eagle-warrior-line
-	gl-my-cavalry-counter = eagle-warrior-line
 		
 #end-if
 ;-----------GENERAL COUNTERS
 #if (gl-meso-civ == NO) (current-age >= castle-age)
 
-	gl-my-infantry-counter = cavalry-archer-line
+	;gl-my-infantry-counter = cavalry-archer-line
 
 #end-if
 
@@ -155,20 +153,10 @@ var gl-meso-civ = NO
 #end-if
 
 #load-if-defined CHINESE-CIV
-
-	gl-my-primary-unit = archer-line
-	gl-my-secondary-unit = knight-line
 	
 	#if (current-age >= castle-age)
 	
 		gl-my-cavalry-counter = camel-line
-	
-	#end-if
-
-	#if (building-type-count castle > 0)
-	
-		gl-my-primary-unit = chu-ko-nu-line
-		gl-my-secondary-unit = knight-line
 	
 	#end-if
 	
@@ -227,6 +215,13 @@ var gl-meso-civ = NO
 
 #end-if
 
+#load-if-defined INDIAN-CIV
+
+	gl-my-primary-unit = camel-line
+	gl-my-secondary-unit = spearman-line
+
+#end-if
+
 #load-if-defined JAPANESE-CIV
 
 	#if (building-type-count castle > 0)
@@ -247,13 +242,6 @@ var gl-meso-civ = NO
 		TryImportantResearch(ri-kataparuto)
 	
 	#end-if
-
-#end-if
-
-#load-if-defined INDIAN-CIV
-
-	gl-my-primary-unit = camel-line
-	gl-my-secondary-unit = spearman-line
 
 #end-if
 
@@ -284,7 +272,7 @@ var gl-meso-civ = NO
 	#if (building-type-count castle > 0)
 		
 		gl-my-infantry-counter = plumed-archer-line
-		gl-my-primary-unit = plumed-archer-line
+		gl-my-secondary-unit = plumed-archer-line
 	
 	#end-if
 

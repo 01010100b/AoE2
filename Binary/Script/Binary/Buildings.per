@@ -95,8 +95,15 @@
 			#if gl-building == castle
 			
 				gl-lerp-tiles = sn-minimum-town-size
-				gl-lerp-tiles += 5
-				gl-zone-size = 7
+				;gl-lerp-tiles += 5
+				gl-zone-size = 10
+				
+				#if building-type-count-total castle == 0
+				
+					;gl-lerp-tiles = 20
+					;gl-zone-size = 5
+					
+				#end-if
 					
 			#end-if
 			
@@ -186,7 +193,7 @@ up-assign-builders c: town-center-foundation c: 6
 up-assign-builders c: castle c: 10
 ;up-assign-builders c: stable c: 2
 ;up-assign-builders c: archery-range c: 2
-;up-assign-builders c: market c: 2
+up-assign-builders c: market c: 2
 ;up-assign-builders c: siege-workshop c: 2
 	
 #if sn-town-threat == HIGH
@@ -423,8 +430,11 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 	#if (can-build-with-escrow mill) (up-pending-objects c: mill == 0)
 
 		var gl-min-mill = 0
+		sn-preferred-mill-placement = 1
 		
 		#if building-type-count mill == 0
+		
+			sn-preferred-mill-placement = 0
 		
 			#if (or (resource-found food) (civilian-population > 15)) (or (civilian-population > 10) (and (unit-type-count livestock-class < 2) (game-time > 180)))
 			
@@ -439,6 +449,12 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 			gl-min-mill -= 8
 			gl-min-mill /= 10
 			gl-min-mill max= 1
+			
+		#end-if
+		
+		#if (buiding-type-count mill == 1) (unit-type-count livestock-class < 2) (game-time > 300)
+		
+			gl-min-mill = 2
 			
 		#end-if
 			

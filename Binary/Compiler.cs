@@ -570,7 +570,7 @@ namespace Binary
                 }
             }
 
-            Debug.Assert(blocks.Count == 0, "Preprocessor block not closed"); // stack should be empty again
+            Debug.Assert(blocks.Count == 0, "Preprocessor block not closed-"); // stack should be empty again
 
             TransformBlock(current_block);
 

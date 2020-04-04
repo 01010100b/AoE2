@@ -116,6 +116,7 @@
     <None Include="Script\Binary\Test.per" />
     <None Include="Script\Binary\Units.per" />
     <None Include="Script\Binary\UserPatchConst.per" />
+    <None Include="Script\Binary\Functions\GetAllyAttacked.per" />
     <Content Include="Script\Binary\Tests.txt" />
     <Content Include="Script\Binary\TODO.txt" />
     <Content Include="Script\lang.xml" />

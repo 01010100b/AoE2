@@ -1,13 +1,29 @@
 ﻿#function TryImportantResearch gl-research-id
 
 	var gl-researched = NO
-	gl-researched = TryResearch(gl-research-id)
+	
+	#if up-research-status g: gl-research-id == research-available
+	
+		gl-researched = TryResearch(gl-research-id)
 
-	#if (gl-researched == NO) (sn-important-research == OFF) (up-research-status g: gl-research-id == research-available)
-
-		sn-important-research = gl-research-id
-		gl-researched = YES
+		#if gl-researched == NO
+		
+			#if up-can-research gl-with-escrow g: gl-research-id
+			
+				up-research gl-with-escrow g: gl-research-id
+				gl-researched = YES
+				
+			#end-if
+	
+		#end-if
+		
+		#if (gl-researched == NO) (sn-important-research == OFF)
+		
+			sn-important-research = gl-research-id
+			gl-researched = YES
+	
+		#end-if
 	
 	#end-if
-
+	
 #return gl-researched

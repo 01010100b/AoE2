@@ -9,14 +9,14 @@
 	(true)
 =>
 	(set-strategic-number sn-percent-enemy-sighted-response 100)
-	(set-strategic-number sn-enemy-sighted-response-distance 100)
+	(set-strategic-number sn-enemy-sighted-response-distance 50)
 	(set-strategic-number sn-zero-priority-distance 100)
 	(set-strategic-number sn-enable-offensive-priority 1)
 	(set-strategic-number sn-enable-patrol-attack 1)
 	(set-strategic-number sn-local-targeting-mode 1)
 	(set-strategic-number sn-minimum-attack-group-size 1)
 	(set-strategic-number sn-maximum-attack-group-size 1)
-	(set-strategic-number sn-disable-defend-groups 9)
+	(set-strategic-number sn-disable-defend-groups flag-outside-max)
 	(set-strategic-number sn-consecutive-idle-unit-limit 1)
 	(set-strategic-number sn-wall-targeting-mode 1)
 	(set-strategic-number sn-gather-defense-units 1)
@@ -28,7 +28,7 @@
 =>
 	(set-strategic-number sn-number-civilian-militia 0)
 	(set-strategic-number sn-allow-civilian-offense 0)
-	;(set-strategic-number sn-allow-civilian-defense 0)
+	(set-strategic-number sn-allow-civilian-defense 0)
 	(disable-self)
 )
 
@@ -37,7 +37,6 @@
 #if (sn-attack == YES) (gl-currently-attacking == NO)
 
 	gl-currently-attacking = YES
-	sn-disable-defend-groups -= flag-tsa
 	
 	chat-local-to-self "Attack!"
 	
@@ -46,11 +45,7 @@
 #if (sn-attack == NO) (gl-currently-attacking == YES)
 
 	gl-currently-attacking = NO
-	sn-disable-defend-groups += flag-tsa
 	sn-number-attack-groups = 0
-	
-	up-update-targets
-	up-retreat-now
 	
 	chat-local-to-self "Run away!"
 	
@@ -66,7 +61,7 @@
 	
 	#end-if
 	
-	#if (sn-maximum-town-size >= 250) (up-players-in-game enemy == 1) (military-population > 50) (sn-recent-target-army < 5) (timer-triggered ti-repeat-3m)
+	#if (sn-maximum-town-size >= 250) (military-population > 40) (sn-recent-target-army < 5) (timer-triggered ti-repeat-3m)
 	
 		sn-total-number-explorers = 10
 		sn-number-explore-groups = 10
@@ -126,15 +121,7 @@
 		
 	#end-if
 	
-	var gl-min = sn-min-primary-unit
-	gl-min /= 2
-	
-	#if (timer-triggered ti-repeat-3m) (up-enemy-units-in-town == 0) (or (up-object-type-count s: sn-primary-unit g:< gl-min) (sn-superiority < HIGH))
-		
-		up-retreat-now
-		
-	#end-if
-	
+	var gl-min
 	up-get-fact military-population 0 gl-min
 	gl-min %*= 200
 	
@@ -154,6 +141,20 @@
 		
 	#end-if
 	
+	#if (current-age < castle-age) (up-enemy-units-in-town < 10) (military-population < 10) (research-completed ri-loom)
+		
+		sn-number-civilian-militia = 10
+		sn-allow-civilian-offense = 2
+		sn-allow-civilian-defense = 3
+		
+	#else
+	
+		sn-number-civilian-militia = 0
+		sn-allow-civilian-offense = 0
+		sn-allow-civilian-defense = 0
+		
+	#end-if
+	
 #end-if
 
 ; Auto Attack
@@ -162,32 +163,36 @@
 
 	var gl-pop
 	var gl-pop-cap
-	var gl-target-army
+	var gl-mod = 90
+	
+	var gl-ally-attacked = -1
+	gl-ally-attacked = GetAllyAttacked()
+	
+	#if gl-ally-attacked > 0
+	
+		gl-mod = 50
+		
+	#end-if
+	
 	up-get-fact population 0 gl-pop
 	up-get-fact population-cap 0 gl-pop-cap
-	gl-pop-cap -= 5
+	gl-pop-cap -= 10
+	gl-pop-cap %*= gl-mod
 		
-	#if (sn-attack == NO) (sn-primary-unit != OFF) (sn-min-primary-unit >= 5) (sn-important-research != imperial-age)
+	#if (sn-attack == NO) (sn-primary-unit != OFF) (sn-min-primary-unit >= 5)
 		
 		var gl-should-attack = NO
-		gl-target-army = sn-recent-target-army
 		
-		#if (up-resource-amount amount-military-population g:> gl-target-army) (military-population > 20)
+		#if (gl-pop > gl-pop-cap) (military-population > 25)
 		
 			gl-should-attack = YES
-			
+		
 		#end-if
 		
-		#if (unit-type-count trebuchet-set == 0) (up-object-type-count s: sn-siege-unit c:== 0)
+		#if sn-town-threat == HIGH
 		
 			gl-should-attack = NO
 			
-		#end-if
-		
-		#if gl-pop >= gl-pop-cap
-		
-			gl-should-attack = YES
-		
 		#end-if
 		
 		#if gl-should-attack == YES
@@ -197,26 +202,23 @@
 		#end-if
 		
 	#else
-	
-		gl-target-army = sn-recent-target-army
-		gl-target-army -= 10
-		gl-target-army max= 10
 		
 		var gl-should-retreat = NO
 		
-		#if or (up-resource-amount amount-military-population g:< gl-target-army) (sn-important-research == imperial-age)
+		gl-pop-cap %*= 80
+		#if or (gl-pop < gl-pop-cap) (military-population < 15)
 		
 			gl-should-retreat = YES
 			
 		#end-if
 		
-		#if (unit-type-count trebuchet-set == 0) (up-object-type-count s: sn-siege-unit c:== 0)
+		#if sn-town-threat == HIGH
 		
 			gl-should-retreat = YES
 			
 		#end-if
 		
-		#if (gl-should-retreat == YES) (gl-pop < gl-pop-cap)
+		#if (gl-should-retreat == YES)
 		
 			sn-attack = NO
 			

@@ -146,9 +146,9 @@ gl-pop-cap max= 0
 			
 			var gl-pop
 			gl-pop = sn-recent-target-army
-			gl-pop %*= 50
+			gl-pop %*= 90
 			
-			#if (up-can-train gl-with-escrow g: gl-unit) (or (up-object-type-count-total s: sn-$unit g:< gl-min) (or (sn-town-threat == HIGH) (up-resource-amount amount-military-population g:< gl-pop)))
+			#if (up-can-train gl-with-escrow g: gl-unit) (or (food-amount > 50) (true)) (or (up-object-type-count-total s: sn-$unit g:< gl-min) (or (sn-town-threat == HIGH) (up-resource-amount amount-military-population g:< gl-pop)))
 			
 				up-train gl-with-escrow g: gl-unit
 				
@@ -179,10 +179,28 @@ sn-focus-player-number = gl-focus
 up-full-reset-search
 up-filter-distance c: -1 s: sn-minimum-town-size
 up-find-remote c: castle c: 1
+up-find-remote c: watch-tower c: 1
+up-find-remote c: watch-tower-line c: 1
 up-get-search-state gl-search-state
 
-#if (gl-remote-total > 0) (unit-type-count-total battering-ram-line < 3) (building-type-count siege-workshop > 0) (sn-important-unit == OFF)
+#if (or (gl-remote-total > 0) (sn-attack == NO)) (sn-siege-unit != OFF) (up-object-type-count-total s: sn-siege-unit < 3) (sn-important-unit == OFF)
 
-	sn-important-unit = battering-ram-line
+	#if (building-type-count siege-workshop > 0) 
+
+		sn-important-unit = sn-siege-unit
+	
+	#else
+	
+		#if building-type-count-total blacksmith == 0
+		
+			TryImportantBuilding(blacksmith, BUILDING-NORMAL, -1, -1)
+	
+		#else
+		
+			TryImportantBuilding(siege-workshop, BUILDING-NORMAL, -1, -1)
+		
+		#end-if
+		
+	#end-if
 	
 #end-if

@@ -95,15 +95,21 @@ sn-market-eco-balance = LOW
 
 ; buildings
 
-#if (current-age >= castle-age) (can-build castle)
+#if (current-age >= castle-age) (can-build castle) (or (players-military-population any-enemy > 10) (up-object-type-count c: town-center s:>= sn-min-town-center))
 
-	TryImportantBuilding(castle, BUILDING-NORMAL, -1, -1)
+	BuildNormal(gl-without-escrow, castle)
 
 #end-if
 
-#if (up-research-status c: castle-age c:>= research-pending) (building-type-count-total castle > 0)
+#if (up-research-status c: castle-age c:>= research-pending)
 
 	sn-min-town-center max= 3
+	
+#end-if
+
+#if (building-type-count castle > 0) (building-type-count university > 0)
+
+	TryImportantResearch(ri-murder-holes)
 	
 #end-if
 
@@ -124,15 +130,15 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 	
 	#end-if
 
-	#if (current-age >= castle-age) (building-type-count-total monastery == 0)
-
-		TryImportantBuilding(monastery, BUILDING-NORMAL, -1, -1)
-	
-	#end-if
-
-	#if (current-age >= castle-age) (building-type-count-total university == 0) (building-type-count-total monastery > 0)
+	#if (current-age >= castle-age) (building-type-count-total university == 0)
 
 		TryImportantBuilding(university, BUILDING-NORMAL, -1, -1)
+	
+	#end-if
+	
+	#if (current-age >= castle-age) (building-type-count-total monastery == 0) (building-type-count-total university > 0)
+
+		TryImportantBuilding(monastery, BUILDING-NORMAL, -1, -1)
 	
 	#end-if
 
@@ -184,21 +190,15 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 		
 	#end-if
 	
-	#if (false) (current-age == feudal-age) (gl-biggest-threat < MEDIUM)
-	
-		sn-allow-civilian-defense = 3
-		sn-allow-civilian-offense = 1
-		
-	#else
-	
-		sn-allow-civilian-defense = 0
-		sn-allow-civilian-offense = 0
-		
-	#end-if
-	
 #end-if
 
 #if up-research-status c: castle-age c:>= research-pending
+
+	sn-primary-unit = gl-my-primary-unit
+	
+#end-if
+
+#if current-age >= castle-age
 	
 	sn-auto-attack = ON
 	
