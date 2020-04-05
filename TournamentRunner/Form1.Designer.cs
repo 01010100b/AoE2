@@ -157,7 +157,7 @@
             this.TextNumberGames.Name = "TextNumberGames";
             this.TextNumberGames.Size = new System.Drawing.Size(45, 26);
             this.TextNumberGames.TabIndex = 8;
-            this.TextNumberGames.Text = "3";
+            this.TextNumberGames.Text = "10";
             // 
             // TextGameType
             // 
@@ -193,7 +193,7 @@
             this.TextName1.Name = "TextName1";
             this.TextName1.Size = new System.Drawing.Size(202, 26);
             this.TextName1.TabIndex = 12;
-            this.TextName1.Text = "InFamous-Celtic";
+            this.TextName1.Text = "UlyssesWK";
             // 
             // TextName2
             // 
@@ -202,7 +202,7 @@
             this.TextName2.Name = "TextName2";
             this.TextName2.Size = new System.Drawing.Size(202, 26);
             this.TextName2.TabIndex = 13;
-            this.TextName2.Text = "InFamous-Celtic";
+            this.TextName2.Text = "UlyssesWK";
             // 
             // TextName3
             // 
@@ -337,7 +337,7 @@
             this.TextCiv1.Name = "TextCiv1";
             this.TextCiv1.Size = new System.Drawing.Size(45, 26);
             this.TextCiv1.TabIndex = 28;
-            this.TextCiv1.Text = "13";
+            this.TextCiv1.Text = "19";
             // 
             // TextCiv2
             // 
@@ -346,7 +346,7 @@
             this.TextCiv2.Name = "TextCiv2";
             this.TextCiv2.Size = new System.Drawing.Size(45, 26);
             this.TextCiv2.TabIndex = 29;
-            this.TextCiv2.Text = "13";
+            this.TextCiv2.Text = "19";
             // 
             // TextCiv3
             // 

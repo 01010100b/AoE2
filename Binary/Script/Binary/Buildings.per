@@ -100,8 +100,8 @@
 				
 				#if building-type-count-total castle == 0
 				
-					;gl-lerp-tiles = 20
-					;gl-zone-size = 5
+					gl-lerp-tiles = 10
+					gl-zone-size = 5
 					
 				#end-if
 					
@@ -306,40 +306,12 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 		#if sn-$unit != OFF
 		
 			;chat-local-to-self "Auto production $unit"
-			var gl-need-barracks = NO
-			var gl-need-blacksmith = NO
 			
 			var gl-unit
 			up-get-object-type-data s: sn-$unit object-data-type gl-unit
 			
 			var gl-train-site
 			up-get-object-type-data g: gl-unit object-data-train-site gl-train-site
-			
-			#if or (gl-train-site == archery-range) (gl-train-site == stable)
-			
-				;chat-local-to-self "Need barracks"
-				gl-need-barracks = YES
-				
-			#end-if
-			
-			#if gl-train-site == siege-workshop
-			
-				;chat-local-to-self "Need blacksmith"
-				gl-need-blacksmith = YES
-				
-			#end-if
-			
-			#if (gl-need-barracks == YES) (building-type-count-total barracks == 0)
-				
-				TryImportantBuilding(barracks, BUILDING-NORMAL, -1, -1)
-				
-			#end-if
-			
-			#if (gl-need-blacksmith == YES) (building-type-count-total blacksmith == 0)
-			
-				TryImportantBuilding(blacksmith, BUILDING-NORMAL, -1, -1)
-				
-			#end-if
 			
 			#if up-object-type-count-total g: gl-train-site c:== 0
 			
@@ -361,7 +333,7 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 			var gl-train-site
 			up-get-object-type-data g: gl-unit object-data-train-site gl-train-site
 			
-			#if (not (up-train-site-ready g: gl-unit)) (up-pending-objects g: gl-train-site c:== 0)
+			#if (not (up-train-site-ready g: gl-unit)) (up-pending-objects g: gl-train-site c:== 0) (timer-triggered ti-repeat-13)
 			
 				TryImportantBuilding(gl-train-site, BUILDING-NORMAL, -1, -1)
 				

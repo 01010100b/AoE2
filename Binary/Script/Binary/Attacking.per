@@ -195,6 +195,12 @@
 			
 		#end-if
 		
+		#if up-object-type-count-total s: sn-siege-unit c:== 0
+		
+			;gl-should-attack = NO
+			
+		#end-if
+		
 		#if gl-should-attack == YES
 		
 			sn-attack = YES
@@ -215,6 +221,12 @@
 		#if sn-town-threat == HIGH
 		
 			gl-should-retreat = YES
+			
+		#end-if
+		
+		#if up-object-type-count-total s: sn-siege-unit c:== 0
+		
+			;gl-should-retreat = YES
 			
 		#end-if
 		

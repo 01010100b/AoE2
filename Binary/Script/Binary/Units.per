@@ -125,7 +125,7 @@ gl-pop-cap max= 0
 
 ; Normal units
 
-#foreach $unit in primary-unit secondary-unit tertiary-unit
+#foreach $unit in primary-unit secondary-unit tertiary-unit siege-unit
 
 	#if (sn-$unit != OFF) (up-object-type-count-total s: sn-$unit s:< sn-min-$unit)
 		
@@ -143,10 +143,11 @@ gl-pop-cap max= 0
 		
 			var gl-min = sn-min-$unit
 			gl-min /= 4
+			gl-min max= 1
 			
 			var gl-pop
 			gl-pop = sn-recent-target-army
-			gl-pop %*= 90
+			gl-pop %*= 75
 			
 			#if (up-can-train gl-with-escrow g: gl-unit) (or (food-amount > 50) (true)) (or (up-object-type-count-total s: sn-$unit g:< gl-min) (or (sn-town-threat == HIGH) (up-resource-amount amount-military-population g:< gl-pop)))
 			
@@ -162,9 +163,21 @@ gl-pop-cap max= 0
 		
 #end-foreach
 
-#if (sn-siege-unit != OFF) (up-object-type-count-total s: sn-siege-unit s:< sn-min-siege-unit) (up-object-type-count c: trebuchet-set s:< sn-min-siege-unit) (up-can-train gl-without-escrow s: sn-siege-unit)
+#if (sn-siege-unit != OFF) (up-object-type-count-total s: sn-siege-unit s:< sn-min-siege-unit) (up-object-type-count c: trebuchet-set s:< sn-min-siege-unit)
 
-	up-train gl-without-escrow s: sn-siege-unit
+	var gl-escrow = without-escrow
+	
+	#if (up-object-type-count s: sn-siege-unit c:== 0) (up-object-type-count c: trebuchet-set c:== 0)
+	
+		gl-escrow = with-escrow
+		
+	#end-if
+	
+	#if (up-can-train gl-escrow s: sn-siege-unit)
+	
+		up-train gl-escrow s: sn-siege-unit
+		
+	#end-if
 	;chat-local-to-self "Training siege unit"
 	
 #end-if

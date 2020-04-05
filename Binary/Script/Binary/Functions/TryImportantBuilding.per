@@ -2,6 +2,18 @@
 
 	var gl-built = NO
 	
+	#if (building-type-count-total barracks == 0) (or (gl-building-id == stable) (gl-building-id == archery-range))
+	
+		gl-building-id = barracks
+		
+	#end-if
+	
+	#if (building-type-count-total blacksmith == 0) (gl-building-id == siege-workshop)
+	
+		gl-building-id = blacksmith
+		
+	#end-if
+	
 	#if gl-placement-type == BUILDING-ENEMY-CAMP
 		
 		gl-built = BuildEnemyCamp(gl-with-escrow, gl-building-id)

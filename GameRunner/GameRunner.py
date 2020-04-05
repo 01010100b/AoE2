@@ -13,17 +13,14 @@ def game_running():
     team2 = 0
     team3 = 0
     team4 = 0
-    team_sum = 0
+    players_in_game = 0
     team_max = 0
     
     for i in range(8):
 
-        if not autogame.call('GetPlayerAlive', i + 1):
+        if autogame.call('GetPlayerAlive', i + 1):
 
-            teams[i] = -1
-
-        else:
-            team_sum += 1
+            players_in_game += 1
 
             if teams[i] == 0:
                 team0 += 1
@@ -53,7 +50,7 @@ def game_running():
     if team0 > 1:
         finished = False
 
-    if team_sum > team_max:
+    if players_in_game > team_max:
         finished = False
 
     return not finished
@@ -110,7 +107,7 @@ print("Started game", flush = True)
 draw = False
 while game_running():  # wait until the game has finished
     time.sleep(3.0)
-    if autogame.call('GetGameTime') > 180 * 60:	# if a game has been running for 3 hours, declare it a draw
+    if autogame.call('GetGameTime') > 3 * 60 * 60:	# if a game has been running for 3 hours, declare it a draw
         draws += 1
         draw = True
         print("Finished game: draw", flush = True)

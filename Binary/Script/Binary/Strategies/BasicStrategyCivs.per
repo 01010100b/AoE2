@@ -99,12 +99,12 @@ var gl-meso-civ = NO
 
 	#if (building-type-count castle > 0)
 	
-		gl-my-primary-unit = longbowman-line
-		gl-my-secondary-unit = knight-line
+		;gl-my-primary-unit = longbowman-line
+		;gl-my-secondary-unit = knight-line
 	
 	#end-if
 
-	#if (unit-type-count archery-class > 0)
+	#if (unit-type-count archery-class > 5)
 	
 		TryImportantResearch(ri-yeomen)
 	
@@ -144,7 +144,7 @@ var gl-meso-civ = NO
 	
 	#end-if
 
-	#if (unit-type-count siege-weapon-class > 0)
+	#if (unit-type-count siege-weapon-class > 3)
 	
 		TryImportantResearch(ri-furor-celtica)
 		
@@ -160,7 +160,7 @@ var gl-meso-civ = NO
 	
 	#end-if
 	
-	#if or (unit-type-count chu-ko-nu-line > 0) (unit-type-count scorpion-line > 0)
+	#if or (unit-type-count chu-ko-nu-line > 3) (unit-type-count scorpion-line > 3)
 	
 		TryImportantResearch(ri-rocketry)
 		
@@ -249,7 +249,7 @@ var gl-meso-civ = NO
 
 	#if (building-type-count castle > 0)
 		
-		gl-my-primary-unit = war-wagon-line
+		;gl-my-primary-unit = war-wagon-line
 		
 	#end-if	
 	
