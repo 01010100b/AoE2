@@ -156,6 +156,7 @@
     <Content Include="aoc-auto-game.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Releases\ui.png" />
     <Content Include="runner\GameRunner.exe" />
     <Content Include="runner\libcrypto-1_1.dll" />
     <Content Include="runner\libssl-1_1.dll" />
