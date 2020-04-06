@@ -28,344 +28,352 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.ComboPlayer = new System.Windows.Forms.ComboBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
-            this.comboBox4 = new System.Windows.Forms.ComboBox();
-            this.comboBox5 = new System.Windows.Forms.ComboBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
+            this.TextMap = new System.Windows.Forms.TextBox();
+            this.TextGames = new System.Windows.Forms.TextBox();
+            this.Check1v1 = new System.Windows.Forms.CheckBox();
+            this.Check2v2 = new System.Windows.Forms.CheckBox();
+            this.Check3v3 = new System.Windows.Forms.CheckBox();
+            this.Check4v4 = new System.Windows.Forms.CheckBox();
+            this.ButtonLaunch = new System.Windows.Forms.Button();
+            this.LabelMap = new System.Windows.Forms.Label();
+            this.LabelGames = new System.Windows.Forms.Label();
+            this.TextAIName = new System.Windows.Forms.TextBox();
+            this.TextAICivs = new System.Windows.Forms.TextBox();
+            this.TextOpponent1Civs = new System.Windows.Forms.TextBox();
+            this.TextOpponent1Name = new System.Windows.Forms.TextBox();
+            this.TextOpponent2Civs = new System.Windows.Forms.TextBox();
+            this.TextOpponent2Name = new System.Windows.Forms.TextBox();
+            this.TextOpponent3Civs = new System.Windows.Forms.TextBox();
+            this.TextOpponent3Name = new System.Windows.Forms.TextBox();
+            this.TextOpponent4Civs = new System.Windows.Forms.TextBox();
+            this.TextOpponent4Name = new System.Windows.Forms.TextBox();
+            this.TextOpponent5Civs = new System.Windows.Forms.TextBox();
+            this.TextOpponent5Name = new System.Windows.Forms.TextBox();
+            this.LabelAI = new System.Windows.Forms.Label();
+            this.LabelCivs = new System.Windows.Forms.Label();
+            this.LabelOpponents = new System.Windows.Forms.Label();
+            this.RichOutput = new System.Windows.Forms.RichTextBox();
+            this.LabelFormat = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // ComboPlayer
+            // TextMap
             // 
-            this.ComboPlayer.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ComboPlayer.FormattingEnabled = true;
-            this.ComboPlayer.Items.AddRange(new object[] {
-            "Test"});
-            this.ComboPlayer.Location = new System.Drawing.Point(531, 40);
-            this.ComboPlayer.Name = "ComboPlayer";
-            this.ComboPlayer.Size = new System.Drawing.Size(338, 28);
-            this.ComboPlayer.TabIndex = 0;
-            this.ComboPlayer.Text = "Test";
+            this.TextMap.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextMap.Location = new System.Drawing.Point(136, 49);
+            this.TextMap.Name = "TextMap";
+            this.TextMap.Size = new System.Drawing.Size(118, 26);
+            this.TextMap.TabIndex = 0;
+            this.TextMap.Text = "9";
             // 
-            // comboBox1
+            // TextGames
             // 
-            this.comboBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "Test"});
-            this.comboBox1.Location = new System.Drawing.Point(531, 123);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(338, 28);
-            this.comboBox1.TabIndex = 1;
-            this.comboBox1.Text = "Test";
+            this.TextGames.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextGames.Location = new System.Drawing.Point(136, 81);
+            this.TextGames.Name = "TextGames";
+            this.TextGames.Size = new System.Drawing.Size(118, 26);
+            this.TextGames.TabIndex = 1;
+            this.TextGames.Text = "3";
             // 
-            // comboBox2
+            // Check1v1
             // 
-            this.comboBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
-            "Test"});
-            this.comboBox2.Location = new System.Drawing.Point(531, 157);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(338, 28);
-            this.comboBox2.TabIndex = 5;
-            this.comboBox2.Text = "Test";
+            this.Check1v1.AutoSize = true;
+            this.Check1v1.Checked = true;
+            this.Check1v1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.Check1v1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Check1v1.Location = new System.Drawing.Point(136, 113);
+            this.Check1v1.Name = "Check1v1";
+            this.Check1v1.Size = new System.Drawing.Size(53, 24);
+            this.Check1v1.TabIndex = 2;
+            this.Check1v1.Text = "1v1";
+            this.Check1v1.UseVisualStyleBackColor = true;
             // 
-            // comboBox3
+            // Check2v2
             // 
-            this.comboBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Items.AddRange(new object[] {
-            "Test"});
-            this.comboBox3.Location = new System.Drawing.Point(531, 191);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(338, 28);
-            this.comboBox3.TabIndex = 9;
-            this.comboBox3.Text = "Test";
+            this.Check2v2.AutoSize = true;
+            this.Check2v2.Checked = true;
+            this.Check2v2.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.Check2v2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Check2v2.Location = new System.Drawing.Point(136, 143);
+            this.Check2v2.Name = "Check2v2";
+            this.Check2v2.Size = new System.Drawing.Size(53, 24);
+            this.Check2v2.TabIndex = 3;
+            this.Check2v2.Text = "2v2";
+            this.Check2v2.UseVisualStyleBackColor = true;
             // 
-            // comboBox4
+            // Check3v3
             // 
-            this.comboBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox4.FormattingEnabled = true;
-            this.comboBox4.Items.AddRange(new object[] {
-            "Test"});
-            this.comboBox4.Location = new System.Drawing.Point(531, 225);
-            this.comboBox4.Name = "comboBox4";
-            this.comboBox4.Size = new System.Drawing.Size(338, 28);
-            this.comboBox4.TabIndex = 13;
-            this.comboBox4.Text = "Test";
+            this.Check3v3.AutoSize = true;
+            this.Check3v3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Check3v3.Location = new System.Drawing.Point(136, 173);
+            this.Check3v3.Name = "Check3v3";
+            this.Check3v3.Size = new System.Drawing.Size(53, 24);
+            this.Check3v3.TabIndex = 4;
+            this.Check3v3.Text = "3v3";
+            this.Check3v3.UseVisualStyleBackColor = true;
             // 
-            // comboBox5
+            // Check4v4
             // 
-            this.comboBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox5.FormattingEnabled = true;
-            this.comboBox5.Items.AddRange(new object[] {
-            "Test"});
-            this.comboBox5.Location = new System.Drawing.Point(531, 259);
-            this.comboBox5.Name = "comboBox5";
-            this.comboBox5.Size = new System.Drawing.Size(338, 28);
-            this.comboBox5.TabIndex = 17;
-            this.comboBox5.Text = "Test";
+            this.Check4v4.AutoSize = true;
+            this.Check4v4.Checked = true;
+            this.Check4v4.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.Check4v4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Check4v4.Location = new System.Drawing.Point(136, 203);
+            this.Check4v4.Name = "Check4v4";
+            this.Check4v4.Size = new System.Drawing.Size(53, 24);
+            this.Check4v4.TabIndex = 5;
+            this.Check4v4.Text = "4v4";
+            this.Check4v4.UseVisualStyleBackColor = true;
             // 
-            // label16
+            // ButtonLaunch
             // 
-            this.label16.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.Location = new System.Drawing.Point(945, 88);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(29, 22);
-            this.label16.TabIndex = 23;
-            this.label16.Text = "D";
+            this.ButtonLaunch.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ButtonLaunch.Location = new System.Drawing.Point(39, 242);
+            this.ButtonLaunch.Name = "ButtonLaunch";
+            this.ButtonLaunch.Size = new System.Drawing.Size(215, 59);
+            this.ButtonLaunch.TabIndex = 6;
+            this.ButtonLaunch.Text = "Launch";
+            this.ButtonLaunch.UseVisualStyleBackColor = true;
+            this.ButtonLaunch.Click += new System.EventHandler(this.ButtonLaunch_Click);
             // 
-            // label17
+            // LabelMap
             // 
-            this.label17.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label17.Location = new System.Drawing.Point(910, 88);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(29, 22);
-            this.label17.TabIndex = 22;
-            this.label17.Text = "L";
+            this.LabelMap.AutoSize = true;
+            this.LabelMap.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelMap.Location = new System.Drawing.Point(90, 52);
+            this.LabelMap.Name = "LabelMap";
+            this.LabelMap.Size = new System.Drawing.Size(40, 20);
+            this.LabelMap.TabIndex = 7;
+            this.LabelMap.Text = "Map";
             // 
-            // label18
+            // LabelGames
             // 
-            this.label18.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label18.Location = new System.Drawing.Point(875, 88);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(29, 22);
-            this.label18.TabIndex = 21;
-            this.label18.Text = "W";
+            this.LabelGames.AutoSize = true;
+            this.LabelGames.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelGames.Location = new System.Drawing.Point(69, 84);
+            this.LabelGames.Name = "LabelGames";
+            this.LabelGames.Size = new System.Drawing.Size(61, 20);
+            this.LabelGames.TabIndex = 8;
+            this.LabelGames.Text = "Games";
             // 
-            // label1
+            // TextAIName
             // 
-            this.label1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(945, 125);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 22);
-            this.label1.TabIndex = 26;
-            this.label1.Text = "00";
+            this.TextAIName.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextAIName.Location = new System.Drawing.Point(285, 49);
+            this.TextAIName.Name = "TextAIName";
+            this.TextAIName.Size = new System.Drawing.Size(268, 26);
+            this.TextAIName.TabIndex = 9;
+            this.TextAIName.Text = "Binary";
             // 
-            // label2
+            // TextAICivs
             // 
-            this.label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(910, 125);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(29, 22);
-            this.label2.TabIndex = 25;
-            this.label2.Text = "00";
+            this.TextAICivs.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextAICivs.Location = new System.Drawing.Point(559, 49);
+            this.TextAICivs.Name = "TextAICivs";
+            this.TextAICivs.Size = new System.Drawing.Size(118, 26);
+            this.TextAICivs.TabIndex = 10;
+            this.TextAICivs.Text = "19";
             // 
-            // label3
+            // TextOpponent1Civs
             // 
-            this.label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(875, 125);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(29, 22);
-            this.label3.TabIndex = 24;
-            this.label3.Text = "00";
+            this.TextOpponent1Civs.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextOpponent1Civs.Location = new System.Drawing.Point(559, 111);
+            this.TextOpponent1Civs.Name = "TextOpponent1Civs";
+            this.TextOpponent1Civs.Size = new System.Drawing.Size(118, 26);
+            this.TextOpponent1Civs.TabIndex = 12;
+            this.TextOpponent1Civs.Text = "3,16";
             // 
-            // label4
+            // TextOpponent1Name
             // 
-            this.label4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(945, 159);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(29, 22);
-            this.label4.TabIndex = 29;
-            this.label4.Text = "00";
+            this.TextOpponent1Name.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextOpponent1Name.Location = new System.Drawing.Point(285, 113);
+            this.TextOpponent1Name.Name = "TextOpponent1Name";
+            this.TextOpponent1Name.Size = new System.Drawing.Size(268, 26);
+            this.TextOpponent1Name.TabIndex = 11;
+            this.TextOpponent1Name.Text = "Meleon";
             // 
-            // label5
+            // TextOpponent2Civs
             // 
-            this.label5.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(910, 159);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(29, 22);
-            this.label5.TabIndex = 28;
-            this.label5.Text = "00";
+            this.TextOpponent2Civs.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextOpponent2Civs.Location = new System.Drawing.Point(559, 143);
+            this.TextOpponent2Civs.Name = "TextOpponent2Civs";
+            this.TextOpponent2Civs.Size = new System.Drawing.Size(118, 26);
+            this.TextOpponent2Civs.TabIndex = 14;
+            this.TextOpponent2Civs.Text = "19";
             // 
-            // label6
+            // TextOpponent2Name
             // 
-            this.label6.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(875, 159);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(29, 22);
-            this.label6.TabIndex = 27;
-            this.label6.Text = "00";
+            this.TextOpponent2Name.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextOpponent2Name.Location = new System.Drawing.Point(285, 143);
+            this.TextOpponent2Name.Name = "TextOpponent2Name";
+            this.TextOpponent2Name.Size = new System.Drawing.Size(268, 26);
+            this.TextOpponent2Name.TabIndex = 13;
+            this.TextOpponent2Name.Text = "UlyssesWK";
             // 
-            // label7
+            // TextOpponent3Civs
             // 
-            this.label7.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(945, 193);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(29, 22);
-            this.label7.TabIndex = 32;
-            this.label7.Text = "00";
+            this.TextOpponent3Civs.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextOpponent3Civs.Location = new System.Drawing.Point(559, 175);
+            this.TextOpponent3Civs.Name = "TextOpponent3Civs";
+            this.TextOpponent3Civs.Size = new System.Drawing.Size(118, 26);
+            this.TextOpponent3Civs.TabIndex = 16;
+            this.TextOpponent3Civs.Text = "16";
             // 
-            // label8
+            // TextOpponent3Name
             // 
-            this.label8.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(910, 193);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(29, 22);
-            this.label8.TabIndex = 31;
-            this.label8.Text = "00";
+            this.TextOpponent3Name.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextOpponent3Name.Location = new System.Drawing.Point(285, 175);
+            this.TextOpponent3Name.Name = "TextOpponent3Name";
+            this.TextOpponent3Name.Size = new System.Drawing.Size(268, 26);
+            this.TextOpponent3Name.TabIndex = 15;
+            this.TextOpponent3Name.Text = "Strong Bow v1b";
             // 
-            // label9
+            // TextOpponent4Civs
             // 
-            this.label9.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(875, 193);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(29, 22);
-            this.label9.TabIndex = 30;
-            this.label9.Text = "00";
+            this.TextOpponent4Civs.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextOpponent4Civs.Location = new System.Drawing.Point(559, 207);
+            this.TextOpponent4Civs.Name = "TextOpponent4Civs";
+            this.TextOpponent4Civs.Size = new System.Drawing.Size(118, 26);
+            this.TextOpponent4Civs.TabIndex = 18;
             // 
-            // label10
+            // TextOpponent4Name
             // 
-            this.label10.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(945, 227);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(29, 22);
-            this.label10.TabIndex = 35;
-            this.label10.Text = "00";
+            this.TextOpponent4Name.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextOpponent4Name.Location = new System.Drawing.Point(285, 207);
+            this.TextOpponent4Name.Name = "TextOpponent4Name";
+            this.TextOpponent4Name.Size = new System.Drawing.Size(268, 26);
+            this.TextOpponent4Name.TabIndex = 17;
             // 
-            // label11
+            // TextOpponent5Civs
             // 
-            this.label11.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(910, 227);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(29, 22);
-            this.label11.TabIndex = 34;
-            this.label11.Text = "00";
+            this.TextOpponent5Civs.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextOpponent5Civs.Location = new System.Drawing.Point(559, 239);
+            this.TextOpponent5Civs.Name = "TextOpponent5Civs";
+            this.TextOpponent5Civs.Size = new System.Drawing.Size(118, 26);
+            this.TextOpponent5Civs.TabIndex = 20;
             // 
-            // label12
+            // TextOpponent5Name
             // 
-            this.label12.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(875, 227);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(29, 22);
-            this.label12.TabIndex = 33;
-            this.label12.Text = "00";
+            this.TextOpponent5Name.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextOpponent5Name.Location = new System.Drawing.Point(285, 239);
+            this.TextOpponent5Name.Name = "TextOpponent5Name";
+            this.TextOpponent5Name.Size = new System.Drawing.Size(268, 26);
+            this.TextOpponent5Name.TabIndex = 19;
             // 
-            // label13
+            // LabelAI
             // 
-            this.label13.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(945, 261);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(29, 22);
-            this.label13.TabIndex = 38;
-            this.label13.Text = "00";
+            this.LabelAI.AutoSize = true;
+            this.LabelAI.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelAI.Location = new System.Drawing.Point(281, 20);
+            this.LabelAI.Name = "LabelAI";
+            this.LabelAI.Size = new System.Drawing.Size(51, 20);
+            this.LabelAI.TabIndex = 21;
+            this.LabelAI.Text = "Name";
             // 
-            // label14
+            // LabelCivs
             // 
-            this.label14.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(910, 261);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(29, 22);
-            this.label14.TabIndex = 37;
-            this.label14.Text = "00";
+            this.LabelCivs.AutoSize = true;
+            this.LabelCivs.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelCivs.Location = new System.Drawing.Point(555, 20);
+            this.LabelCivs.Name = "LabelCivs";
+            this.LabelCivs.Size = new System.Drawing.Size(38, 20);
+            this.LabelCivs.TabIndex = 22;
+            this.LabelCivs.Text = "Civs";
             // 
-            // label15
+            // LabelOpponents
             // 
-            this.label15.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(875, 261);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(29, 22);
-            this.label15.TabIndex = 36;
-            this.label15.Text = "00";
+            this.LabelOpponents.AutoSize = true;
+            this.LabelOpponents.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelOpponents.Location = new System.Drawing.Point(281, 84);
+            this.LabelOpponents.Name = "LabelOpponents";
+            this.LabelOpponents.Size = new System.Drawing.Size(88, 20);
+            this.LabelOpponents.TabIndex = 23;
+            this.LabelOpponents.Text = "Opponents";
+            // 
+            // RichOutput
+            // 
+            this.RichOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.RichOutput.Location = new System.Drawing.Point(40, 331);
+            this.RichOutput.Name = "RichOutput";
+            this.RichOutput.ReadOnly = true;
+            this.RichOutput.Size = new System.Drawing.Size(665, 270);
+            this.RichOutput.TabIndex = 24;
+            this.RichOutput.Text = "";
+            // 
+            // LabelFormat
+            // 
+            this.LabelFormat.AutoSize = true;
+            this.LabelFormat.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelFormat.Location = new System.Drawing.Point(281, 281);
+            this.LabelFormat.Name = "LabelFormat";
+            this.LabelFormat.Size = new System.Drawing.Size(298, 20);
+            this.LabelFormat.TabIndex = 25;
+            this.LabelFormat.Text = "Result format: \"name - opponent: W L D\"";
             // 
             // FormTournament
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1024, 589);
-            this.Controls.Add(this.label13);
-            this.Controls.Add(this.label14);
-            this.Controls.Add(this.label15);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.label12);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label16);
-            this.Controls.Add(this.label17);
-            this.Controls.Add(this.label18);
-            this.Controls.Add(this.comboBox5);
-            this.Controls.Add(this.comboBox4);
-            this.Controls.Add(this.comboBox3);
-            this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.ComboPlayer);
+            this.ClientSize = new System.Drawing.Size(783, 628);
+            this.Controls.Add(this.LabelFormat);
+            this.Controls.Add(this.RichOutput);
+            this.Controls.Add(this.LabelOpponents);
+            this.Controls.Add(this.LabelCivs);
+            this.Controls.Add(this.LabelAI);
+            this.Controls.Add(this.TextOpponent5Civs);
+            this.Controls.Add(this.TextOpponent5Name);
+            this.Controls.Add(this.TextOpponent4Civs);
+            this.Controls.Add(this.TextOpponent4Name);
+            this.Controls.Add(this.TextOpponent3Civs);
+            this.Controls.Add(this.TextOpponent3Name);
+            this.Controls.Add(this.TextOpponent2Civs);
+            this.Controls.Add(this.TextOpponent2Name);
+            this.Controls.Add(this.TextOpponent1Civs);
+            this.Controls.Add(this.TextOpponent1Name);
+            this.Controls.Add(this.TextAICivs);
+            this.Controls.Add(this.TextAIName);
+            this.Controls.Add(this.LabelGames);
+            this.Controls.Add(this.LabelMap);
+            this.Controls.Add(this.ButtonLaunch);
+            this.Controls.Add(this.Check4v4);
+            this.Controls.Add(this.Check3v3);
+            this.Controls.Add(this.Check2v2);
+            this.Controls.Add(this.Check1v1);
+            this.Controls.Add(this.TextGames);
+            this.Controls.Add(this.TextMap);
             this.Name = "FormTournament";
             this.Text = "FormTournament";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.ComboBox ComboPlayer;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.ComboBox comboBox3;
-        private System.Windows.Forms.ComboBox comboBox4;
-        private System.Windows.Forms.ComboBox comboBox5;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.TextBox TextMap;
+        private System.Windows.Forms.TextBox TextGames;
+        private System.Windows.Forms.CheckBox Check1v1;
+        private System.Windows.Forms.CheckBox Check2v2;
+        private System.Windows.Forms.CheckBox Check3v3;
+        private System.Windows.Forms.CheckBox Check4v4;
+        private System.Windows.Forms.Button ButtonLaunch;
+        private System.Windows.Forms.Label LabelMap;
+        private System.Windows.Forms.Label LabelGames;
+        private System.Windows.Forms.TextBox TextAIName;
+        private System.Windows.Forms.TextBox TextAICivs;
+        private System.Windows.Forms.TextBox TextOpponent1Civs;
+        private System.Windows.Forms.TextBox TextOpponent1Name;
+        private System.Windows.Forms.TextBox TextOpponent2Civs;
+        private System.Windows.Forms.TextBox TextOpponent2Name;
+        private System.Windows.Forms.TextBox TextOpponent3Civs;
+        private System.Windows.Forms.TextBox TextOpponent3Name;
+        private System.Windows.Forms.TextBox TextOpponent4Civs;
+        private System.Windows.Forms.TextBox TextOpponent4Name;
+        private System.Windows.Forms.TextBox TextOpponent5Civs;
+        private System.Windows.Forms.TextBox TextOpponent5Name;
+        private System.Windows.Forms.Label LabelAI;
+        private System.Windows.Forms.Label LabelCivs;
+        private System.Windows.Forms.Label LabelOpponents;
+        private System.Windows.Forms.RichTextBox RichOutput;
+        private System.Windows.Forms.Label LabelFormat;
     }
 }

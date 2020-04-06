@@ -15,13 +15,13 @@ namespace TournamentRunner
     {
         private static readonly Queue<Match> Matches = new Queue<Match>();
 
-        public static void Run(string exe, int speed, List<Match> games)
+        public static void Run(string exe, int speed, List<Match> matches)
         {
             Matches.Clear();
 
-            foreach (var game in games)
+            foreach (var match in matches)
             {
-                Matches.Enqueue(game);
+                Matches.Enqueue(match);
             }
 
             var old_speed = GetSpeed();
@@ -106,11 +106,20 @@ namespace TournamentRunner
                 args += " " + game.MapType;
                 args += " " + game.MapSize;
 
-                foreach (var player in game.Players)
+                for (int i = 0; i < 8; i++)
                 {
-                    args += " " + player.Name.Replace(" ", "%20");
-                    args += " " + player.Team;
-                    args += " " + player.Civ;
+                    if (i < game.Players.Count)
+                    {
+                        var player = game.Players[i];
+
+                        args += " " + player.Name.Replace(" ", "%20");
+                        args += " " + player.Team;
+                        args += " " + player.Civ;
+                    }
+                    else
+                    {
+                        args += " Closed 0 0";
+                    }
                 }
             }
             

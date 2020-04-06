@@ -96,6 +96,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runner.cs" />
+    <Compile Include="Tournament.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -130,6 +131,7 @@
     <None Include="Releases\Tournament Runner 2.5.zip" />
     <None Include="Releases\Tournament Runner 2.6.zip" />
     <None Include="Releases\Tournament Runner 2.7.zip" />
+    <None Include="Releases\Tournament Runner 3.0.zip" />
     <None Include="runner\base_library.zip" />
     <None Include="runner\GameRunner.exe.manifest" />
     <None Include="runner\pyexpat.pyd" />
@@ -152,9 +154,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="aoc-auto-game.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="readme.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="runner\GameRunner.exe" />
