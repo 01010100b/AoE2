@@ -105,9 +105,10 @@ namespace TournamentRunner
                     {
                         result = RunMatch(match, port);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         result = false;
+                        Debug.WriteLine(e.Message);
                     }
 
                     if (aoc.HasExited)

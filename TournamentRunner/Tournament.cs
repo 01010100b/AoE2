@@ -77,7 +77,7 @@ namespace TournamentRunner
             Runner.Shutdown();
         }
 
-        public List<string> GetShortResults()
+        public List<string> GetResultString()
         {
             var name = Participants[0].Name;
             var wins = new Dictionary<string, int>();

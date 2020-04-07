@@ -14,6 +14,7 @@
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -102,6 +103,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -125,22 +127,54 @@
     <None Include="Releases\Tournament Runner 3.0.zip" />
     <None Include="Releases\Tournament Runner 3.1.zip" />
     <None Include="Releases\Tournament Runner 3.2.zip" />
-    <None Include="runner\base_library.zip" />
-    <None Include="runner\GameRunner.exe.manifest" />
-    <None Include="runner\pyexpat.pyd" />
-    <None Include="runner\select.pyd" />
-    <None Include="runner\unicodedata.pyd" />
-    <None Include="runner\_asyncio.pyd" />
-    <None Include="runner\_bz2.pyd" />
-    <None Include="runner\_ctypes.pyd" />
-    <None Include="runner\_decimal.pyd" />
-    <None Include="runner\_hashlib.pyd" />
-    <None Include="runner\_lzma.pyd" />
-    <None Include="runner\_multiprocessing.pyd" />
-    <None Include="runner\_overlapped.pyd" />
-    <None Include="runner\_queue.pyd" />
-    <None Include="runner\_socket.pyd" />
-    <None Include="runner\_ssl.pyd" />
+    <None Include="runner\base_library.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="runner\GameRunner.exe.manifest">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="runner\pyexpat.pyd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="runner\select.pyd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="runner\unicodedata.pyd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="runner\_asyncio.pyd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="runner\_bz2.pyd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="runner\_ctypes.pyd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="runner\_decimal.pyd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="runner\_hashlib.pyd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="runner\_lzma.pyd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="runner\_multiprocessing.pyd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="runner\_overlapped.pyd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="runner\_queue.pyd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="runner\_socket.pyd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="runner\_ssl.pyd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -150,28 +184,32 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Releases\ui.png" />
-    <Content Include="runner\GameRunner.exe" />
-    <Content Include="runner\libcrypto-1_1.dll" />
-    <Content Include="runner\libssl-1_1.dll" />
-    <Content Include="runner\python37.dll" />
-    <Content Include="runner\VCRUNTIME140.dll" />
+    <Content Include="runner\GameRunner.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="runner\libcrypto-1_1.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="runner\libssl-1_1.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="runner\python37.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="runner\VCRUNTIME140.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="BeforeBuild">
+    <!-- Remove bin folder -->
+    <RemoveDir Directories="$(TargetDir)" />
+  </Target>
   <Import Project="..\packages\Reloaded.Assembler.1.0.8\build\Reloaded.Assembler.targets" Condition="Exists('..\packages\Reloaded.Assembler.1.0.8\build\Reloaded.Assembler.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Reloaded.Assembler.1.0.8\build\Reloaded.Assembler.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Reloaded.Assembler.1.0.8\build\Reloaded.Assembler.targets'))" />
-  </Target>
-  <Target Name="BeforeBuild">
-    <!-- Remove bin folder -->
-    <RemoveDir Directories="$(TargetDir)" />
-  </Target>
-  <Target Name="AfterBuild">
-    <ItemGroup>
-      <ANTLR Include="runner\**\*.*" />
-    </ItemGroup>
-    <Copy SourceFiles="@(ANTLR)" DestinationFolder="$(TargetDir)\runner\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
 </Project>

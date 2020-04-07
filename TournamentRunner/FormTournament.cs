@@ -148,7 +148,7 @@ namespace TournamentRunner
                     }
                 }
 
-                var results = tournament.GetShortResults();
+                var results = tournament.GetResultString();
 
                 var sb = new StringBuilder();
                 sb.AppendLine($"After game {finished}/{tournament.Matches.Count}");
