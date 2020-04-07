@@ -105,6 +105,11 @@ namespace TournamentRunner
                 participants.Add(new Participant(name, civs));
             }
 
+            foreach (var participant in participants)
+            {
+                Debug.WriteLine("Participant: " + participant.ToString());
+            }
+
             bool record = CheckRecord.Checked;
 
             var tournament = new Tournament(games, maps, participants, teams, record);
@@ -131,18 +136,6 @@ namespace TournamentRunner
             while (finished < tournament.Matches.Count)
             {
                 finished = 0;
-                wins.Clear();
-                losses.Clear();
-                draws.Clear();
-
-                for (int i = 1; i < tournament.Participants.Count; i++)
-                {
-                    wins.Add(tournament.Participants[i].Name, 0);
-                    losses.Add(tournament.Participants[i].Name, 0);
-                    draws.Add(tournament.Participants[i].Name, 0);
-
-                    //Debug.WriteLine("participant: " + tournament.Participants[i].Name);
-                }
 
                 lock (tournament.Matches)
                 {
@@ -151,62 +144,11 @@ namespace TournamentRunner
                         if (match.Finished)
                         {
                             finished++;
-
-                            var team1 = match.Players.First(p => p.Team == 1).Name;
-                            var team2 = match.Players.First(p => p.Team == 2).Name;
-                            //Debug.WriteLine("team1: " + team1);
-                            //Debug.WriteLine("team2: " + team2);
-
-                            var opponent = team1;
-                            if (opponent.Equals(name))
-                            {
-                                opponent = team2;
-                            }
-
-                            //Debug.WriteLine("opponent: " + opponent);
-
-                            if (match.Draw)
-                            {
-                                draws[opponent]++;
-                            }
-                            else
-                            {
-                                var my_team = 1;
-                                if (name.Equals(team2))
-                                {
-                                    my_team = 2;
-                                }
-
-                                if (match.WinningTeams.Contains(my_team))
-                                {
-                                    wins[opponent]++;
-                                }
-                                else
-                                {
-                                    losses[opponent]++;
-                                }
-                            }
                         }
                     }
                 }
 
-                var results = new List<string>();
-
-                var opponents = tournament.Participants.Select(p => p.Name).ToList();
-                opponents.RemoveAt(0);
-                opponents.Sort();
-
-                foreach (var o in opponents)
-                {
-                    var w = wins[o];
-                    var l = losses[o];
-                    var d = draws[o];
-
-                    var result = $"{name} - {o}: {w} {l} {d}";
-                    results.Add(result);
-                }
-
-                results.Sort();
+                var results = tournament.GetShortResults();
 
                 var sb = new StringBuilder();
                 sb.AppendLine($"After game {finished}/{tournament.Matches.Count}");

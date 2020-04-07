@@ -128,9 +128,9 @@
             // ButtonLaunch
             // 
             this.ButtonLaunch.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ButtonLaunch.Location = new System.Drawing.Point(39, 242);
+            this.ButtonLaunch.Location = new System.Drawing.Point(40, 207);
             this.ButtonLaunch.Name = "ButtonLaunch";
-            this.ButtonLaunch.Size = new System.Drawing.Size(215, 59);
+            this.ButtonLaunch.Size = new System.Drawing.Size(215, 58);
             this.ButtonLaunch.TabIndex = 6;
             this.ButtonLaunch.Text = "Launch";
             this.ButtonLaunch.UseVisualStyleBackColor = true;
@@ -300,7 +300,7 @@
             this.RichOutput.Location = new System.Drawing.Point(40, 331);
             this.RichOutput.Name = "RichOutput";
             this.RichOutput.ReadOnly = true;
-            this.RichOutput.Size = new System.Drawing.Size(665, 270);
+            this.RichOutput.Size = new System.Drawing.Size(637, 270);
             this.RichOutput.TabIndex = 24;
             this.RichOutput.Text = "";
             // 
@@ -308,7 +308,7 @@
             // 
             this.LabelFormat.AutoSize = true;
             this.LabelFormat.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LabelFormat.Location = new System.Drawing.Point(281, 281);
+            this.LabelFormat.Location = new System.Drawing.Point(36, 308);
             this.LabelFormat.Name = "LabelFormat";
             this.LabelFormat.Size = new System.Drawing.Size(298, 20);
             this.LabelFormat.TabIndex = 25;
@@ -317,8 +317,6 @@
             // CheckRecord
             // 
             this.CheckRecord.AutoSize = true;
-            this.CheckRecord.Checked = true;
-            this.CheckRecord.CheckState = System.Windows.Forms.CheckState.Checked;
             this.CheckRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CheckRecord.Location = new System.Drawing.Point(136, 177);
             this.CheckRecord.Name = "CheckRecord";
@@ -331,7 +329,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(783, 628);
+            this.ClientSize = new System.Drawing.Size(727, 628);
             this.Controls.Add(this.CheckRecord);
             this.Controls.Add(this.LabelFormat);
             this.Controls.Add(this.RichOutput);

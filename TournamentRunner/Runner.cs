@@ -13,8 +13,6 @@ namespace TournamentRunner
 {
     public static class Runner
     {
-        public const int NUM_INSTANCES = 6;
-
         private static readonly Queue<Match> Matches = new Queue<Match>();
         private static readonly List<Match> RunningMatches = new List<Match>();
         private static readonly List<Thread> Instances = new List<Thread>();
@@ -25,10 +23,16 @@ namespace TournamentRunner
         {
             Shutdown();
 
+            var num_instances = (3 * Environment.ProcessorCount) / 2;
+            if (num_instances < 1)
+            {
+                num_instances = 1;
+            }
+
             Speed = speed;
             var rng = new Random();
             var ports = new List<int>();
-            while (ports.Count < NUM_INSTANCES)
+            while (ports.Count < num_instances)
             {
                 var p = rng.Next(40000, 65000);
                 while (ports.Contains(p))
@@ -39,7 +43,7 @@ namespace TournamentRunner
                 ports.Add(p);
             }
 
-            for (int i = 0; i < NUM_INSTANCES; i++)
+            for (int i = 0; i < num_instances; i++)
             {
                 var port = ports[i];
                 var aoc = Launch(exe, port);
@@ -53,29 +57,14 @@ namespace TournamentRunner
             }
         }
 
-        public static void Run(List<Match> matches)
+        public static void Enqueue(IEnumerable<Match> matches) 
         {
             lock (Matches)
             {
-                foreach (var match in matches)
+                foreach (var match in matches.Where(m => !m.Finished))
                 {
                     Matches.Enqueue(match);
                 }
-            }
-        }
-
-        public static void WaitForFinish()
-        {
-            var remaining = 1;
-            while (remaining > 0)
-            {
-                lock (Matches)
-                {
-                    remaining = Matches.Count;
-                    remaining += RunningMatches.Count;
-                }
-
-                Thread.Sleep(2 * 1000);
             }
         }
 

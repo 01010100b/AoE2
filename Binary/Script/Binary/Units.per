@@ -71,7 +71,7 @@ up-get-fact unit-type-count-total trade-cart gl-trade-carts
 gl-pop-cap -= gl-trade-carts
 gl-pop-cap max= 0
 
-#if (up-object-type-count-total c: villager g:< gl-pop-cap) (can-train-with-escrow villager)
+#if (up-object-type-count-total c: villager g:< gl-pop-cap) (can-train-with-escrow villager) (up-compare-const build-villagers == 1)
 
 	up-train gl-with-escrow c: villager
 	
@@ -102,7 +102,7 @@ gl-pop-cap max= 0
 
 #if (timer-triggered ti-next-villager) (food-amount < 50)
 
-	#if (current-age == dark-age)
+	#if current-age == dark-age
 	
 		up-drop-resources food c: 3
 		
