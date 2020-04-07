@@ -21,24 +21,29 @@ namespace TournamentRunner
         }
 
         public readonly int Games;
-        public readonly int MapType;
+        public readonly List<int> Maps;
         public readonly List<Participant> Participants;
         public readonly List<int> TeamSizes;
+        public readonly bool Record;
         public readonly List<Match> Matches;
 
-        public Tournament(int games, int map, List<Participant> participants, List<int> teams)
+        public Tournament(int games, List<int> maps, List<Participant> participants, List<int> teams, bool record)
         {
             Games = games;
-            MapType = map;
+            Maps = maps.ToList();
             Participants = participants.ToList();
             TeamSizes = teams.ToList();
-            
+            Record = record;
+
             Matches = GetAllMatches();
         }
 
         public void Run(string exe, int speed)
         {
-            Runner.Run(exe, speed, Matches);
+            Runner.Startup(exe, speed);
+            Runner.Run(Matches);
+            Runner.WaitForFinish();
+            Runner.Shutdown();
         }
 
         private List<Match> GetAllMatches()
@@ -58,10 +63,10 @@ namespace TournamentRunner
         {
             var matches = new List<Match>();
 
-            foreach (var teamsizes in TeamSizes)
+            foreach (var teamsize in TeamSizes)
             {
-                var mapsize = teamsizes;
-                if (teamsizes == 1)
+                var mapsize = teamsize;
+                if (teamsize == 1)
                 {
                     mapsize = 0;
                 }
@@ -70,7 +75,7 @@ namespace TournamentRunner
                 {
                     var players = new List<Player>();
 
-                    for (int i = 0; i < teamsizes; i++)
+                    for (int i = 0; i < teamsize; i++)
                     {
                         var name = a.Name;
                         var civ = a.Civilizations[rng.Next(a.Civilizations.Count)];
@@ -78,15 +83,15 @@ namespace TournamentRunner
                         players.Add(new Player(name, 1, civ));
                     }
 
-                    for (int i = 0; i < teamsizes; i++)
+                    for (int i = 0; i < teamsize; i++)
                     {
                         var name = b.Name;
-                        var civ = b.Civilizations[rng.Next(a.Civilizations.Count)];
+                        var civ = b.Civilizations[rng.Next(b.Civilizations.Count)];
 
                         players.Add(new Player(name, 2, civ));
                     }
 
-                    matches.Add(new Match(0, MapType, mapsize, players));
+                    matches.Add(new Match(0, Maps[rng.Next(Maps.Count)], mapsize, players, Record));
                 }
             }
 

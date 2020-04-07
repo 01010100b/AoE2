@@ -54,6 +54,7 @@
             this.LabelOpponents = new System.Windows.Forms.Label();
             this.RichOutput = new System.Windows.Forms.RichTextBox();
             this.LabelFormat = new System.Windows.Forms.Label();
+            this.CheckRecord = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // TextMap
@@ -72,7 +73,7 @@
             this.TextGames.Name = "TextGames";
             this.TextGames.Size = new System.Drawing.Size(118, 26);
             this.TextGames.TabIndex = 1;
-            this.TextGames.Text = "3";
+            this.TextGames.Text = "5";
             // 
             // Check1v1
             // 
@@ -93,7 +94,7 @@
             this.Check2v2.Checked = true;
             this.Check2v2.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Check2v2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Check2v2.Location = new System.Drawing.Point(136, 143);
+            this.Check2v2.Location = new System.Drawing.Point(195, 115);
             this.Check2v2.Name = "Check2v2";
             this.Check2v2.Size = new System.Drawing.Size(53, 24);
             this.Check2v2.TabIndex = 3;
@@ -104,7 +105,7 @@
             // 
             this.Check3v3.AutoSize = true;
             this.Check3v3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Check3v3.Location = new System.Drawing.Point(136, 173);
+            this.Check3v3.Location = new System.Drawing.Point(136, 145);
             this.Check3v3.Name = "Check3v3";
             this.Check3v3.Size = new System.Drawing.Size(53, 24);
             this.Check3v3.TabIndex = 4;
@@ -117,7 +118,7 @@
             this.Check4v4.Checked = true;
             this.Check4v4.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Check4v4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Check4v4.Location = new System.Drawing.Point(136, 203);
+            this.Check4v4.Location = new System.Drawing.Point(195, 145);
             this.Check4v4.Name = "Check4v4";
             this.Check4v4.Size = new System.Drawing.Size(53, 24);
             this.Check4v4.TabIndex = 5;
@@ -180,7 +181,7 @@
             this.TextOpponent1Civs.Name = "TextOpponent1Civs";
             this.TextOpponent1Civs.Size = new System.Drawing.Size(118, 26);
             this.TextOpponent1Civs.TabIndex = 12;
-            this.TextOpponent1Civs.Text = "3,16";
+            this.TextOpponent1Civs.Text = "3,5,15,16";
             // 
             // TextOpponent1Name
             // 
@@ -234,6 +235,7 @@
             this.TextOpponent4Civs.Name = "TextOpponent4Civs";
             this.TextOpponent4Civs.Size = new System.Drawing.Size(118, 26);
             this.TextOpponent4Civs.TabIndex = 18;
+            this.TextOpponent4Civs.Text = "19";
             // 
             // TextOpponent4Name
             // 
@@ -242,6 +244,7 @@
             this.TextOpponent4Name.Name = "TextOpponent4Name";
             this.TextOpponent4Name.Size = new System.Drawing.Size(268, 26);
             this.TextOpponent4Name.TabIndex = 17;
+            this.TextOpponent4Name.Text = "Kosmos3.00beta2";
             // 
             // TextOpponent5Civs
             // 
@@ -250,6 +253,7 @@
             this.TextOpponent5Civs.Name = "TextOpponent5Civs";
             this.TextOpponent5Civs.Size = new System.Drawing.Size(118, 26);
             this.TextOpponent5Civs.TabIndex = 20;
+            this.TextOpponent5Civs.Text = "13";
             // 
             // TextOpponent5Name
             // 
@@ -258,6 +262,7 @@
             this.TextOpponent5Name.Name = "TextOpponent5Name";
             this.TextOpponent5Name.Size = new System.Drawing.Size(268, 26);
             this.TextOpponent5Name.TabIndex = 19;
+            this.TextOpponent5Name.Text = "InFamous-Celtic";
             // 
             // LabelAI
             // 
@@ -309,11 +314,25 @@
             this.LabelFormat.TabIndex = 25;
             this.LabelFormat.Text = "Result format: \"name - opponent: W L D\"";
             // 
+            // CheckRecord
+            // 
+            this.CheckRecord.AutoSize = true;
+            this.CheckRecord.Checked = true;
+            this.CheckRecord.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CheckRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CheckRecord.Location = new System.Drawing.Point(136, 177);
+            this.CheckRecord.Name = "CheckRecord";
+            this.CheckRecord.Size = new System.Drawing.Size(80, 24);
+            this.CheckRecord.TabIndex = 26;
+            this.CheckRecord.Text = "Record";
+            this.CheckRecord.UseVisualStyleBackColor = true;
+            // 
             // FormTournament
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(783, 628);
+            this.Controls.Add(this.CheckRecord);
             this.Controls.Add(this.LabelFormat);
             this.Controls.Add(this.RichOutput);
             this.Controls.Add(this.LabelOpponents);
@@ -375,5 +394,6 @@
         private System.Windows.Forms.Label LabelOpponents;
         private System.Windows.Forms.RichTextBox RichOutput;
         private System.Windows.Forms.Label LabelFormat;
+        private System.Windows.Forms.CheckBox CheckRecord;
     }
 }

@@ -13,84 +13,204 @@ namespace TournamentRunner
 {
     public static class Runner
     {
+        public const int NUM_INSTANCES = 6;
+
         private static readonly Queue<Match> Matches = new Queue<Match>();
+        private static readonly List<Match> RunningMatches = new List<Match>();
+        private static readonly List<Thread> Instances = new List<Thread>();
+        private static volatile bool Stop = false;
+        private static int Speed = 100;
 
-        public static void Run(string exe, int speed, List<Match> matches)
+        public static void Startup(string exe, int speed)
         {
-            Matches.Clear();
+            Shutdown();
 
-            foreach (var match in matches)
+            Speed = speed;
+            var rng = new Random();
+            var ports = new List<int>();
+            while (ports.Count < NUM_INSTANCES)
             {
-                Matches.Enqueue(match);
+                var p = rng.Next(40000, 65000);
+                while (ports.Contains(p))
+                {
+                    p = rng.Next(40000, 65000);
+                }
+
+                ports.Add(p);
             }
 
-            var old_speed = GetSpeed();
-            SetSpeed(speed);
-
-            var rng = new Random();
-            var instances = new List<Thread>();
-            var num_instances = Math.Min(6, Matches.Count);
-
-            for (int i = 0; i < num_instances; i++)
+            for (int i = 0; i < NUM_INSTANCES; i++)
             {
-                var port = rng.Next(40000, 65000);
+                var port = ports[i];
                 var aoc = Launch(exe, port);
                 var inst = new Thread(() => RunInstance(aoc, port))
                 {
                     IsBackground = true
                 };
 
-                instances.Add(inst);
+                Instances.Add(inst);
                 inst.Start();
+            }
+        }
+
+        public static void Run(List<Match> matches)
+        {
+            lock (Matches)
+            {
+                foreach (var match in matches)
+                {
+                    Matches.Enqueue(match);
+                }
+            }
+        }
+
+        public static void WaitForFinish()
+        {
+            var remaining = 1;
+            while (remaining > 0)
+            {
+                lock (Matches)
+                {
+                    remaining = Matches.Count;
+                    remaining += RunningMatches.Count;
+                }
 
                 Thread.Sleep(2 * 1000);
             }
+        }
 
-            SetSpeed(old_speed);
+        public static void Shutdown()
+        {
+            Stop = true;
 
-            foreach (var inst in instances)
+            foreach (var instance in Instances)
             {
-                inst.Join();
+                instance.Join();
             }
+
+            Matches.Clear();
+            RunningMatches.Clear();
+            Instances.Clear();
+            Stop = false;
         }
 
         private static void RunInstance(Process aoc, int port)
         {
-            lock (Matches)
+            while (!Stop)
             {
-                if (Matches.Count == 0)
-                {
-                    aoc.Kill();
-                    return;
-                }
-            }
-
-            while (true)
-            {
-                Match game = null;
+                Match match = null;
                 lock (Matches)
                 {
                     if (Matches.Count > 0)
                     {
-                        game = Matches.Dequeue();
+                        match = Matches.Dequeue();
+                        RunningMatches.Add(match);
                     }
                 }
 
-                if (game == null)
+                if (match != null)
                 {
-                    break;
+                    var result = false;
+                    
+                    try
+                    {
+                        result = RunMatch(match, port);
+                    }
+                    catch (Exception)
+                    {
+                        result = false;
+                    }
+
+                    if (aoc.HasExited)
+                    {
+                        result = false;
+                    }
+
+                    if (result)
+                    {
+                        match.Finished = true;
+
+                        lock (Matches)
+                        {
+                            RunningMatches.Remove(match);
+                        }
+                    }
+                    else
+                    {
+                        match.Finished = false;
+
+                        Debug.WriteLine("Error: failed result at " + DateTime.Now.ToShortTimeString());
+
+                        lock (match)
+                        {
+                            match.Winners.Clear();
+                        }
+
+                        lock (Matches)
+                        {
+                            RunningMatches.Remove(match);
+                            Matches.Enqueue(match);
+                        }
+
+                        if (!aoc.HasExited)
+                        {
+                            aoc.Kill();
+                            aoc.WaitForExit();
+                        }
+
+                        var launched = true;
+                        try
+                        {
+                            Thread.Sleep(10 * 1000);
+                            aoc = Launch(aoc.StartInfo.FileName, port);
+                        }
+                        catch (Exception e)
+                        {
+                            launched = false;
+                            Debug.WriteLine("Exception: " + e.Message);
+                        }
+
+                        while (!launched)
+                        {
+                            if (!aoc.HasExited)
+                            {
+                                aoc.Kill();
+                                aoc.WaitForExit();
+                            }
+
+                            Debug.WriteLine("Launch failed, retrying...");
+
+                            launched = true;
+                            try
+                            {
+                                Thread.Sleep(10 * 1000);
+                                aoc = Launch(aoc.StartInfo.FileName, port);
+                            }
+                            catch (Exception e)
+                            {
+                                launched = false;
+                                Debug.WriteLine("Exception: " + e.Message);
+                            }
+
+                            if (Stop)
+                            {
+                                break;
+                            }
+                        }
+                    }
                 }
 
-                RunGame(game, port);
+                Thread.Sleep(1 * 1000);
             }
 
             if (!aoc.HasExited)
             {
                 aoc.Kill();
+                aoc.WaitForExit();
             }
         }
 
-        private static void RunGame(Match game, int port)
+        private static bool RunMatch(Match match, int port)
         {
             var cmd = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "runner", "GameRunner.exe");
             if (!File.Exists(cmd))
@@ -100,17 +220,18 @@ namespace TournamentRunner
 
             var args = port.ToString();
 
-            lock (game)
+            lock (match)
             {
-                args += " " + game.GameType;
-                args += " " + game.MapType;
-                args += " " + game.MapSize;
+                args += " " + match.GameType;
+                args += " " + match.MapType;
+                args += " " + match.MapSize;
+                args += " " + (match.Record ? "true" : "false");
 
                 for (int i = 0; i < 8; i++)
                 {
-                    if (i < game.Players.Count)
+                    if (i < match.Players.Count)
                     {
-                        var player = game.Players[i];
+                        var player = match.Players[i];
 
                         args += " " + player.Name.Replace(" ", "%20");
                         args += " " + player.Team;
@@ -138,15 +259,22 @@ namespace TournamentRunner
             {
                 StartInfo = info
             };
-            process.Start();
+            
+            lock (Instances)
+            {
+                process.Start();
+                Thread.Sleep(10 * 1000);
+            }
+            
 
+            var gotresult = false;
             while (!process.HasExited)
             {
                 var line = process.StandardOutput.ReadLine();
-                Debug.WriteLine(line);
 
                 if (line != null && line.StartsWith("Result"))
                 {
+                    gotresult = true;
                     var pieces = line.Split(' ');
                     var winners = new List<int>();
 
@@ -158,19 +286,15 @@ namespace TournamentRunner
                         }
                     }
 
-                    lock (game)
+                    lock (match)
                     {
-                        game.Winners.AddRange(winners);
+                        match.Winners.Clear();
+                        match.Winners.AddRange(winners);
                     }
                 }
             }
 
-            lock (game)
-            {
-                game.Finished = true;
-            }
-
-            Debug.WriteLine("done running");
+            return gotresult;
         }
 
         private static Process Launch(string exe, int port)
@@ -188,22 +312,49 @@ namespace TournamentRunner
                 throw new Exception("File not found: " + exe);
             }
 
-            var process = Process.Start(exe, "-multipleinstances -autogameport " + port);
-            while (!process.Responding)
+            lock (Instances)
             {
-                Thread.Sleep(1 * 1000);
-                Debug.WriteLine("Waiting for process to respond");
+                var old_speed = GetSpeed();
+                SetSpeed(Speed);
+
+                Process process = null;
+                try
+                {
+                    process = Process.Start(exe, "-multipleinstances -autogameport " + port);
+
+                    while (!process.Responding)
+                    {
+                        Debug.WriteLine("Waiting for process to respond");
+                        Thread.Sleep(1 * 1000);
+                    }
+
+                    Thread.Sleep(3 * 1000);
+                    using (var injector = new Injector(process))
+                    {
+                        injector.Inject(dll);
+                    }
+
+                    Thread.Sleep(10 * 1000);
+                }
+                catch (Exception e)
+                {
+                    if (process != null && !process.HasExited)
+                    {
+                        process.Kill();
+                        process.WaitForExit();
+                    }
+
+                    throw e;
+                }
+                finally
+                {
+                    SetSpeed(old_speed);
+                }
+
+                Debug.WriteLine("launched");
+
+                return process;
             }
-
-            using (var injector = new Injector(process))
-            {
-                injector.Inject(dll);
-            }
-
-            Thread.Sleep(10 * 1000);
-            Debug.WriteLine("launched");
-
-            return process;
         }
 
         private static int GetSpeed()

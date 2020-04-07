@@ -2,7 +2,7 @@ import msgpackrpc
 import time
 import sys
 
-# GameRunner port game_type map_type map_size player1_name player1_team player1_civ player2_name ... 
+# GameRunner port game_type map_type map_size record player1_name player1_team player1_civ player2_name ... 
 
 teams = [0, 0, 0, 0, 0, 0, 0, 0]
 
@@ -68,15 +68,19 @@ autogame.call('SetGameDifficulty', 1)
 autogame.call('SetGameStartingAge', 0)
 autogame.call('SetGameTeamsLocked', True)
 autogame.call('SetGameTeamsTogether', True)
-autogame.call('SetGameRecorded', True)
+
 autogame.call('SetGameVictoryType', 1, 0)
 
 autogame.call('SetGameType', int(sys.argv[2]))
 autogame.call('SetGameMapType', int(sys.argv[3]))
 autogame.call('SetGameMapSize', int(sys.argv[4]))
+if sys.argv[5] == "True":
+    autogame.call('SetGameRecorded', True)
+else:
+    autogame.call('SetGameRecorded', False)
 
 for i in range(8):
-    index = 5 + (i * 3)
+    index = 6 + (i * 3)
     name = sys.argv[index].replace("%20", " ")
     team = int(sys.argv[index + 1])
     teams[i] = team
@@ -139,4 +143,4 @@ if not draw:
 autogame.call('QuitGame')
 print("Result: " + str(win1) + " " + str(win2) + " " + str(win3) + " " + str(win4) + " " + str(win5) + " " + str(win6) + " " + str(win7) + " " + str(win8), flush = True)
 
-time.sleep(3.0)
+time.sleep(10.0)

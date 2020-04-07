@@ -43,7 +43,7 @@ namespace TournamentRunner
             RichOutput.Text = "Starting tournament...";
 
             var games = int.Parse(TextGames.Text);
-            var map = int.Parse(TextMap.Text);
+            var maps = TextMap.Text.Split(',').Select(s => int.Parse(s)).ToList();
 
             var teams = new List<int>();
             if (Check1v1.Checked)
@@ -105,7 +105,9 @@ namespace TournamentRunner
                 participants.Add(new Participant(name, civs));
             }
 
-            var tournament = new Tournament(games, map, participants, teams);
+            bool record = CheckRecord.Checked;
+
+            var tournament = new Tournament(games, maps, participants, teams, record);
 
             var runner = new Thread(() => Run(tournament, exe, 100)) { IsBackground = true };
             runner.Start();
@@ -146,45 +148,42 @@ namespace TournamentRunner
                 {
                     foreach (var match in tournament.Matches)
                     {
-                        lock (match)
+                        if (match.Finished)
                         {
-                            if (match.Finished)
+                            finished++;
+
+                            var team1 = match.Players.First(p => p.Team == 1).Name;
+                            var team2 = match.Players.First(p => p.Team == 2).Name;
+                            //Debug.WriteLine("team1: " + team1);
+                            //Debug.WriteLine("team2: " + team2);
+
+                            var opponent = team1;
+                            if (opponent.Equals(name))
                             {
-                                finished++;
+                                opponent = team2;
+                            }
 
-                                var team1 = match.Players.First(p => p.Team == 1).Name;
-                                var team2 = match.Players.First(p => p.Team == 2).Name;
-                                //Debug.WriteLine("team1: " + team1);
-                                //Debug.WriteLine("team2: " + team2);
+                            //Debug.WriteLine("opponent: " + opponent);
 
-                                var opponent = team1;
-                                if (opponent.Equals(name))
+                            if (match.Draw)
+                            {
+                                draws[opponent]++;
+                            }
+                            else
+                            {
+                                var my_team = 1;
+                                if (name.Equals(team2))
                                 {
-                                    opponent = team2;
+                                    my_team = 2;
                                 }
 
-                                //Debug.WriteLine("opponent: " + opponent);
-
-                                if (match.Draw)
+                                if (match.WinningTeams.Contains(my_team))
                                 {
-                                    draws[opponent]++;
+                                    wins[opponent]++;
                                 }
                                 else
                                 {
-                                    var my_team = 1;
-                                    if (name.Equals(team2))
-                                    {
-                                        my_team = 2;
-                                    }
-
-                                    if (match.WinningTeams.Contains(my_team))
-                                    {
-                                        wins[opponent]++;
-                                    }
-                                    else
-                                    {
-                                        losses[opponent]++;
-                                    }
+                                    losses[opponent]++;
                                 }
                             }
                         }
@@ -239,6 +238,12 @@ namespace TournamentRunner
             }
 
             var lines = File.ReadAllLines(file);
+            if (lines.Length != 19)
+            {
+                File.Delete(file);
+                Debug.WriteLine("tournament.txt not correct number of lines");
+                return;
+            }
 
             TextMap.Text = lines[0];
             TextGames.Text = lines[1];
@@ -259,6 +264,7 @@ namespace TournamentRunner
             TextOpponent4Civs.Text = lines[15];
             TextOpponent5Name.Text = lines[16];
             TextOpponent5Civs.Text = lines[17];
+            CheckRecord.Checked = lines[18].Equals("True") ? true : false;
         }
 
         private void SaveSettings()
@@ -281,11 +287,12 @@ namespace TournamentRunner
                 TextOpponent2Name.Text,
                 TextOpponent2Civs.Text,
                 TextOpponent3Name.Text,
-             TextOpponent3Civs.Text,
+                TextOpponent3Civs.Text,
                 TextOpponent4Name.Text,
                 TextOpponent4Civs.Text,
                 TextOpponent5Name.Text,
-                TextOpponent5Civs.Text
+                TextOpponent5Civs.Text,
+                CheckRecord.Checked ? "True" : "False"
             };
 
             File.WriteAllLines(file, lines);

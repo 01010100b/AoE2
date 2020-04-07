@@ -8,26 +8,36 @@ namespace TournamentRunner
 {
     public class Match
     {
-        public bool Finished { get; internal set; } = false;
+        private volatile bool _Finished = false;
+        public bool Finished { get { return _Finished; } set { _Finished = value; } }
         public readonly int GameType;
         public readonly int MapType;
         public readonly int MapSize;
+        public readonly bool Record;
         public readonly List<Player> Players;
+
+        // undefined before Finished = true
         public readonly List<int> Winners = new List<int>();
         public List<int> WinningTeams { get { return GetWinningTeams(); } }
-        public bool Draw { get { return Winners.Count == 0; } }
+        public bool Draw { get { return GetDraw(); } }
 
-        public Match(int game_type, int map_type, int map_size, List<Player> players)
+        public Match(int game_type, int map_type, int map_size, List<Player> players, bool record)
         {
             GameType = game_type;
             MapType = map_type;
             MapSize = map_size;
             Players = players.ToList();
+            Record = record;
         }
 
         private List<int> GetWinningTeams()
         {
             var teams = new List<int>();
+
+            if (!Finished)
+            {
+                return teams;
+            }
 
             foreach (var w in Winners)
             {
@@ -40,6 +50,16 @@ namespace TournamentRunner
             }
 
             return teams;
+        }
+
+        private bool GetDraw()
+        {
+            if (!Finished)
+            {
+                return false;
+            }
+
+            return Winners.Count == 0;
         }
     }
 }
