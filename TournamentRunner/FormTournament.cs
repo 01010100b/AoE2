@@ -133,13 +133,13 @@ namespace TournamentRunner
             var losses = new Dictionary<string, int>();
             var draws = new Dictionary<string, int>();
 
-            while (finished < tournament.Matches.Count)
+            while (finished < tournament.Games.Count)
             {
                 finished = 0;
 
-                lock (tournament.Matches)
+                lock (tournament.Games)
                 {
-                    foreach (var match in tournament.Matches)
+                    foreach (var match in tournament.Games)
                     {
                         if (match.Finished)
                         {
@@ -151,7 +151,7 @@ namespace TournamentRunner
                 var results = tournament.GetResultString();
 
                 var sb = new StringBuilder();
-                sb.AppendLine($"After game {finished}/{tournament.Matches.Count}");
+                sb.AppendLine($"After game {finished}/{tournament.Games.Count}");
                 foreach (var r in results)
                 {
                     sb.AppendLine(r);
@@ -164,7 +164,7 @@ namespace TournamentRunner
             runner.Join();
 
             sw.Stop();
-            var time = "Took " + sw.Elapsed.TotalMinutes.ToString("N2") + " m, " + (sw.Elapsed.TotalMinutes / tournament.Matches.Count).ToString("N2") + " m/game";
+            var time = "Took " + sw.Elapsed.TotalMinutes.ToString("N2") + " m, " + (sw.Elapsed.TotalMinutes / tournament.Games.Count).ToString("N2") + " m/game";
             Invoke(new Action(() => RichOutput.AppendText("\n" + time)));
 
             Invoke(new Action(() => ButtonLaunch.Enabled = true));

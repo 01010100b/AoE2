@@ -34,37 +34,37 @@ namespace TournamentRunner
             }
         }
 
-        public readonly int Games;
+        public readonly int GamesPerMatch;
         public readonly List<int> Maps;
         public readonly List<Participant> Participants;
         public readonly List<int> TeamSizes;
         public readonly bool Record;
-        public readonly List<Match> Matches;
+        public readonly List<Game> Games;
 
         public Tournament(int games, List<int> maps, List<Participant> participants, List<int> teams, bool record)
         {
-            Games = games;
+            GamesPerMatch = games;
             Maps = maps.ToList();
             Participants = participants.ToList();
             TeamSizes = teams.ToList();
             Record = record;
 
-            Matches = GetAllMatches();
+            Games = GetAllGames();
         }
 
         public void Run(string exe, int speed)
         {
             Runner.Startup(exe, speed);
 
-            Runner.Enqueue(Matches);
+            Runner.Enqueue(Games);
 
             var finished = false;
             while (!finished)
             {
                 finished = true;
-                foreach (var match in Matches)
+                foreach (var game in Games)
                 {
-                    if (!match.Finished)
+                    if (!game.Finished)
                     {
                         finished = false;
                         break;
@@ -91,14 +91,14 @@ namespace TournamentRunner
                 draws.Add(Participants[i].Name, 0);
             }
 
-            lock (Matches)
+            lock (Games)
             {
-                foreach (var match in Matches)
+                foreach (var game in Games)
                 {
-                    if (match.Finished)
+                    if (game.Finished)
                     {
-                        var team1 = match.Players.First(p => p.Team == 1).Name;
-                        var team2 = match.Players.First(p => p.Team == 2).Name;
+                        var team1 = game.Players.First(p => p.Team == 1).Name;
+                        var team2 = game.Players.First(p => p.Team == 2).Name;
                         //Debug.WriteLine("team1: " + team1);
                         //Debug.WriteLine("team2: " + team2);
 
@@ -110,7 +110,7 @@ namespace TournamentRunner
 
                         //Debug.WriteLine("opponent: " + opponent);
 
-                        if (match.Draw)
+                        if (game.Draw)
                         {
                             draws[opponent]++;
                         }
@@ -122,7 +122,7 @@ namespace TournamentRunner
                                 my_team = 2;
                             }
 
-                            if (match.WinningTeams.Contains(my_team))
+                            if (game.WinningTeams.Contains(my_team))
                             {
                                 wins[opponent]++;
                             }
@@ -156,22 +156,22 @@ namespace TournamentRunner
             return results;
         }
 
-        private List<Match> GetAllMatches()
+        private List<Game> GetAllGames()
         {
-            var matches = new List<Match>();
+            var games = new List<Game>();
             var rng = new Random();
 
             for (int i = 1; i < Participants.Count; i++)
             {
-                matches.AddRange(GetMatches(rng, Participants[0], Participants[i]));
+                games.AddRange(GetGames(rng, Participants[0], Participants[i]));
             }
 
-            return matches.OrderBy(m => rng.Next()).ToList();
+            return games.OrderBy(m => rng.Next()).ToList();
         }
 
-        private List<Match> GetMatches(Random rng, Participant a, Participant b)
+        private List<Game> GetGames(Random rng, Participant a, Participant b)
         {
-            var matches = new List<Match>();
+            var games = new List<Game>();
 
             foreach (var teamsize in TeamSizes)
             {
@@ -181,7 +181,7 @@ namespace TournamentRunner
                     mapsize = 0;
                 }
 
-                for (int game = 0; game < Games; game++)
+                for (int game = 0; game < GamesPerMatch; game++)
                 {
                     var players = new List<Player>();
 
@@ -201,11 +201,11 @@ namespace TournamentRunner
                         players.Add(new Player(name, 2, civ));
                     }
 
-                    matches.Add(new Match(0, Maps[rng.Next(Maps.Count)], mapsize, players, Record));
+                    games.Add(new Game(0, Maps[rng.Next(Maps.Count)], mapsize, players, Record));
                 }
             }
 
-            return matches;
+            return games;
         }
     }
 }

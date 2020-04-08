@@ -13,8 +13,8 @@ namespace TournamentRunner
 {
     public static class Runner
     {
-        private static readonly Queue<Match> Matches = new Queue<Match>();
-        private static readonly List<Match> RunningMatches = new List<Match>();
+        private static readonly Queue<Game> Games = new Queue<Game>();
+        private static readonly List<Game> RunningGames = new List<Game>();
         private static readonly List<Thread> Instances = new List<Thread>();
         private static volatile bool Stop = false;
         private static int Speed = 100;
@@ -57,13 +57,13 @@ namespace TournamentRunner
             }
         }
 
-        public static void Enqueue(IEnumerable<Match> matches) 
+        public static void Enqueue(IEnumerable<Game> games) 
         {
-            lock (Matches)
+            lock (Games)
             {
-                foreach (var match in matches.Where(m => !m.Finished))
+                foreach (var game in games.Where(m => !m.Finished))
                 {
-                    Matches.Enqueue(match);
+                    Games.Enqueue(game);
                 }
             }
         }
@@ -77,8 +77,10 @@ namespace TournamentRunner
                 instance.Join();
             }
 
-            Matches.Clear();
-            RunningMatches.Clear();
+            Thread.Sleep(10 * 1000);
+
+            Games.Clear();
+            RunningGames.Clear();
             Instances.Clear();
             Stop = false;
         }
@@ -87,23 +89,23 @@ namespace TournamentRunner
         {
             while (!Stop)
             {
-                Match match = null;
-                lock (Matches)
+                Game game = null;
+                lock (Games)
                 {
-                    if (Matches.Count > 0)
+                    if (Games.Count > 0)
                     {
-                        match = Matches.Dequeue();
-                        RunningMatches.Add(match);
+                        game = Games.Dequeue();
+                        RunningGames.Add(game);
                     }
                 }
 
-                if (match != null)
+                if (game != null)
                 {
                     var result = false;
                     
                     try
                     {
-                        result = RunMatch(match, port);
+                        result = RunGame(game, port);
                     }
                     catch (Exception e)
                     {
@@ -118,28 +120,28 @@ namespace TournamentRunner
 
                     if (result)
                     {
-                        match.Finished = true;
+                        game.Finished = true;
 
-                        lock (Matches)
+                        lock (Games)
                         {
-                            RunningMatches.Remove(match);
+                            RunningGames.Remove(game);
                         }
                     }
                     else
                     {
-                        match.Finished = false;
+                        game.Finished = false;
 
                         Debug.WriteLine("Error: failed result at " + DateTime.Now.ToShortTimeString());
 
-                        lock (match)
+                        lock (game)
                         {
-                            match.Winners.Clear();
+                            game.Winners.Clear();
                         }
 
-                        lock (Matches)
+                        lock (Games)
                         {
-                            RunningMatches.Remove(match);
-                            Matches.Enqueue(match);
+                            RunningGames.Remove(game);
+                            Games.Enqueue(game);
                         }
 
                         if (!aoc.HasExited)
@@ -200,7 +202,7 @@ namespace TournamentRunner
             }
         }
 
-        private static bool RunMatch(Match match, int port)
+        private static bool RunGame(Game game, int port)
         {
             var cmd = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "runner", "GameRunner.exe");
             if (!File.Exists(cmd))
@@ -210,18 +212,18 @@ namespace TournamentRunner
 
             var args = port.ToString();
 
-            lock (match)
+            lock (game)
             {
-                args += " " + match.GameType;
-                args += " " + match.MapType;
-                args += " " + match.MapSize;
-                args += " " + (match.Record ? "true" : "false");
+                args += " " + game.GameType;
+                args += " " + game.MapType;
+                args += " " + game.MapSize;
+                args += " " + (game.Record ? "true" : "false");
 
                 for (int i = 0; i < 8; i++)
                 {
-                    if (i < match.Players.Count)
+                    if (i < game.Players.Count)
                     {
-                        var player = match.Players[i];
+                        var player = game.Players[i];
 
                         args += " " + player.Name.Replace(" ", "%20");
                         args += " " + player.Team;
@@ -276,10 +278,10 @@ namespace TournamentRunner
                         }
                     }
 
-                    lock (match)
+                    lock (game)
                     {
-                        match.Winners.Clear();
-                        match.Winners.AddRange(winners);
+                        game.Winners.Clear();
+                        game.Winners.AddRange(winners);
                     }
                 }
             }

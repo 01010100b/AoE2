@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TournamentRunner
 {
-    public class Match
+    public class Game
     {
         private volatile bool _Finished = false;
         public bool Finished { get { return _Finished; } set { _Finished = value; } }
@@ -21,7 +21,7 @@ namespace TournamentRunner
         public List<int> WinningTeams { get { return GetWinningTeams(); } }
         public bool Draw { get { return GetDraw(); } }
 
-        public Match(int game_type, int map_type, int map_size, List<Player> players, bool record)
+        public Game(int game_type, int map_type, int map_size, List<Player> players, bool record)
         {
             GameType = game_type;
             MapType = map_type;

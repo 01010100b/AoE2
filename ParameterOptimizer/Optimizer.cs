@@ -125,16 +125,16 @@ namespace ParameterOptimizer
             particpants.Insert(0, ai);
             var tournament = new Tournament(games, maps, particpants, teams, false);
 
-            Runner.Enqueue(tournament.Matches);
+            Runner.Enqueue(tournament.Games);
 
             var finished = false;
             while (!finished)
             {
                 finished = true;
 
-                foreach (var match in tournament.Matches)
+                foreach (var game in tournament.Games)
                 {
-                    if (!match.Finished)
+                    if (!game.Finished)
                     {
                         finished = false;
                         break;
@@ -145,12 +145,12 @@ namespace ParameterOptimizer
             }
 
             var score = 0;
-            foreach (var match in tournament.Matches)
+            foreach (var game in tournament.Games)
             {
-                var team1 = match.Players.First(p => p.Team == 1).Name;
-                var team2 = match.Players.First(p => p.Team == 2).Name;
+                var team1 = game.Players.First(p => p.Team == 1).Name;
+                var team2 = game.Players.First(p => p.Team == 2).Name;
 
-                if (match.Draw)
+                if (game.Draw)
                 {
                     score += 1;
                 }
@@ -162,7 +162,7 @@ namespace ParameterOptimizer
                         my_team = 2;
                     }
 
-                    if (match.WinningTeams.Contains(my_team))
+                    if (game.WinningTeams.Contains(my_team))
                     {
                         score += 2;
                     }
