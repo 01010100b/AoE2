@@ -57,22 +57,7 @@ namespace TournamentRunner
             Runner.Startup(exe, speed);
 
             Runner.Enqueue(Games);
-
-            var finished = false;
-            while (!finished)
-            {
-                finished = true;
-                foreach (var game in Games)
-                {
-                    if (!game.Finished)
-                    {
-                        finished = false;
-                        break;
-                    }
-                }
-
-                Thread.Sleep(5 * 1000);
-            }
+            Runner.WaitForGames(Games);
 
             Runner.Shutdown();
         }

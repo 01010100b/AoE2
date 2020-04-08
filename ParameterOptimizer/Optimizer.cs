@@ -126,23 +126,7 @@ namespace ParameterOptimizer
             var tournament = new Tournament(games, maps, particpants, teams, false);
 
             Runner.Enqueue(tournament.Games);
-
-            var finished = false;
-            while (!finished)
-            {
-                finished = true;
-
-                foreach (var game in tournament.Games)
-                {
-                    if (!game.Finished)
-                    {
-                        finished = false;
-                        break;
-                    }
-                }
-
-                Thread.Sleep(2 * 1000);
-            }
+            Runner.WaitForGames(tournament.Games);
 
             var score = 0;
             foreach (var game in tournament.Games)

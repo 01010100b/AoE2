@@ -14,7 +14,6 @@ namespace TournamentRunner
     public static class Runner
     {
         private static readonly Queue<Game> Games = new Queue<Game>();
-        private static readonly List<Game> RunningGames = new List<Game>();
         private static readonly List<Thread> Instances = new List<Thread>();
         private static volatile bool Stop = false;
         private static int Speed = 100;
@@ -68,6 +67,17 @@ namespace TournamentRunner
             }
         }
 
+        public static void WaitForGames(IEnumerable<Game> games)
+        {
+            foreach (var game in games)
+            {
+                while (!game.Finished)
+                {
+                    Thread.Sleep(2 * 1000);
+                }
+            }
+        }
+
         public static void Shutdown()
         {
             Stop = true;
@@ -80,7 +90,6 @@ namespace TournamentRunner
             Thread.Sleep(10 * 1000);
 
             Games.Clear();
-            RunningGames.Clear();
             Instances.Clear();
             Stop = false;
         }
@@ -95,7 +104,6 @@ namespace TournamentRunner
                     if (Games.Count > 0)
                     {
                         game = Games.Dequeue();
-                        RunningGames.Add(game);
                     }
                 }
 
@@ -121,16 +129,9 @@ namespace TournamentRunner
                     if (result)
                     {
                         game.Finished = true;
-
-                        lock (Games)
-                        {
-                            RunningGames.Remove(game);
-                        }
                     }
                     else
                     {
-                        game.Finished = false;
-
                         Debug.WriteLine("Error: failed result at " + DateTime.Now.ToShortTimeString());
 
                         lock (game)
@@ -140,29 +141,11 @@ namespace TournamentRunner
 
                         lock (Games)
                         {
-                            RunningGames.Remove(game);
                             Games.Enqueue(game);
                         }
 
-                        if (!aoc.HasExited)
-                        {
-                            aoc.Kill();
-                            aoc.WaitForExit();
-                        }
-
-                        var launched = true;
-                        try
-                        {
-                            Thread.Sleep(10 * 1000);
-                            aoc = Launch(aoc.StartInfo.FileName, port);
-                        }
-                        catch (Exception e)
-                        {
-                            launched = false;
-                            Debug.WriteLine("Exception: " + e.Message);
-                        }
-
-                        while (!launched)
+                        var launched = false;
+                        do
                         {
                             if (!aoc.HasExited)
                             {
@@ -170,13 +153,16 @@ namespace TournamentRunner
                                 aoc.WaitForExit();
                             }
 
-                            Debug.WriteLine("Launch failed, retrying...");
+                            if (Stop)
+                            {
+                                break;
+                            }
 
-                            launched = true;
                             try
                             {
                                 Thread.Sleep(10 * 1000);
                                 aoc = Launch(aoc.StartInfo.FileName, port);
+                                launched = true;
                             }
                             catch (Exception e)
                             {
@@ -184,11 +170,7 @@ namespace TournamentRunner
                                 Debug.WriteLine("Exception: " + e.Message);
                             }
 
-                            if (Stop)
-                            {
-                                break;
-                            }
-                        }
+                        } while (!launched);
                     }
                 }
 
@@ -258,7 +240,6 @@ namespace TournamentRunner
                 Thread.Sleep(10 * 1000);
             }
             
-
             var gotresult = false;
             while (!process.HasExited)
             {
