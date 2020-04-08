@@ -86,6 +86,13 @@ sn-market-eco-balance = LOW
 	
 #end-if
 
+#if current-age >= feudal-age
+
+	TryImportantResearch(ri-double-bit-axe)
+	TryImportantResearch(ri-horse-collar)
+	
+#end-if
+
 #if (sn-town-threat < MEDIUM) (up-research-status c: castle-age c:>= research-pending) (research-completed ri-double-bit-axe) (research-completed ri-horse-collar)
 
 	TryImportantResearch(ri-gold-mining)

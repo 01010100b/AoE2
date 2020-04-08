@@ -13,7 +13,7 @@ namespace ParameterOptimizer
 {
     public static class Optimizer
     {
-        public static void Run(string exe, List<Parameter> parameters, Participant ai, List<Participant> opponents, int games, List<int> maps)
+        public static Dictionary<Parameter, int> Run(string exe, List<Parameter> parameters, Participant ai, List<Participant> opponents, int games, List<int> maps)
         {
             Runner.Startup(exe, 100);
 
@@ -23,15 +23,11 @@ namespace ParameterOptimizer
             var ai_file = Path.Combine(ai_folder, ai.Name + ".per");
 
             var best = new Dictionary<string, int>();
-            foreach (var parameter in parameters)
-            {
-                best[parameter.Name] = (parameter.Min + parameter.Max) / 2;
-            }
 
             var result_file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "best.txt");
             if (File.Exists(result_file))
             {
-                foreach (var line in File.ReadAllLines(result_file))
+                foreach (var line in File.ReadAllLines(result_file).Where(l => l.Contains("=")))
                 {
                     var pieces = line.Split('=');
                     var name = pieces[0];
@@ -41,16 +37,25 @@ namespace ParameterOptimizer
                 }
             }
 
+            var rng = new Random();
+            parameters = parameters.OrderBy(p => best.ContainsKey(p.Name) ? 1 : 0).ThenBy(p => rng.Next()).ToList();
+
             foreach (var parameter in parameters)
             {
                 var best_score = -1;
 
-                Debug.WriteLine("Starting parameter: " + parameter.Name);
+                Console.WriteLine("Starting parameter: " + parameter.Name);
                 var individuals = new List<Individual>();
 
                 for (int v = parameter.Min; v <= parameter.Max; v++)
                 {
                     var ind = new Individual();
+
+                    foreach (var p in parameters)
+                    {
+                        ind.Parameters[p.Name] = (p.Min + p.Max) / 2;
+                    }
+
                     foreach (var kvp in best)
                     {
                         ind.Parameters[kvp.Key] = kvp.Value;
@@ -63,37 +68,51 @@ namespace ParameterOptimizer
 
                 foreach (var individual in individuals)
                 {
-                    Debug.Write("Starting individual...");
+                    Console.Write("Starting individual...");
 
                     SetParameters(ai_file, individual.Parameters);
                     Thread.Sleep(2 * 1000);
 
+                    Console.Write("getting score...");
                     var score = GetScore(ai, opponents, games, maps);
-                    Debug.WriteLine("score: " + score);
+                    Debug.WriteLine(score);
                     if (score > best_score)
                     {
                         best[parameter.Name] = individual.Parameters[parameter.Name];
-                        Debug.WriteLine($"New best value: {parameter.Name} = {best[parameter.Name]}");
-
-                        var lines = new List<string>();
-                        foreach (var kvp in best)
-                        {
-                            lines.Add(kvp.Key + "=" + kvp.Value);
-                        }
-
-                        lines.Sort();
-                        File.WriteAllLines(result_file, lines);
+                        Console.WriteLine($"New best value: {parameter.Name} = {best[parameter.Name]}");
 
                         best_score = score;
                     }
 
                     Thread.Sleep(5 * 1000);
                 }
+
+                var lines = new List<string>();
+                foreach (var kvp in best)
+                {
+                    lines.Add(kvp.Key + "=" + kvp.Value);
+                }
+
+                lines.Sort();
+                File.WriteAllLines(result_file, lines);
+            }
+
+            foreach (var parameter in parameters.Where(p => !best.ContainsKey(p.Name)))
+            {
+                best[parameter.Name] = (parameter.Min + parameter.Max) / 2;
             }
 
             SetParameters(ai_file, best);
 
             Runner.Shutdown();
+
+            var result = new Dictionary<Parameter, int>();
+            foreach (var parameter in parameters)
+            {
+                result[parameter] = best[parameter.Name];
+            }
+
+            return result;
         }
 
         private static int GetScore(Participant ai, List<Participant> opponents, int games, List<int> maps)
@@ -130,12 +149,6 @@ namespace ParameterOptimizer
             {
                 var team1 = match.Players.First(p => p.Team == 1).Name;
                 var team2 = match.Players.First(p => p.Team == 2).Name;
-
-                var opponent = team1;
-                if (opponent.Equals(ai.Name))
-                {
-                    opponent = team2;
-                }
 
                 if (match.Draw)
                 {

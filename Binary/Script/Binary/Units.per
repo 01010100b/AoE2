@@ -71,7 +71,7 @@ up-get-fact unit-type-count-total trade-cart gl-trade-carts
 gl-pop-cap -= gl-trade-carts
 gl-pop-cap max= 0
 
-#if (up-object-type-count-total c: villager g:< gl-pop-cap) (can-train-with-escrow villager) (up-compare-const build-villagers == 1)
+#if (up-object-type-count-total c: villager g:< gl-pop-cap) (can-train-with-escrow villager)
 
 	up-train gl-with-escrow c: villager
 	
@@ -147,9 +147,11 @@ gl-pop-cap max= 0
 			
 			var gl-pop
 			gl-pop = sn-recent-target-army
-			gl-pop %*= 75
+			var gl-percentage = target-army-escrow
+			gl-percentage *= 10
+			gl-pop %*= gl-percentage
 			
-			#if (up-can-train gl-with-escrow g: gl-unit) (or (food-amount > 50) (true)) (or (up-object-type-count-total s: sn-$unit g:< gl-min) (or (sn-town-threat == HIGH) (up-resource-amount amount-military-population g:< gl-pop)))
+			#if (up-can-train gl-with-escrow g: gl-unit) (or (up-object-type-count-total s: sn-$unit g:< gl-min) (or (sn-town-threat == HIGH) (up-resource-amount amount-military-population g:< gl-pop)))
 			
 				up-train gl-with-escrow g: gl-unit
 				
@@ -173,7 +175,7 @@ gl-pop-cap max= 0
 		
 	#end-if
 	
-	#if (up-can-train gl-escrow s: sn-siege-unit)
+	#if up-can-train gl-escrow s: sn-siege-unit
 	
 		up-train gl-escrow s: sn-siege-unit
 		
