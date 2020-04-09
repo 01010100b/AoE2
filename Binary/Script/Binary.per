@@ -1,6 +1,18 @@
 ﻿; BINARY
 
 (defconst target-army-escrow 8)
+(defconst use-offensive-priority 1)
+(defconst use-knight-counter 1)
+
+(defrule
+	(up-compare-const use-offensive-priority == 1)
+=>
+	(up-reset-target-priorities 0 1)
+	(up-set-offense-priority c: 913 c: 11)
+	(up-set-offense-priority c: 951 c: 11)
+	(up-set-offense-priority c: 954 c: 11)
+	(disable-self)
+)
 
 (load "Binary\PublicInterface")
 

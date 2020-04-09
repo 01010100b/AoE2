@@ -75,7 +75,7 @@ namespace ParameterOptimizer
 
                     Console.Write("getting score...");
                     var score = GetScore(ai, opponents, games, maps);
-                    Debug.WriteLine(score);
+                    Console.WriteLine(score);
                     if (score > best_score)
                     {
                         best[parameter.Name] = individual.Parameters[parameter.Name];

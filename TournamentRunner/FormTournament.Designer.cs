@@ -181,7 +181,7 @@
             this.TextOpponent1Civs.Name = "TextOpponent1Civs";
             this.TextOpponent1Civs.Size = new System.Drawing.Size(118, 26);
             this.TextOpponent1Civs.TabIndex = 12;
-            this.TextOpponent1Civs.Text = "3,5,15,16";
+            this.TextOpponent1Civs.Text = "19";
             // 
             // TextOpponent1Name
             // 
@@ -190,7 +190,7 @@
             this.TextOpponent1Name.Name = "TextOpponent1Name";
             this.TextOpponent1Name.Size = new System.Drawing.Size(268, 26);
             this.TextOpponent1Name.TabIndex = 11;
-            this.TextOpponent1Name.Text = "Meleon";
+            this.TextOpponent1Name.Text = "The General";
             // 
             // TextOpponent2Civs
             // 

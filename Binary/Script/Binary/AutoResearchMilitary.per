@@ -115,7 +115,7 @@
 
 #foreach $unit:$upgrade:$ri-upgrade in battering-ram:capped-ram:ri-capped-ram capped-ram:siege-ram:ri-siege-ram mangonel:onager:ri-onager onager:siege-onager:ri-siege-onager scorpion:heavy-scorpion:ri-heavy-scorpion 
 	
-	#if unit-type-count-total $unit >= 5
+	#if unit-type-count-total $unit >= 3
 	
 		TryImportantResearch($ri-upgrade)
 		

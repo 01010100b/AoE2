@@ -46,9 +46,9 @@ var gl-meso-civ = NO
 		
 #end-if
 ;-----------GENERAL COUNTERS
-#if (gl-meso-civ == NO) (current-age >= castle-age)
+#if (gl-meso-civ == NO) (current-age >= castle-age) (up-compare-const use-knight-counter == 1)
 
-	;gl-my-infantry-counter = cavalry-archer-line
+	gl-my-archer-counter = knight-line
 
 #end-if
 

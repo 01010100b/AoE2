@@ -134,11 +134,6 @@ namespace TournamentRunner
                     {
                         Debug.WriteLine("Error: failed result at " + DateTime.Now.ToShortTimeString());
 
-                        lock (game)
-                        {
-                            game.Winners.Clear();
-                        }
-
                         lock (Games)
                         {
                             Games.Enqueue(game);
@@ -247,7 +242,6 @@ namespace TournamentRunner
 
                 if (line != null && line.StartsWith("Result"))
                 {
-                    gotresult = true;
                     var pieces = line.Split(' ');
                     var winners = new List<int>();
 
@@ -261,8 +255,8 @@ namespace TournamentRunner
 
                     lock (game)
                     {
-                        game.Winners.Clear();
-                        game.Winners.AddRange(winners);
+                        game.SetWinners(winners);
+                        gotresult = true;
                     }
                 }
             }
