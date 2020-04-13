@@ -13,7 +13,7 @@ namespace Binary
     class Program
     {
         public const int MAX_GOALS = 512;
-        public const int MIN_STRATEGIC_NUMBER = 296;
+        public const int MIN_STRATEGIC_NUMBER = 304;
         public const int MAX_STRATEGIC_NUMBER = 511;
         public const int FUNCTION_PARAMETERS = 8;
         public const int MIN_TEMPORARY_VARS = 32;
