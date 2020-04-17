@@ -16,7 +16,7 @@ namespace Binary.Elements
         public ConstElement(string code) : base(code)
         {
             var pieces = Pieces;
-            Debug.Assert(pieces.Count == 3, "invalid defconst: " + code);
+            Assert.That(pieces.Count == 3, "invalid defconst: " + code);
 
             Name = pieces[1].Trim();
             Value = pieces[2].Replace(")", "").Trim();

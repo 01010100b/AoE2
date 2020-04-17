@@ -24,7 +24,7 @@ namespace ParameterOptimizer
 
             var best = new Dictionary<string, int>();
 
-            var result_file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "best.txt");
+            var result_file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "result.txt");
             if (File.Exists(result_file))
             {
                 foreach (var line in File.ReadAllLines(result_file).Where(l => l.Contains("=")))

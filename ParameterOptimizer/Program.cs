@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,6 +39,24 @@ namespace ParameterOptimizer
             Optimizer.Run(exe, parameters, ai, opponents, games, maps);
 
             Console.ReadLine();
+        }
+
+        private static void Run()
+        {
+            string exe = null;
+            Participant ai = null;
+            int games = -1;
+            var opponents = new List<Participant>();
+            var parameters = new List<Parameter>();
+            var maps = new List<int>();
+
+            var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.ini");
+            var lines = File.ReadAllLines(file);
+
+            foreach (var line in lines)
+            {
+
+            }
         }
     }
 }
