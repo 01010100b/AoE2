@@ -17,7 +17,19 @@ namespace GameServer
                 throw new Exception("File not found: " + exe);
             }
 
-            var runner = new Runner(exe, 20, null, null);
+            var ai_folder = Path.Combine(Environment.GetEnvironmentVariable("APPDATA"), "Microsoft Games", "Age of Empires ii", "Ai");
+            if (!Directory.Exists(ai_folder))
+            {
+                throw new Exception("Folder not found: " + ai_folder);
+            }
+
+            var rec_folder = Path.Combine(Environment.GetEnvironmentVariable("APPDATA"), "Microsoft Games", "Age of Empires ii", "SaveGame");
+            if (!Directory.Exists(rec_folder))
+            {
+                throw new Exception("Folder not found: " + rec_folder);
+            }
+
+            var runner = new Runner(exe, 100, ai_folder, rec_folder);
             
             runner.Startup();
             Debug.WriteLine("startup done");
@@ -26,7 +38,14 @@ namespace GameServer
             var barbarian = new Player("Barbarian", 0, 19, null);
 
             var game = new Game(binary, barbarian);
-            runner.Run(game);
+            var result = runner.Run(game);
+
+            foreach (var winner in result.Winners)
+            {
+                Debug.WriteLine("Winner: " + winner.Name);
+            }
+
+            Debug.WriteLine("Rec size: " + result.Rec?.Length / 1000000d + "mb");
         }
     }
 }
