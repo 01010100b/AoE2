@@ -5,4 +5,23 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="aoc-auto-game.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="aoc-auto-game.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bleak" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MsgPack.Rpc.Core\MsgPack.Rpc.Core.csproj" />
+  </ItemGroup>
+
 </Project>
