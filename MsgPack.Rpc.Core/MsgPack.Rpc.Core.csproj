@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>nrrdio.pfx</AssemblyOriginatorKeyFile>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MsgPack.Cli" Version="1.0.1" />
+  </ItemGroup>
+  
+</Project>
