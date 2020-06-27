@@ -6,6 +6,6 @@ namespace ScriptVM
 {
     class VirtualType
     {
-        public readonly int Length;
+        public readonly int Size;
     }
 }
