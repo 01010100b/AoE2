@@ -4,29 +4,24 @@ using System.Text;
 
 namespace GameServer
 {
-    class Game
+    public class Game
     {
-        public List<Player> Players = new List<Player>();
+        public List<Player> Players { get; set; } = new List<Player>();
         
-        public int GameType = 0;
-        public string ScenarioName = null;
-        public int MapType = 9;
-        public int MapSize = 0;
-        public int Difficulty = 1;
-        public int StartingResources = 0;
-        public int PopulationLimit = 200;
-        public int RevealMap = 0;
-        public int StartingAge = 0;
-        public int VictoryType = 0;
-        public int VictoryValue = 0;
-        public bool TeamsTogether = true;
-        public bool LockTeams = true;
-        public bool AllTechs = true;
-        public bool Recorded = true;
-
-        public Game(params Player[] players)
-        {
-            Players.AddRange(players);
-        }
+        public int GameType { get; set; } = 0;
+        public string ScenarioName { get; set; } = null;
+        public int MapType { get; set; } = 9;
+        public int MapSize { get; set; } = 0;
+        public int Difficulty { get; set; } = 1;
+        public int StartingResources { get; set; } = 0;
+        public int PopulationLimit { get; set; } = 200;
+        public int RevealMap { get; set; } = 0;
+        public int StartingAge { get; set; } = 0;
+        public int VictoryType { get; set; } = 0;
+        public int VictoryValue { get; set; } = 0;
+        public bool TeamsTogether { get; set; } = true;
+        public bool LockTeams { get; set; } = true;
+        public bool AllTechs { get; set; } = true;
+        public bool Recorded { get; set; } = true;
     }
 }

@@ -34,6 +34,21 @@ namespace GameServer
 
         public void Startup()
         {
+            if (!File.Exists(Exe))
+            {
+                throw new Exception("File not found: " + Exe);
+            }
+
+            if (!Directory.Exists(AiFolder))
+            {
+                throw new Exception("Folder not found: " + AiFolder);
+            }
+
+            if (!Directory.Exists(RecFolder))
+            {
+                throw new Exception("Folder not found: " + RecFolder);
+            }
+
             if (RpcClient != null)
             {
                 RpcClient.Dispose();
@@ -71,6 +86,13 @@ namespace GameServer
 
         public GameResult Run(Game game)
         {
+            // install players
+
+            foreach (var player in game.Players)
+            {
+                InstallPlayer(player);
+            }
+
             // start game
 
             RpcClient.Call("ResetGameSettings");
@@ -111,7 +133,7 @@ namespace GameServer
 
             RpcClient.Call("SetUseInGameResolution", false);
             RpcClient.Call("SetRunUnfocused", true);
-            RpcClient.Call("SetWindowMinimized", true);
+            //RpcClient.Call("SetWindowMinimized", true);
 
             RpcClient.Call("StartGame");
 
@@ -301,6 +323,35 @@ namespace GameServer
             Debug.WriteLine("launched");
 
             return process;
+        }
+
+        private void InstallPlayer(Player player)
+        {
+            var src = player.Folder;
+            var dest = AiFolder;
+
+            var stack = new Stack<string>();
+            stack.Push(src);
+            while (stack.Count > 0)
+            {
+                var current = stack.Pop();
+                var other = current.Replace(src, dest);
+                if (!Directory.Exists(other))
+                {
+                    Directory.CreateDirectory(other);
+                }
+
+                foreach (var file in Directory.EnumerateFiles(current))
+                {
+                    var dest_file = Path.Combine(other, Path.GetFileName(file));
+                    File.Copy(file, dest_file, true);
+                }
+
+                foreach (var dir in Directory.EnumerateDirectories(current))
+                {
+                    stack.Push(dir);
+                }
+            }
         }
     }
 }

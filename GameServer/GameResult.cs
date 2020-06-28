@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GameServer
 {
-    class GameResult
+    public class GameResult
     {
         public readonly Game Game;
         public readonly bool Crashed = false;

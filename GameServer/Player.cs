@@ -4,19 +4,11 @@ using System.Text;
 
 namespace GameServer
 {
-    class Player
+    public class Player
     {
-        public readonly string Name;
-        public readonly int Team;
-        public readonly int Civ;
-        public readonly string Folder;
-
-        public Player(string name, int team, int civ, string folder)
-        {
-            Name = name;
-            Team = team;
-            Civ = civ;
-            Folder = folder;
-        }
+        public string Name { get; set; }
+        public int Team { get; set; }
+        public int Civ { get; set; }
+        public string Folder { get; set; }
     }
 }
