@@ -54,6 +54,8 @@ namespace GameServer
             public string Winner { get; set; }
         }
 
+        public volatile bool Reset = false;
+
         private const string LADDER_FOLDER = @"E:\ladder";
         private readonly List<AI> AIs = new List<AI>();
         private readonly List<SavedGame> SavedGames = new List<SavedGame>();
@@ -75,8 +77,6 @@ namespace GameServer
 
             while (!Stop)
             {
-                var reset = false;
-
                 try
                 {
                     Debug.WriteLine("getting next game");
@@ -93,15 +93,16 @@ namespace GameServer
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.Message);
-                    reset = true;
+                    Reset = true;
                 }
 
-                if (reset)
+                if (Reset)
                 {
                     try
                     {
                         runner.Shutdown();
                         runner.Startup();
+                        Reset = false;
                     }
                     catch (Exception e)
                     {
@@ -252,12 +253,12 @@ namespace GameServer
             AIs.Sort((a, b) => b.Elo.CompareTo(a.Elo));
             var sb = new StringBuilder();
             sb.AppendLine("--- RANKING ---");
-            sb.AppendLine("Rank Name             Elo  Games");
+            sb.AppendLine("Rank Name                     Elo  Games");
             
             for (int i = 0; i < AIs.Count; i++)
             {
                 var ai = AIs[i];
-                var str = string.Format("{0,-4} {1, -16} {2, -4} {3, -4}", i + 1, ai.Name, ai.Elo, ai.Games);
+                var str = string.Format("{0,-4} {1, -24} {2, -4} {3, -4}", i + 1, ai.Name, ai.Elo, ai.Games);
                 sb.AppendLine(str);
             }
 

@@ -68,6 +68,7 @@ namespace GameServer
             
             Process = Launch(Exe, port);
             RpcClient = new RpcClient(new IPEndPoint(IPAddress.Loopback, port));
+            Thread.Sleep(1000);
 
             var api = RpcClient.Call("GetApiVersion");
             Debug.WriteLine("Api: " + api.ToString());
@@ -83,7 +84,7 @@ namespace GameServer
                 Process.WaitForExit();
             }
 
-            Thread.Sleep(5000);
+            Thread.Sleep(10000);
         }
 
         public GameResult Run(Game game)
@@ -160,6 +161,11 @@ namespace GameServer
                     break;
                 }
 
+                if (RpcClient.Call("GetGameTime").AsInt32() > 2 * 60 * 60)
+                {
+                    break;
+                }
+
                 var team0 = 0;
                 var team1 = 0;
                 var team2 = 0;
@@ -172,7 +178,7 @@ namespace GameServer
                 {
                     if (RpcClient.Call("GetPlayerAlive", i + 1).AsBoolean())
                     {
-                        Thread.Sleep(100);
+                        Thread.Sleep(300);
 
                         players_in_game++;
 
@@ -224,15 +230,38 @@ namespace GameServer
             var result = new GameResult(game, Process.HasExited);
             if (result.Crashed)
             {
+                Shutdown();
                 Startup();
             }
             else
             {
-                for (int i = 0; i < 8; i++)
+                if (finished)
                 {
-                    if (RpcClient.Call("GetPlayerAlive", i + 1).AsBoolean())
+                    for (int i = 0; i < 8; i++)
                     {
-                        result.Winners.Add(game.Players[i]);
+                        if (RpcClient.Call("GetPlayerAlive", i + 1).AsBoolean())
+                        {
+                            result.Winners.Add(game.Players[i]);
+                        }
+                    }
+                }
+                else
+                {
+                    var max = -1;
+                    var winner = -1;
+                    for (int i = 0; i < 8; i++)
+                    {
+                        var score = RpcClient.Call("GetPlayerScore", i + 1).AsInt32();
+                        if (score > max)
+                        {
+                            max = score;
+                            winner = i;
+                        }
+                    }
+
+                    if (winner >= 0)
+                    {
+                        result.Winners.Add(game.Players[winner]);
                     }
                 }
 

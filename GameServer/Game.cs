@@ -17,7 +17,7 @@ namespace GameServer
         public int PopulationLimit { get; set; } = 200;
         public int RevealMap { get; set; } = 0;
         public int StartingAge { get; set; } = 0;
-        public int VictoryType { get; set; } = 0;
+        public int VictoryType { get; set; } = 1;
         public int VictoryValue { get; set; } = 0;
         public bool TeamsTogether { get; set; } = true;
         public bool LockTeams { get; set; } = true;
