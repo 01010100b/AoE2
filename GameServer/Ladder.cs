@@ -75,16 +75,39 @@ namespace GameServer
 
             while (!Stop)
             {
-                Debug.WriteLine("getting next game");
+                var reset = false;
 
-                var game = GetNextGame();
-                Console.WriteLine(PrintRanking());
-                Console.WriteLine();
+                try
+                {
+                    Debug.WriteLine("getting next game");
 
-                Debug.WriteLine("running game");
-                var result = runner.Run(game);
-                SetResult(result);
-                Debug.WriteLine("result added");
+                    var game = GetNextGame();
+                    Console.WriteLine(PrintRanking());
+                    Console.WriteLine();
+
+                    Debug.WriteLine("running game");
+                    var result = runner.Run(game);
+                    SetResult(result);
+                    Debug.WriteLine("result added");
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                    reset = true;
+                }
+
+                if (reset)
+                {
+                    try
+                    {
+                        runner.Shutdown();
+                        runner.Startup();
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e.Message);
+                    }
+                }
             }
 
             runner.Shutdown();
@@ -142,9 +165,9 @@ namespace GameServer
                 }
 
                 var elo1 = players[0].Elo;
-                var k1 = 24;
+                var k1 = Math.Max(10, 30 - players[0].Games);
                 var elo2 = players[1].Elo;
-                var k2 = 24;
+                var k2 = Math.Max(10, 30 - players[1].Games);
                 var delta = GetEloDelta(elo1, elo2, score, k1, k2);
 
                 players[0].Elo += delta;

@@ -82,10 +82,22 @@ namespace GameServer
                 Process.Kill();
                 Process.WaitForExit();
             }
+
+            Thread.Sleep(5000);
         }
 
         public GameResult Run(Game game)
         {
+            if (Process == null || Process.HasExited)
+            {
+                throw new Exception("Process not running");
+            }
+
+            if (RpcClient == null || !RpcClient.IsConnected)
+            {
+                throw new Exception("RcpClient not connected");
+            }
+
             // install players
 
             foreach (var player in game.Players)
@@ -160,6 +172,8 @@ namespace GameServer
                 {
                     if (RpcClient.Call("GetPlayerAlive", i + 1).AsBoolean())
                     {
+                        Thread.Sleep(100);
+
                         players_in_game++;
 
                         if (game.Players[i].Team == 0)
