@@ -103,7 +103,7 @@ namespace MsgPack.Rpc.Core.Protocols {
 			var shift = BytesTransferred;
 			_receivedData.Add(new ArraySegment<byte>(CurrentReceivingBuffer, SocketContext.Offset, shift));
 			CurrentReceivingBufferOffset += shift;
-			if (CurrentReceivingBufferOffset == CurrentReceivingBuffer.Length) {
+			if (CurrentReceivingBufferOffset >= CurrentReceivingBuffer.Length) {
 				// Replace with new buffer.
 				CurrentReceivingBuffer = new byte[CurrentReceivingBuffer.Length];
 				CurrentReceivingBufferOffset = 0;

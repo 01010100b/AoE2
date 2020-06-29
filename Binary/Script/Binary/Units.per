@@ -151,7 +151,7 @@ gl-pop-cap max= 0
 			gl-percentage *= 10
 			gl-pop %*= gl-percentage
 			
-			#if (up-can-train gl-with-escrow g: gl-unit) (or (up-object-type-count-total s: sn-$unit g:< gl-min) (or (sn-town-threat == HIGH) (up-resource-amount amount-military-population g:< gl-pop)))
+			#if (up-can-train gl-with-escrow g: gl-unit) (building-type-count castle < 4) (or (up-object-type-count-total s: sn-$unit g:< gl-min) (or (sn-town-threat == HIGH) (up-resource-amount amount-military-population g:< gl-pop)))
 			
 				up-train gl-with-escrow g: gl-unit
 				

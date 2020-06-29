@@ -54,8 +54,6 @@ namespace GameServer
             public string Winner { get; set; }
         }
 
-        public volatile bool Reset = false;
-
         private const string LADDER_FOLDER = @"E:\ladder";
         private readonly List<AI> AIs = new List<AI>();
         private readonly List<SavedGame> SavedGames = new List<SavedGame>();
@@ -75,6 +73,7 @@ namespace GameServer
             runner.Startup();
             Debug.WriteLine("startup done");
 
+            var reset = false;
             while (!Stop)
             {
                 try
@@ -84,25 +83,28 @@ namespace GameServer
                     var game = GetNextGame();
                     Console.WriteLine(PrintRanking());
                     Console.WriteLine();
+                    Trace.WriteLine(PrintRanking());
+                    Trace.WriteLine("");
 
                     Debug.WriteLine("running game");
                     var result = runner.Run(game);
+                    Debug.WriteLine("adding result");
                     SetResult(result);
-                    Debug.WriteLine("result added");
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.Message);
-                    Reset = true;
+                    reset = true;
                 }
 
-                if (Reset)
+                if (reset)
                 {
                     try
                     {
+                        Debug.WriteLine("Restarting runner");
                         runner.Shutdown();
                         runner.Startup();
-                        Reset = false;
+                        reset = false;
                     }
                     catch (Exception e)
                     {
@@ -125,17 +127,35 @@ namespace GameServer
 
             var rng = new Random();
             var name1 = AIs[rng.Next(AIs.Count)].Name;
+            if (rng.NextDouble() < 2d / AIs.Count)
+            {
+                AIs.Sort((a, b) => a.Games.CompareTo(b.Games));
+                name1 = AIs[0].Name;
+            }
+            if (rng.NextDouble() < 0.3)
+            {
+                name1 = "Binary";
+            }
+
             var name2 = AIs[rng.Next(AIs.Count)].Name;
             while (name2 == name1)
             {
                 name2 = AIs[rng.Next(AIs.Count)].Name;
             }
 
-            var player1 = new Player() { Name = name1, Team = 1, Civ = 19, Folder = GetLatestVersionFolder(name1) };
-            var player2 = new Player() { Name = name2, Team = 2, Civ = 19, Folder = GetLatestVersionFolder(name2) };
+            var folder1 = GetLatestVersionFolder(name1);
+            var folder2 = GetLatestVersionFolder(name2);
+
             var game = new Game();
-            game.Players.Add(player1);
-            game.Players.Add(player2);
+            var teamsize = rng.Next(1, 5);
+            for (int i = 1; i <= teamsize; i++)
+            {
+                var player1 = new Player() { Name = name1, Team = 1, Civ = 19, Folder = folder1 };
+                var player2 = new Player() { Name = name2, Team = 2, Civ = 19, Folder = folder2 };
+
+                game.Players.Add(player1);
+                game.Players.Add(player2);
+            }
 
             return game;
         }

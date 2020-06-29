@@ -152,12 +152,21 @@ namespace GameServer
 
             // wait for finish
             var finished = false;
+            var crashed = false;
+            var start = DateTime.UtcNow;
             while (!finished)
             {
                 Thread.Sleep(2000);
 
                 if (Process.HasExited)
                 {
+                    crashed = true;
+                    break;
+                }
+
+                if (DateTime.UtcNow - start > TimeSpan.FromHours(2))
+                {
+                    crashed = true;
                     break;
                 }
 
@@ -227,9 +236,10 @@ namespace GameServer
             }
 
             // get result
-            var result = new GameResult(game, Process.HasExited);
+            var result = new GameResult(game, crashed);
             if (result.Crashed)
             {
+                Debug.WriteLine("game crashed");
                 Shutdown();
                 Startup();
             }
@@ -241,6 +251,7 @@ namespace GameServer
                     {
                         if (RpcClient.Call("GetPlayerAlive", i + 1).AsBoolean())
                         {
+                            Thread.Sleep(300);
                             result.Winners.Add(game.Players[i]);
                         }
                     }
@@ -252,6 +263,7 @@ namespace GameServer
                     for (int i = 0; i < 8; i++)
                     {
                         var score = RpcClient.Call("GetPlayerScore", i + 1).AsInt32();
+                        Thread.Sleep(300);
                         if (score > max)
                         {
                             max = score;
