@@ -86,7 +86,7 @@ namespace GameServer
                     Trace.WriteLine(PrintRanking());
                     Trace.WriteLine("");
 
-                    Debug.WriteLine("running game");
+                    Debug.WriteLine("running game " + DateTime.Now);
                     var result = runner.Run(game);
                     Debug.WriteLine("adding result");
                     SetResult(result);

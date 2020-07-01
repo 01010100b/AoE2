@@ -16,6 +16,28 @@
 
 (load "Binary\PublicInterface")
 
+(defconst gl-ran-everything 7)
+(defrule
+	(true)
+=>
+	(set-goal gl-ran-everything TRUE)
+	(disable-self)
+)
+
+(defrule
+	(not (goal gl-ran-everything TRUE))
+=>
+	(chat-to-all "binary not fully parsed")
+	(up-jump-direct c: 20000)
+)
+
+(defrule
+	(true)
+=>
+	(set-goal gl-ran-everything FALSE)
+)
+
+
 (defrule
 	(true)
 =>
@@ -198,3 +220,9 @@ up-set-target-point gl-point1
 	#end-foreach
 	
 #end-if
+
+(defrule
+	(true)
+=>
+	(set-goal gl-ran-everything TRUE)
+)
