@@ -70,19 +70,17 @@ namespace GameServer
             }
 
             var runner = new Runner(settings.Exe, settings.Speed, settings.AiFolder, settings.RecFolder);
-            runner.Startup();
-            Debug.WriteLine("startup done");
-
-            var reset = false;
+            
             while (!Stop)
             {
                 try
                 {
-                    Debug.WriteLine("getting next game");
+                    runner.Startup();
+                    Debug.WriteLine("startup done");
 
+                    Debug.WriteLine("getting next game");
                     var game = GetNextGame();
-                    Console.WriteLine(PrintRanking());
-                    Console.WriteLine();
+
                     Trace.WriteLine(PrintRanking());
                     Trace.WriteLine("");
 
@@ -90,30 +88,15 @@ namespace GameServer
                     var result = runner.Run(game);
                     Debug.WriteLine("adding result");
                     SetResult(result);
+
+                    Debug.WriteLine("shutting down runner");
+                    runner.Shutdown();
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.Message);
-                    reset = true;
-                }
-
-                if (reset)
-                {
-                    try
-                    {
-                        Debug.WriteLine("Restarting runner");
-                        runner.Shutdown();
-                        runner.Startup();
-                        reset = false;
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(e.Message);
-                    }
                 }
             }
-
-            runner.Shutdown();
         }
 
         protected virtual Game GetNextGame()
