@@ -21,7 +21,7 @@ namespace GameServer
         public int VictoryValue { get; set; } = 0;
         public bool TeamsTogether { get; set; } = true;
         public bool LockTeams { get; set; } = true;
-        public bool AllTechs { get; set; } = true;
+        public bool AllTechs { get; set; } = false;
         public bool Recorded { get; set; } = true;
     }
 }

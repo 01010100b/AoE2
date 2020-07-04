@@ -41,7 +41,6 @@ namespace GameServer
         private class AI
         {
             public string Name { get; set; }
-            public string Author { get; set; }
             public int Elo { get; set; }
             public int Games { get; set; }
         }
@@ -54,7 +53,7 @@ namespace GameServer
             public string Winner { get; set; }
         }
 
-        private const string LADDER_FOLDER = @"E:\ladder";
+        private const string TEMP_FOLDER = @"E:\ladder";
         private readonly List<AI> AIs = new List<AI>();
         private readonly List<SavedGame> SavedGames = new List<SavedGame>();
         private volatile bool Stop = false;
@@ -184,7 +183,7 @@ namespace GameServer
 
             if (result.Rec != null)
             {
-                var file = Path.Combine(LADDER_FOLDER, "recs", id + ".mgz");
+                var file = Path.Combine(TEMP_FOLDER, "recs", id + ".mgz");
                 File.WriteAllBytes(file, result.Rec);
             }
 
@@ -201,14 +200,14 @@ namespace GameServer
                 WriteIndented = true
             };
 
-            var file = Path.Combine(LADDER_FOLDER, "ais.json");
+            var file = Path.Combine(TEMP_FOLDER, "ais.json");
             if (File.Exists(file))
             {
                 var ais = JsonSerializer.Deserialize<List<AI>>(File.ReadAllText(file), options);
                 AIs.AddRange(ais);
             }
 
-            file = Path.Combine(LADDER_FOLDER, "games.json");
+            file = Path.Combine(TEMP_FOLDER, "games.json");
             if (File.Exists(file))
             {
                 var games = JsonSerializer.Deserialize<List<SavedGame>>(File.ReadAllText(file), options);
@@ -218,8 +217,8 @@ namespace GameServer
             if (AIs.Count < 2)
             {
                 AIs.Clear();
-                var binary = new AI() { Name = "Binary", Author = "01010100", Elo = 1000, Games = 0 };
-                var barbarian = new AI() { Name = "Barbarian", Author = "TheMax", Elo = 1000, Games = 0 };
+                var binary = new AI() { Name = "Binary", Elo = 1000, Games = 0 };
+                var barbarian = new AI() { Name = "Barbarian", Elo = 1000, Games = 0 };
                 AIs.Add(binary);
                 AIs.Add(barbarian);
             }
@@ -232,23 +231,23 @@ namespace GameServer
                 WriteIndented = true
             };
 
-            var file = Path.Combine(LADDER_FOLDER, "ais.json");
+            var file = Path.Combine(TEMP_FOLDER, "ais.json");
             File.WriteAllText(file, JsonSerializer.Serialize(AIs, options));
 
-            file = Path.Combine(LADDER_FOLDER, "games.json");
+            file = Path.Combine(TEMP_FOLDER, "games.json");
             File.WriteAllText(file, JsonSerializer.Serialize(SavedGames, options));
         }
 
         private string GetLatestVersionFolder(string name)
         {
-            var folders = Directory.EnumerateDirectories(Path.Combine(LADDER_FOLDER, "bots", name)).Select(d => Path.GetFileName(d)).ToList();
+            var folders = Directory.EnumerateDirectories(Path.Combine(TEMP_FOLDER, "bots", name)).Select(d => Path.GetFileName(d)).ToList();
             if (folders.Count < 1)
             {
                 throw new Exception("AI " + name + " does not have a latest version folder");
             }
             folders.Sort((a, b) => int.Parse(b).CompareTo(int.Parse(a)));
 
-            return Path.Combine(LADDER_FOLDER, "bots", name, folders[0]);
+            return Path.Combine(TEMP_FOLDER, "bots", name, folders[0]);
         }
 
         private string PrintRanking()
