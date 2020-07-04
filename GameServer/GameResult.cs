@@ -9,7 +9,7 @@ namespace GameServer
         public readonly Game Game;
         public readonly bool Crashed = false;
         public readonly List<Player> Winners = new List<Player>();
-        public byte[] Rec { get; internal set; } = null;
+        public string RecFile { get; internal set; } = null;
 
         public GameResult(Game game, bool crashed)
         {

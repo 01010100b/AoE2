@@ -47,6 +47,7 @@ namespace GameServer
             public int Elo { get; set; }
             public int Games { get; set; }
             public long LatestUpdate { get; set; }
+            public Player.Civs Civs { get; set; }
         }
 
         private class SavedGame
@@ -57,7 +58,7 @@ namespace GameServer
             public string Winner { get; set; }
         }
 
-        private const string TEMP_FOLDER = @"E:\ladder";
+        private string TEMP_FOLDER => AppDomain.CurrentDomain.BaseDirectory;
         private readonly List<AI> AIs = new List<AI>();
         private HttpClient Client;
         private volatile bool Stop = false;
@@ -78,31 +79,24 @@ namespace GameServer
             
             while (!Stop)
             {
-                runner.Startup();
-                Debug.WriteLine("startup done");
-
-                Debug.WriteLine("getting next game");
-                var game = GetNextGame();
-
-                Console.WriteLine(PrintRanking());
-                Console.WriteLine("");
-                Trace.WriteLine(PrintRanking());
-                Trace.WriteLine("");
-
-                Debug.WriteLine("running game " + DateTime.Now);
-                var result = runner.Run(game);
-                Debug.WriteLine("adding result");
-                SetResult(result);
-
-                Debug.WriteLine("shutting down runner");
-                runner.Shutdown();
                 try
                 {
-                    
+                    Debug.WriteLine("getting next game");
+                    var game = GetNextGame();
+
+                    Console.WriteLine(PrintRanking());
+                    Console.WriteLine("");
+                    Trace.WriteLine(PrintRanking());
+                    Trace.WriteLine("");
+
+                    Debug.WriteLine("running game " + DateTime.Now);
+                    var result = runner.Run(game);
+                    Debug.WriteLine("adding result");
+                    SetResult(result);
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(e.Message);
+                    Debug.WriteLine(e.Message + "\n" + e.StackTrace);
                 }
             }
 
@@ -125,10 +119,6 @@ namespace GameServer
                 AIs.Sort((a, b) => a.Games.CompareTo(b.Games));
                 name1 = AIs[0].Name;
             }
-            if (rng.NextDouble() < 0.3)
-            {
-                name1 = "Binary";
-            }
 
             var name2 = AIs[rng.Next(AIs.Count)].Name;
             while (name2 == name1)
@@ -143,8 +133,8 @@ namespace GameServer
             var teamsize = rng.Next(1, 5);
             for (int i = 1; i <= teamsize; i++)
             {
-                var player1 = new Player() { Name = name1, Team = 1, Civ = 19, Folder = folder1 };
-                var player2 = new Player() { Name = name2, Team = 2, Civ = 19, Folder = folder2 };
+                var player1 = new Player() { Name = name1, Team = 1, Civ = Player.Civs.Random, Folder = folder1 };
+                var player2 = new Player() { Name = name2, Team = 2, Civ = Player.Civs.Random, Folder = folder2 };
 
                 game.Players.Add(player1);
                 game.Players.Add(player2);
@@ -176,29 +166,45 @@ namespace GameServer
             foreach (var line in lines)
             {
                 var pieces = line.Split(",");
-                var ai = new AI() 
-                { 
-                    Id = int.Parse(pieces[0]), 
-                    Name = pieces[1], 
-                    Elo = int.Parse(pieces[2]), 
-                    Games = int.Parse(pieces[3]), 
-                    // TODO add civs pieces[4]
+                var ai = new AI()
+                {
+                    Id = int.Parse(pieces[0]),
+                    Name = pieces[1],
+                    Elo = int.Parse(pieces[2]),
+                    Games = int.Parse(pieces[3]),
+                    Civs = Enum.Parse<Player.Civs>(pieces[4]),
                     LatestUpdate = long.Parse(pieces[5]) 
                 };
                 AIs.Add(ai);
             }
 
-            foreach (var ai in AIs)
+            foreach (var ai in AIs.ToList())
             {
                 var folder = Path.Combine(TEMP_FOLDER, "ais", ai.Name, ai.LatestUpdate.ToString());
                 if (!Directory.Exists(folder))
                 {
-                    var url = @"https://aiscripters.projectvalkyrie.net/ladder/files/ais/" + ai.Name + ".zip";
-                    Debug.WriteLine(url);
-                    var bytes = Client.GetAsync(url).Result.Content.ReadAsByteArrayAsync().Result;
-                    var file = Path.Combine(TEMP_FOLDER, "temp.dat");
-                    File.WriteAllBytes(file, bytes);
-                    ZipFile.ExtractToDirectory(file, folder);
+                    try
+                    {
+                        var url = @"https://aiscripters.projectvalkyrie.net/ladder/files/ais/" + ai.Name + ".zip";
+                        Debug.WriteLine(url);
+                        var bytes = Client.GetAsync(url).Result.Content.ReadAsByteArrayAsync().Result;
+                        var file = Path.Combine(TEMP_FOLDER, "temp.zip");
+                        File.WriteAllBytes(file, bytes);
+                        ZipFile.ExtractToDirectory(file, folder);
+
+                        var ai_file = Directory.EnumerateFiles(folder, "*.ai").Single();
+                        var old_name = Path.GetFileNameWithoutExtension(ai_file);
+                        var per_file = Directory.EnumerateFiles(folder, "*.per")
+                            .Where(f => Path.GetFileNameWithoutExtension(f) == old_name).Single();
+
+                        File.Move(ai_file, Path.Combine(folder, ai.Name + ".ai"));
+                        File.Move(per_file, Path.Combine(folder, ai.Name + ".per"));
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e.Message + "\n" + e.StackTrace);
+                        AIs.Remove(ai);
+                    }
                 }
             }
         }

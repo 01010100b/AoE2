@@ -32,62 +32,66 @@ namespace GameServer
             RecFolder = rec_folder;
         }
 
-        public void Startup()
+        public GameResult Run(Game game)
         {
-            if (!File.Exists(Exe))
+            try
             {
-                throw new Exception("File not found: " + Exe);
-            }
+                if (!File.Exists(Exe))
+                {
+                    throw new Exception("File not found: " + Exe);
+                }
 
-            if (!Directory.Exists(AiFolder))
-            {
-                throw new Exception("Folder not found: " + AiFolder);
-            }
+                if (!Directory.Exists(AiFolder))
+                {
+                    throw new Exception("Folder not found: " + AiFolder);
+                }
 
-            if (!Directory.Exists(RecFolder))
-            {
-                throw new Exception("Folder not found: " + RecFolder);
-            }
+                if (!Directory.Exists(RecFolder))
+                {
+                    throw new Exception("Folder not found: " + RecFolder);
+                }
 
-            if (RpcClient != null)
-            {
-                RpcClient.Dispose();
-            }
+                if (RpcClient != null)
+                {
+                    RpcClient.Dispose();
+                }
 
-            if (Process != null)
+                if (Process != null)
+                {
+                    if (!Process.HasExited)
+                    {
+                        Process.Kill();
+                        Process.WaitForExit();
+                    }
+                }
+
+                var rng = new Random();
+                var port = rng.Next(40000, 60000);
+
+                Process = Launch(Exe, port);
+                RpcClient = new RpcClient(new IPEndPoint(IPAddress.Loopback, port));
+                Thread.Sleep(1000);
+
+                var api = RpcClient.Call("GetApiVersion");
+                Debug.WriteLine("Api: " + api.ToString());
+
+                return RunPrivate(game);
+            }
+            finally
             {
-                if (!Process.HasExited)
+                RpcClient?.Dispose();
+
+                if (Process != null && !Process.HasExited)
                 {
                     Process.Kill();
                     Process.WaitForExit();
                 }
+
+                Thread.Sleep(10000);
             }
-
-            var rng = new Random();
-            var port = rng.Next(40000, 60000);
-            
-            Process = Launch(Exe, port);
-            RpcClient = new RpcClient(new IPEndPoint(IPAddress.Loopback, port));
-            Thread.Sleep(1000);
-
-            var api = RpcClient.Call("GetApiVersion");
-            Debug.WriteLine("Api: " + api.ToString());
         }
 
-        public void Shutdown()
-        {
-            RpcClient?.Dispose();
-            
-            if (Process != null && !Process.HasExited)
-            {
-                Process.Kill();
-                Process.WaitForExit();
-            }
-
-            Thread.Sleep(10000);
-        }
-
-        public GameResult Run(Game game)
+        private GameResult RunPrivate(Game game)
         {
             if (Process == null || Process.HasExited)
             {
@@ -135,7 +139,7 @@ namespace GameServer
                 if (i < game.Players.Count)
                 {
                     RpcClient.Call("SetPlayerComputer", player, game.Players[i].Name);
-                    RpcClient.Call("SetPlayerCivilization", player, game.Players[i].Civ);
+                    RpcClient.Call("SetPlayerCivilization", player, (int)game.Players[i].Civ);
                     RpcClient.Call("SetPlayerTeam", player, game.Players[i].Team);
                 }
                 else
@@ -240,8 +244,6 @@ namespace GameServer
             if (result.Crashed)
             {
                 Debug.WriteLine("game crashed");
-                Shutdown();
-                Startup();
             }
             else
             {
@@ -309,8 +311,7 @@ namespace GameServer
 
                     if (File.Exists(rec))
                     {
-                        result.Rec = File.ReadAllBytes(rec);
-                        File.Delete(rec);
+                        result.RecFile = rec;
                     }
                 }
                 
@@ -396,7 +397,7 @@ namespace GameServer
                     Directory.CreateDirectory(other);
                 }
 
-                foreach (var file in Directory.EnumerateFiles(current))
+                foreach (var file in Directory.EnumerateFiles(current).Where(f => Path.GetExtension(f) == ".per" || Path.GetExtension(f) == ".ai"))
                 {
                     var dest_file = Path.Combine(other, Path.GetFileName(file));
                     File.Copy(file, dest_file, true);
