@@ -1,5 +1,6 @@
 ﻿using Bleak;
 using Microsoft.Win32;
+using MsgPack;
 using MsgPack.Rpc.Core.Client;
 using MsgPack.Serialization;
 using System;
@@ -30,39 +31,37 @@ namespace GameServer
             Speed = speed;
             AiFolder = ai_folder;
             RecFolder = rec_folder;
+
+            if (!File.Exists(Exe))
+            {
+                throw new Exception("File not found: " + Exe);
+            }
+
+            if (!Directory.Exists(AiFolder))
+            {
+                throw new Exception("Folder not found: " + AiFolder);
+            }
+
+            if (!Directory.Exists(RecFolder))
+            {
+                throw new Exception("Folder not found: " + RecFolder);
+            }
         }
 
         public GameResult Run(Game game)
         {
             try
             {
-                if (!File.Exists(Exe))
-                {
-                    throw new Exception("File not found: " + Exe);
-                }
-
-                if (!Directory.Exists(AiFolder))
-                {
-                    throw new Exception("Folder not found: " + AiFolder);
-                }
-
-                if (!Directory.Exists(RecFolder))
-                {
-                    throw new Exception("Folder not found: " + RecFolder);
-                }
-
                 if (RpcClient != null)
                 {
                     RpcClient.Dispose();
                 }
 
-                if (Process != null)
+                if (Process != null && !Process.HasExited)
                 {
-                    if (!Process.HasExited)
-                    {
-                        Process.Kill();
-                        Process.WaitForExit();
-                    }
+                    Process.Kill();
+                    Process.WaitForExit();
+                    Thread.Sleep(5000);
                 }
 
                 var rng = new Random();
@@ -87,7 +86,7 @@ namespace GameServer
                     Process.WaitForExit();
                 }
 
-                Thread.Sleep(10000);
+                Thread.Sleep(5000);
             }
         }
 
@@ -96,11 +95,6 @@ namespace GameServer
             if (Process == null || Process.HasExited)
             {
                 throw new Exception("Process not running");
-            }
-
-            if (RpcClient == null || !RpcClient.IsConnected)
-            {
-                throw new Exception("RcpClient not connected");
             }
 
             // install players
@@ -112,47 +106,47 @@ namespace GameServer
 
             // start game
 
-            RpcClient.Call("ResetGameSettings");
+            Call("ResetGameSettings");
 
-            RpcClient.Call("SetGameType", game.GameType);
+            Call("SetGameType", game.GameType);
             if (game.GameType == 3)
             {
-                RpcClient.Call("SetGameScenarioName", game.ScenarioName);
+                Call("SetGameScenarioName", game.ScenarioName);
             }
             
-            RpcClient.Call("SetGameMapType", game.MapType);
-            RpcClient.Call("SetGameMapSize", game.MapSize);
-            RpcClient.Call("SetGameDifficulty", game.Difficulty);
-            RpcClient.Call("SetGameStartingResources", game.StartingResources);
-            RpcClient.Call("SetGamePopulationLimit", game.PopulationLimit);
-            RpcClient.Call("SetGameRevealMap", game.RevealMap);
-            RpcClient.Call("SetGameStartingAge", game.StartingAge);
-            RpcClient.Call("SetGameVictoryType", game.VictoryType, game.VictoryValue);
-            RpcClient.Call("SetGameTeamsTogether", game.TeamsTogether);
-            RpcClient.Call("SetGameTeamsLocked", game.LockTeams);
-            RpcClient.Call("SetGameAllTechs", game.AllTechs);
-            RpcClient.Call("SetGameRecorded", game.Recorded);
+            Call("SetGameMapType", game.MapType);
+            Call("SetGameMapSize", game.MapSize);
+            Call("SetGameDifficulty", game.Difficulty);
+            Call("SetGameStartingResources", game.StartingResources);
+            Call("SetGamePopulationLimit", game.PopulationLimit);
+            Call("SetGameRevealMap", game.RevealMap);
+            Call("SetGameStartingAge", game.StartingAge);
+            Call("SetGameVictoryType", game.VictoryType, game.VictoryValue);
+            Call("SetGameTeamsTogether", game.TeamsTogether);
+            Call("SetGameTeamsLocked", game.LockTeams);
+            Call("SetGameAllTechs", game.AllTechs);
+            Call("SetGameRecorded", game.Recorded);
 
             for (int i = 0; i < 8; i++)
             {
                 var player = i + 1;
                 if (i < game.Players.Count)
                 {
-                    RpcClient.Call("SetPlayerComputer", player, game.Players[i].Name);
-                    RpcClient.Call("SetPlayerCivilization", player, (int)game.Players[i].Civ);
-                    RpcClient.Call("SetPlayerTeam", player, game.Players[i].Team);
+                    Call("SetPlayerComputer", player, game.Players[i].Name);
+                    Call("SetPlayerCivilization", player, (int)game.Players[i].Civ);
+                    Call("SetPlayerTeam", player, game.Players[i].Team);
                 }
                 else
                 {
-                    RpcClient.Call("SetPlayerClosed", player);
+                    Call("SetPlayerClosed", player);
                 }
             }
 
-            RpcClient.Call("SetUseInGameResolution", false);
-            RpcClient.Call("SetRunUnfocused", true);
+            Call("SetUseInGameResolution", false);
+            Call("SetRunUnfocused", true);
             //RpcClient.Call("SetWindowMinimized", true);
 
-            RpcClient.Call("StartGame");
+            Call("StartGame");
 
             // wait for finish
             var finished = false;
@@ -174,7 +168,7 @@ namespace GameServer
                     break;
                 }
 
-                if (RpcClient.Call("GetGameTime").AsInt32() > 2 * 60 * 60)
+                if (Call("GetGameTime").AsInt32() > 2 * 60 * 60)
                 {
                     break;
                 }
@@ -189,7 +183,7 @@ namespace GameServer
 
                 for (int i = 0; i < 8; i++)
                 {
-                    if (RpcClient.Call("GetPlayerAlive", i + 1).AsBoolean())
+                    if (Call("GetPlayerAlive", i + 1).AsBoolean())
                     {
                         Thread.Sleep(300);
 
@@ -251,7 +245,7 @@ namespace GameServer
                 {
                     for (int i = 0; i < 8; i++)
                     {
-                        if (RpcClient.Call("GetPlayerAlive", i + 1).AsBoolean())
+                        if (Call("GetPlayerAlive", i + 1).AsBoolean())
                         {
                             Thread.Sleep(300);
                             result.Winners.Add(game.Players[i]);
@@ -264,7 +258,7 @@ namespace GameServer
                     var winner = -1;
                     for (int i = 0; i < 8; i++)
                     {
-                        var score = RpcClient.Call("GetPlayerScore", i + 1).AsInt32();
+                        var score = Call("GetPlayerScore", i + 1).AsInt32();
                         Thread.Sleep(300);
                         if (score > max)
                         {
@@ -292,7 +286,7 @@ namespace GameServer
                     }
                 }
 
-                RpcClient.Call("QuitGame");
+                Call("QuitGame");
                 Thread.Sleep(5000);
 
                 if (game.Recorded)
@@ -408,6 +402,38 @@ namespace GameServer
                     stack.Push(dir);
                 }
             }
+        }
+
+        private MessagePackObject Call(string method, params object[] arguments)
+        {
+            if (RpcClient == null)
+            {
+                throw new Exception("rpc client == null");
+            }
+
+            if (!RpcClient.IsConnected)
+            {
+                throw new Exception("RcpClient not connected");
+            }
+
+            var task = RpcClient.CallAsync(method, arguments, null);
+            var sw = new Stopwatch();
+            sw.Start();
+            while (!task.IsCompleted)
+            {
+                Thread.Sleep(100);
+                if (sw.ElapsedMilliseconds > 100 * 1000)
+                {
+                    break;
+                }
+            }
+
+            if (!task.IsCompletedSuccessfully)
+            {
+                throw new Exception("call not returned from rpc client");
+            }
+
+            return task.Result;
         }
     }
 }

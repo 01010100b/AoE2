@@ -113,28 +113,28 @@ namespace GameServer
             }
 
             var rng = new Random();
-            var name1 = AIs[rng.Next(AIs.Count)].Name;
+            var ai1 = AIs[rng.Next(AIs.Count)];
             if (rng.NextDouble() < 2d / AIs.Count)
             {
                 AIs.Sort((a, b) => a.Games.CompareTo(b.Games));
-                name1 = AIs[0].Name;
+                ai1 = AIs[0];
             }
 
-            var name2 = AIs[rng.Next(AIs.Count)].Name;
-            while (name2 == name1)
+            var ai2 = AIs[rng.Next(AIs.Count)];
+            while (ai2 == ai1)
             {
-                name2 = AIs[rng.Next(AIs.Count)].Name;
+                ai2 = AIs[rng.Next(AIs.Count)];
             }
 
-            var folder1 = GetLatestVersionFolder(name1);
-            var folder2 = GetLatestVersionFolder(name2);
+            var folder1 = GetLatestVersionFolder(ai1.Name);
+            var folder2 = GetLatestVersionFolder(ai2.Name);
 
             var game = new Game();
             var teamsize = rng.Next(1, 5);
             for (int i = 1; i <= teamsize; i++)
             {
-                var player1 = new Player() { Name = name1, Team = 1, Civ = Player.Civs.Random, Folder = folder1 };
-                var player2 = new Player() { Name = name2, Team = 2, Civ = Player.Civs.Random, Folder = folder2 };
+                var player1 = new Player() { Name = ai1.Name, Team = 1, Civ = ai1.Civs, Folder = folder1 };
+                var player2 = new Player() { Name = ai2.Name, Team = 2, Civ = ai2.Civs, Folder = folder2 };
 
                 game.Players.Add(player1);
                 game.Players.Add(player2);
