@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -40,9 +42,11 @@ namespace GameServer
 
         private class AI
         {
+            public int Id { get; set; }
             public string Name { get; set; }
             public int Elo { get; set; }
             public int Games { get; set; }
+            public long LatestUpdate { get; set; }
         }
 
         private class SavedGame
@@ -55,7 +59,7 @@ namespace GameServer
 
         private const string TEMP_FOLDER = @"E:\ladder";
         private readonly List<AI> AIs = new List<AI>();
-        private readonly List<SavedGame> SavedGames = new List<SavedGame>();
+        private HttpClient Client;
         private volatile bool Stop = false;
 
         public void Run()
@@ -68,37 +72,44 @@ namespace GameServer
                 settings = JsonSerializer.Deserialize<Settings>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json")));
             }
 
+            Client = new HttpClient();
+
             var runner = new Runner(settings.Exe, settings.Speed, settings.AiFolder, settings.RecFolder);
             
             while (!Stop)
             {
+                runner.Startup();
+                Debug.WriteLine("startup done");
+
+                Debug.WriteLine("getting next game");
+                var game = GetNextGame();
+
+                Console.WriteLine(PrintRanking());
+                Console.WriteLine("");
+                Trace.WriteLine(PrintRanking());
+                Trace.WriteLine("");
+
+                Debug.WriteLine("running game " + DateTime.Now);
+                var result = runner.Run(game);
+                Debug.WriteLine("adding result");
+                SetResult(result);
+
+                Debug.WriteLine("shutting down runner");
+                runner.Shutdown();
                 try
                 {
-                    runner.Startup();
-                    Debug.WriteLine("startup done");
-
-                    Debug.WriteLine("getting next game");
-                    var game = GetNextGame();
-
-                    Trace.WriteLine(PrintRanking());
-                    Trace.WriteLine("");
-
-                    Debug.WriteLine("running game " + DateTime.Now);
-                    var result = runner.Run(game);
-                    Debug.WriteLine("adding result");
-                    SetResult(result);
-
-                    Debug.WriteLine("shutting down runner");
-                    runner.Shutdown();
+                    
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.Message);
                 }
             }
+
+            Client.Dispose();
         }
 
-        protected virtual Game GetNextGame()
+        private Game GetNextGame()
         {
             Load();
 
@@ -139,115 +150,69 @@ namespace GameServer
                 game.Players.Add(player2);
             }
 
+            switch (teamsize)
+            {
+                case 1: game.MapSize = 0; break;
+                case 2: game.MapSize = 2; break;
+                case 3: game.MapSize = 3; break;
+                case 4: game.MapSize = 4; break;
+            }
+
             return game;
         }
 
-        protected virtual void SetResult(GameResult result)
+        private void SetResult(GameResult result)
         {
-            var savedgame = new SavedGame();
-            var id = 1;
-            if (SavedGames.Count > 0)
-            {
-                id = SavedGames.Max(g => g.Id);
-                id++;
-            }
-            savedgame.Id = id;
-            savedgame.Game = result.Game;
-            savedgame.Crashed = result.Crashed;
-            if (!savedgame.Crashed)
-            {
-                savedgame.Winner = result.Winners[0].Name;
 
-                var players = result.Game.Players.Select(p => p.Name).Distinct().Select(n => AIs.Single(a => a.Name == n)).ToList();
-                Debug.Assert(players.Count == 2);
-
-                var score = 0;
-                if (savedgame.Winner == players[0].Name)
-                {
-                    score = 1;
-                }
-
-                var elo1 = players[0].Elo;
-                var k1 = Math.Max(10, 30 - players[0].Games);
-                var elo2 = players[1].Elo;
-                var k2 = Math.Max(10, 30 - players[1].Games);
-                var delta = GetEloDelta(elo1, elo2, score, k1, k2);
-
-                players[0].Elo += delta;
-                players[1].Elo -= delta;
-                players[0].Games++;
-                players[1].Games++;
-            }
-
-            SavedGames.Add(savedgame);
-
-            if (result.Rec != null)
-            {
-                var file = Path.Combine(TEMP_FOLDER, "recs", id + ".mgz");
-                File.WriteAllBytes(file, result.Rec);
-            }
-
-            Save();
         }
 
         private void Load()
         {
             AIs.Clear();
-            SavedGames.Clear();
 
-            var options = new JsonSerializerOptions
+            var src = Client.GetAsync(@"https://aiscripters.projectvalkyrie.net/ladder/auto_ais.php").Result.Content.ReadAsStringAsync().Result;
+            //Debug.WriteLine(src);
+            var lines = src.Split("\n").Select(l => l.Trim()).Where(l => l.Length > 0).ToList();
+            foreach (var line in lines)
             {
-                WriteIndented = true
-            };
-
-            var file = Path.Combine(TEMP_FOLDER, "ais.json");
-            if (File.Exists(file))
-            {
-                var ais = JsonSerializer.Deserialize<List<AI>>(File.ReadAllText(file), options);
-                AIs.AddRange(ais);
+                var pieces = line.Split(",");
+                var ai = new AI() 
+                { 
+                    Id = int.Parse(pieces[0]), 
+                    Name = pieces[1], 
+                    Elo = int.Parse(pieces[2]), 
+                    Games = int.Parse(pieces[3]), 
+                    // TODO add civs pieces[4]
+                    LatestUpdate = long.Parse(pieces[5]) 
+                };
+                AIs.Add(ai);
             }
 
-            file = Path.Combine(TEMP_FOLDER, "games.json");
-            if (File.Exists(file))
+            foreach (var ai in AIs)
             {
-                var games = JsonSerializer.Deserialize<List<SavedGame>>(File.ReadAllText(file), options);
-                SavedGames.AddRange(games);
+                var folder = Path.Combine(TEMP_FOLDER, "ais", ai.Name, ai.LatestUpdate.ToString());
+                if (!Directory.Exists(folder))
+                {
+                    var url = @"https://aiscripters.projectvalkyrie.net/ladder/files/ais/" + ai.Name + ".zip";
+                    Debug.WriteLine(url);
+                    var bytes = Client.GetAsync(url).Result.Content.ReadAsByteArrayAsync().Result;
+                    var file = Path.Combine(TEMP_FOLDER, "temp.dat");
+                    File.WriteAllBytes(file, bytes);
+                    ZipFile.ExtractToDirectory(file, folder);
+                }
             }
-
-            if (AIs.Count < 2)
-            {
-                AIs.Clear();
-                var binary = new AI() { Name = "Binary", Elo = 1000, Games = 0 };
-                var barbarian = new AI() { Name = "Barbarian", Elo = 1000, Games = 0 };
-                AIs.Add(binary);
-                AIs.Add(barbarian);
-            }
-        }
-
-        private void Save()
-        {
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true
-            };
-
-            var file = Path.Combine(TEMP_FOLDER, "ais.json");
-            File.WriteAllText(file, JsonSerializer.Serialize(AIs, options));
-
-            file = Path.Combine(TEMP_FOLDER, "games.json");
-            File.WriteAllText(file, JsonSerializer.Serialize(SavedGames, options));
         }
 
         private string GetLatestVersionFolder(string name)
         {
-            var folders = Directory.EnumerateDirectories(Path.Combine(TEMP_FOLDER, "bots", name)).Select(d => Path.GetFileName(d)).ToList();
+            var folders = Directory.EnumerateDirectories(Path.Combine(TEMP_FOLDER, "ais", name)).Select(d => Path.GetFileName(d)).ToList();
             if (folders.Count < 1)
             {
                 throw new Exception("AI " + name + " does not have a latest version folder");
             }
-            folders.Sort((a, b) => int.Parse(b).CompareTo(int.Parse(a)));
+            folders.Sort((a, b) => long.Parse(b).CompareTo(long.Parse(a)));
 
-            return Path.Combine(TEMP_FOLDER, "bots", name, folders[0]);
+            return Path.Combine(TEMP_FOLDER, "ais", name, folders[0]);
         }
 
         private string PrintRanking()
