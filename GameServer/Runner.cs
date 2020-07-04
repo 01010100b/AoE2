@@ -143,7 +143,7 @@ namespace GameServer
 
             Call("SetUseInGameResolution", false);
             Call("SetRunUnfocused", true);
-            //RpcClient.Call("SetWindowMinimized", true);
+            Call("SetWindowMinimized", true);
 
             Call("StartGame");
 

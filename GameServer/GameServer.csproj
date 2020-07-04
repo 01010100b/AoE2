@@ -7,11 +7,15 @@
 
   <ItemGroup>
     <None Remove="aoc-auto-game.dll" />
+    <None Remove="readme.txt" />
     <None Remove="settings.json" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="aoc-auto-game.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="readme.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="settings.json">
@@ -26,6 +30,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MsgPack.Rpc.Core\MsgPack.Rpc.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Releases\" />
   </ItemGroup>
 
 </Project>

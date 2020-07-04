@@ -163,6 +163,7 @@ namespace GameServer
 
             if (string.IsNullOrWhiteSpace(Password))
             {
+                Console.WriteLine("No password, aborting upload");
                 File.Delete(result.RecFile);
                 return;
             }
