@@ -32,14 +32,6 @@ namespace GameServer
             return (int)Math.Round(delta);
         }
 
-        private class Settings
-        {
-            public string Exe { get; set; } = Path.Combine(Environment.GetEnvironmentVariable("APPDATA"), "Microsoft Games", "Age of Empires ii", "Age2_x1", "age2_x1.5.exe");
-            public int Speed { get; set; } = 100;
-            public string AiFolder { get; set; } = Path.Combine(Environment.GetEnvironmentVariable("APPDATA"), "Microsoft Games", "Age of Empires ii", "Ai");
-            public string RecFolder { get; set; } = Path.Combine(Environment.GetEnvironmentVariable("APPDATA"), "Microsoft Games", "Age of Empires ii", "SaveGame");
-        }
-
         private class AI
         {
             public int Id { get; set; }
@@ -47,7 +39,7 @@ namespace GameServer
             public int Elo { get; set; }
             public int Games { get; set; }
             public long LatestUpdate { get; set; }
-            public Player.Civs Civs { get; set; }
+            public Civ Civ { get; set; }
         }
 
         private class SavedGame
@@ -62,20 +54,22 @@ namespace GameServer
         private readonly List<AI> AIs = new List<AI>();
         private HttpClient Client;
         private volatile bool Stop = false;
+        private Settings Settings;
+        private string Password;
 
-        public void Run()
+        public void Run(Settings settings, string pw = null)
         {
-            var settings = new Settings();
-
-            if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json")))
+            if (settings == null)
             {
-                Debug.WriteLine("loading settings");
-                settings = JsonSerializer.Deserialize<Settings>(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json")));
+                throw new ArgumentNullException("settings");
             }
+
+            Settings = settings;
+            Password = pw;
 
             Client = new HttpClient();
 
-            var runner = new Runner(settings.Exe, settings.Speed, settings.AiFolder, settings.RecFolder);
+            var runner = new Runner(Settings.Exe, Settings.Speed, Settings.AiFolder, Settings.RecFolder);
             
             while (!Stop)
             {
@@ -133,8 +127,8 @@ namespace GameServer
             var teamsize = rng.Next(1, 5);
             for (int i = 1; i <= teamsize; i++)
             {
-                var player1 = new Player() { Name = ai1.Name, Team = 1, Civ = ai1.Civs, Folder = folder1 };
-                var player2 = new Player() { Name = ai2.Name, Team = 2, Civ = ai2.Civs, Folder = folder2 };
+                var player1 = new Player() { Name = ai1.Name, Team = 1, Civ = ai1.Civ, Folder = folder1 };
+                var player2 = new Player() { Name = ai2.Name, Team = 2, Civ = ai2.Civ, Folder = folder2 };
 
                 game.Players.Add(player1);
                 game.Players.Add(player2);
@@ -153,6 +147,44 @@ namespace GameServer
 
         private void SetResult(GameResult result)
         {
+            if (string.IsNullOrWhiteSpace(result.RecFile))
+            {
+                return;
+            }
+
+            if (result.Crashed)
+            {
+                return;
+            }
+
+            if (!File.Exists(result.RecFile))
+            {
+                throw new FileNotFoundException(result.RecFile);
+            }
+
+            if (string.IsNullOrWhiteSpace(Password))
+            {
+                //File.Delete(result.RecFile);
+                //return;
+            }
+
+            var dir = Path.Combine(TEMP_FOLDER, "tmp");
+            if (Directory.Exists(dir))
+            {
+                Directory.Delete(dir, true);
+            }
+
+            Directory.CreateDirectory(dir);
+            File.Move(result.RecFile, Path.Combine(dir, Path.GetFileName(result.RecFile)));
+
+            var file = Path.Combine(TEMP_FOLDER, "temp.zip");
+            if (File.Exists(file))
+            {
+                File.Delete(file);
+            }
+
+            ZipFile.CreateFromDirectory(dir, file);
+
 
         }
 
@@ -172,7 +204,7 @@ namespace GameServer
                     Name = pieces[1],
                     Elo = int.Parse(pieces[2]),
                     Games = int.Parse(pieces[3]),
-                    Civs = Enum.Parse<Player.Civs>(pieces[4]),
+                    Civ = Enum.Parse<Civ>(pieces[4]),
                     LatestUpdate = long.Parse(pieces[5]) 
                 };
                 AIs.Add(ai);

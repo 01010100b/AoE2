@@ -84,9 +84,8 @@ namespace GameServer
                 {
                     Process.Kill();
                     Process.WaitForExit();
-                }
-
-                Thread.Sleep(5000);
+                    Thread.Sleep(5000);
+                } 
             }
         }
 
