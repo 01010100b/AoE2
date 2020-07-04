@@ -10,7 +10,7 @@ namespace GameServer
         
         public int GameType { get; set; } = 0;
         public string ScenarioName { get; set; } = null;
-        public int MapType { get; set; } = 9;
+        public Map MapType { get; set; } = Map.Arabia;
         public int MapSize { get; set; } = 0;
         public int Difficulty { get; set; } = 1;
         public int StartingResources { get; set; } = 0;

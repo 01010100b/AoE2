@@ -6,6 +6,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -75,17 +76,17 @@ namespace GameServer
             {
                 try
                 {
-                    Debug.WriteLine("getting next game");
-                    var game = GetNextGame();
+                    Load();
 
                     Console.WriteLine(PrintRanking());
                     Console.WriteLine("");
-                    Trace.WriteLine(PrintRanking());
-                    Trace.WriteLine("");
 
-                    Debug.WriteLine("running game " + DateTime.Now);
+                    Console.WriteLine("getting next game");
+                    var game = GetNextGame();
+
+                    Console.WriteLine("running game ");
                     var result = runner.Run(game);
-                    Debug.WriteLine("adding result");
+                    Console.WriteLine("uploading result");
                     SetResult(result);
                 }
                 catch (Exception e)
@@ -99,8 +100,6 @@ namespace GameServer
 
         private Game GetNextGame()
         {
-            Load();
-
             if (AIs.Count < 2)
             {
                 throw new Exception("Need at least 2 AIs");
@@ -164,8 +163,8 @@ namespace GameServer
 
             if (string.IsNullOrWhiteSpace(Password))
             {
-                //File.Delete(result.RecFile);
-                //return;
+                File.Delete(result.RecFile);
+                return;
             }
 
             var dir = Path.Combine(TEMP_FOLDER, "tmp");
@@ -185,7 +184,68 @@ namespace GameServer
 
             ZipFile.CreateFromDirectory(dir, file);
 
+            var rng = new Random();
 
+            var winner = AIs.Single(a => a.Name == result.Winners[0].Name);
+            var loser = AIs.Single(a => a.Name == result.Game.Players.First(p => p.Name != winner.Name).Name);
+
+            var pw = Password;
+
+            var player1 = winner.Id.ToString();
+            var player2 = loser.Id.ToString();
+            var player1_wins = "1";
+            var player2_wins = "0";
+            if (rng.NextDouble() < 0.5)
+            {
+                player1 = loser.Id.ToString();
+                player2 = winner.Id.ToString();
+                player1_wins = "0";
+                player2_wins = "1";
+            }
+
+            var teams = "1v1";
+            switch (result.Game.Players.Count)
+            {
+                case 4: teams = "2v2"; break;
+                case 6: teams = "3v3"; break;
+                case 8: teams = "4v4"; break;
+            }
+
+            var map = result.Game.MapType.ToString();
+            switch (result.Game.MapType)
+            {
+                case Map.BlackForest: map = "Black Forest"; break;
+                case Map.CraterLake: map = "Crater Lake"; break;
+                case Map.GhostLake: map = "Ghost Lake"; break;
+                case Map.GoldRush: map = "Gold Rush"; break;
+                case Map.SaltMarsh: map = "Salt March"; break;
+                case Map.TeamIslands: map = "Team Islands"; break;
+            }
+
+            var game_mode = "Random Map";
+            var tournament = "Auto Ladder";
+            var game_version = "WK";
+
+            using var form = new MultipartFormDataContent();
+            using var file_content = new ByteArrayContent(File.ReadAllBytes(file));
+            file_content.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
+            form.Add(file_content, "zip", Path.GetFileName(file));
+
+            form.Add(new StringContent(pw), "pw");
+            form.Add(new StringContent(player1), "player1");
+            form.Add(new StringContent(player2), "player2");
+            form.Add(new StringContent(player1_wins), "player1_wins");
+            form.Add(new StringContent(player2_wins), "player2_wins");
+            form.Add(new StringContent(teams), "teams");
+            form.Add(new StringContent(map), "map");
+            form.Add(new StringContent(game_mode), "game_mode");
+            form.Add(new StringContent(tournament), "tournament");
+            form.Add(new StringContent(game_version), "game_version");
+
+            var url = @"https://aiscripters.projectvalkyrie.net/ladder/add_game.php";
+            var response = Client.PostAsync(url, form).Result;
+            var content = response.Content;
+            Debug.WriteLine(content.ReadAsStringAsync().Result);
         }
 
         private void Load()
@@ -218,11 +278,11 @@ namespace GameServer
                     try
                     {
                         var url = @"https://aiscripters.projectvalkyrie.net/ladder/files/ais/" + ai.Name + ".zip";
-                        Debug.WriteLine(url);
+                        Console.WriteLine("Downloading: " + url);
                         var bytes = Client.GetAsync(url).Result.Content.ReadAsByteArrayAsync().Result;
                         var file = Path.Combine(TEMP_FOLDER, "temp.zip");
                         File.WriteAllBytes(file, bytes);
-                        ZipFile.ExtractToDirectory(file, folder);
+                        ZipFile.ExtractToDirectory(file, folder, true);
 
                         var ai_file = Directory.EnumerateFiles(folder, "*.ai").Single();
                         var old_name = Path.GetFileNameWithoutExtension(ai_file);

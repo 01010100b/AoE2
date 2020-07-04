@@ -113,7 +113,7 @@ namespace GameServer
                 Call("SetGameScenarioName", game.ScenarioName);
             }
             
-            Call("SetGameMapType", game.MapType);
+            Call("SetGameMapType", (int)game.MapType);
             Call("SetGameMapSize", game.MapSize);
             Call("SetGameDifficulty", game.Difficulty);
             Call("SetGameStartingResources", game.StartingResources);
