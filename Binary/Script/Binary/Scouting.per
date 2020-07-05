@@ -23,10 +23,8 @@
 	#if gl-scout == OFF
 		
 		up-full-reset-search
-		up-find-local c: scout-cavalry-line c: 1
-		up-find-local c: eagle-warrior-line c: 1
-		up-find-local c: cavalry-class c: 1
-		up-find-local c: infantry-class c: 1
+		up-filter-include -1 -1 orderid-explore -1
+		up-find-local c: -1 c: 1
 		up-get-search-state gl-search-state
 		
 		#if gl-local-total > 0
@@ -40,7 +38,7 @@
 		
 	#end-if
 	
-	#if (gl-scout != OFF)
+	#if gl-scout != OFF
 	
 		; get sighted livestock
 
@@ -89,10 +87,10 @@
 				
 				sn-focus-player-number = sn-target-player-number
 				up-full-reset-search
-				up-find-remote c: building-class c: 1
+				up-find-remote c: town-center c: 1
 				up-get-search-state gl-search-state
 				
-				#if gl-remote-total > 0
+				#if gl-remote-total == 0
 				
 					up-send-scout group-type-land-explore scout-enemy
 				

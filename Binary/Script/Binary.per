@@ -181,7 +181,7 @@ gl-point1-x = gl-currently-placing-point-x
 gl-point1-y = gl-currently-placing-point-y
 up-set-target-point gl-point1
 
-#if timer-triggered ti-repeat-23
+#if timer-triggered ti-repeat-1m
 
 	#if sn-important-research != OFF
 	
@@ -199,25 +199,12 @@ up-set-target-point gl-point1
 	
 	#if sn-important-unit != OFF
 	
-		up-store-type-name s: sn-important-unit
+		var gl-unit
+		up-get-object-type-data s: sn-important-unit object-data-upgrade-type gl-unit
+		up-store-type-name g: gl-unit
 		up-chat-data-to-player my-player-number "Important unit: %s" c: 7031232
 		
 	#end-if
-	
-#end-if
-
-; chat SitRep
-#if timer-triggered ti-repeat-1m
-
-	up-chat-data-to-player my-player-number "My target: %d" s: sn-target-player-number
-	up-chat-data-to-player my-player-number "Superiority: %d" s: sn-superiority
-	up-chat-data-to-player my-player-number "Target army: %d" s: sn-target-army
-	
-	#foreach $class in town infantry archery cavalry monk eagle-warrior
-	
-		up-chat-data-to-player my-player-number "$class threat: %d" s: sn-$class-threat
-		
-	#end-foreach
 	
 #end-if
 

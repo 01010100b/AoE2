@@ -32,7 +32,9 @@
 		
 	#end-foreach
 	
-	up-store-type-name g: gl-current-important-unit
+	var gl-unit-id
+	up-get-object-type-data g: gl-current-important-unit object-data-upgrade-type gl-unit-id
+	up-store-type-name g: gl-unit-id
 	up-chat-data-to-self "Saving up for unit: %s" c: 7031232
 	
 #end-if
@@ -90,7 +92,7 @@ gl-pop-cap max= 0
 		
 	#end-if
 	
-	#if (sn-kill-excess-villagers == YES) (up-object-type-count c: villager g:> gl-pop-cap)
+	#if (sn-kill-excess-villagers == YES) (up-object-type-count c: villager g:> gl-pop-cap) (housing-headroom < 3)
 	
 		delete-unit villager
 		
@@ -106,14 +108,9 @@ gl-pop-cap max= 0
 	
 		up-drop-resources food c: 3
 		
-	#else
-	
-		up-drop-resources food c: 10
-		
 	#end-if
 	
 	disable-timer ti-next-villager
-	enable-timer ti-next-villager 5
 	
 #end-if
 

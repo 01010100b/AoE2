@@ -100,10 +100,12 @@
     <None Include="Script\Binary\ConstantMemory.per" />
     <None Include="Script\Binary\Economy.per" />
     <None Include="Script\Binary\FoodEconomy.per" />
+    <None Include="Script\Binary\Functions\GetAvailableMilitary.per" />
     <None Include="Script\Binary\Functions\GetNextUnit.per" />
     <None Include="Script\Binary\Functions\GetObjectCount.per" />
     <None Include="Script\Binary\Functions\GetObjectMovementDistance.per" />
     <None Include="Script\Binary\Functions\GetRandomNumber.per" />
+    <None Include="Script\Binary\Functions\GetSiegeUnits.per" />
     <None Include="Script\Binary\Functions\ObjectExists.per" />
     <None Include="Script\Binary\Functions\TryImportantBuilding.per" />
     <None Include="Script\Binary\Functions\TryImportantResearch.per" />

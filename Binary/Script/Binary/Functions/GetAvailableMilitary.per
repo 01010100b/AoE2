@@ -1,0 +1,70 @@
+﻿#function GetAvailableMilitary gl-search-list
+
+	var gl-units = 0
+	
+	#if gl-search-list == search-local
+	
+		up-reset-search 1 1 0 0
+		up-reset-filters
+		up-filter-include cmdid-military -1 -1 -1
+		
+		up-find-local c: -1 c: 240
+		up-remove-objects search-local object-data-base-type c:== battering-ram
+		up-remove-objects search-local object-data-class c:== packed-trebuchet-class
+		up-remove-objects search-local object-data-class c:== unpacked-trebuchet-class
+		up-remove-objects search-local object-data-id g:== gl-scout
+		
+		#if sn-siege-unit != OFF
+		
+			var gl-siege-unit
+			up-get-object-type-data s: sn-siege-unit object-data-base-type gl-siege-unit
+			up-remove-objects search-local object-data-base-type g:== gl-siege-unit
+			
+		#end-if
+		
+		;up-remove-objects search-local object-data-idling c:== 0
+		up-remove-objects search-local object-data-action c:== actionid-explore
+		up-remove-objects search-local object-data-order c:== orderid-explore
+		up-remove-objects search-local object-data-target c:== siege-weapon-class
+		up-remove-objects search-local object-data-target c:== packed-trebuchet-class
+		up-remove-objects search-local object-data-target c:== unpacked-trebuchet-class
+		
+		up-get-search-state gl-search-state
+		gl-units = gl-local-total
+	
+	#end-if
+	
+	#if gl-search-list == search-remote
+		
+		sn-focus-player-number = my-player-number
+		up-reset-search 0 0 1 1
+		up-reset-filters
+		up-filter-include cmdid-military -1 -1 -1
+		
+		up-find-remote c: -1 c: 240
+		up-remove-objects search-remote object-data-base-type c:== battering-ram
+		up-remove-objects search-remote object-data-class c:== packed-trebuchet-class
+		up-remove-objects search-remote object-data-class c:== unpacked-trebuchet-class
+		up-remove-objects search-remote object-data-id g:== gl-scout
+		
+		#if sn-siege-unit != OFF
+		
+			var gl-siege-unit
+			up-get-object-type-data s: sn-siege-unit object-data-base-type gl-siege-unit
+			up-remove-objects search-remote object-data-base-type g:== gl-siege-unit
+			
+		#end-if
+		
+		;up-remove-objects search-remote object-data-idling c:== 0
+		up-remove-objects search-remote object-data-action c:== actionid-explore
+		up-remove-objects search-remote object-data-order c:== orderid-explore
+		up-remove-objects search-remote object-data-target c:== siege-weapon-class
+		up-remove-objects search-remote object-data-target c:== packed-trebuchet-class
+		up-remove-objects search-remote object-data-target c:== unpacked-trebuchet-class
+		
+		up-get-search-state gl-search-state
+		gl-units = gl-remote-total
+	
+	#end-if
+	
+#return gl-units

@@ -19,7 +19,7 @@
 	(set-strategic-number sn-disable-defend-groups flag-outside-max)
 	(set-strategic-number sn-consecutive-idle-unit-limit 1)
 	(set-strategic-number sn-wall-targeting-mode 1)
-	(set-strategic-number sn-gather-defense-units 1)
+	;(set-strategic-number sn-gather-defense-units 1)
 	(disable-self)
 )
 
@@ -32,7 +32,7 @@
 	(disable-self)
 )
 
-; switch attack state
+; Switch Attack State
 
 #if (sn-attack == YES) (gl-currently-attacking == NO)
 
@@ -51,93 +51,273 @@
 	
 #end-if
 
-; perform attack/retreat
+; Unit Micro
 
 #if gl-currently-attacking == YES
-	
-	#if (sn-maximum-town-size < 250) (up-building-type-in-town c: town-center == 0) (up-building-type-in-town c: castle == 0)
-
-		sn-maximum-town-size += 3
-	
-	#end-if
-	
-	#if (sn-maximum-town-size >= 250) (military-population > 40) (sn-recent-target-army < 5) (timer-triggered ti-repeat-3m)
-	
-		sn-total-number-explorers = 10
-		sn-number-explore-groups = 10
-		sn-percentage-explore-exterminators = 100
-		up-reset-scouts
-		
-	#end-if
 	
 	#if timer-triggered ti-repeat-7
 	
 		chat-local-to-self "Attacking..."
 		
+		var gl-used = NO
+		var gl-units
+		
+		; get siege
+		up-full-reset-search
+		gl-units = GetSiegeUnits(search-local)
+		
+		; if I have siege
+		#if gl-units > 0
+		
+			up-chat-data-to-self "Siege: %d" g: gl-units
+			
+			; get target building
+			sn-focus-player-number = sn-target-player-number
+			up-find-remote c: castle c: 10
+			up-find-remote c: town-center c: 10
+			up-find-remote c: watch-tower c: 10
+			up-get-search-state gl-search-state
+			
+			#if gl-remote-total == 0
+			
+				up-find-remote c: building-class c: 10
+				up-get-search-state gl-search-state
+				
+				sn-total-number-explorers max= 10
+				sn-number-explore-groups max= 10
+			
+			#else
+			
+				sn-total-number-explorers = 1
+				sn-number-explore-groups = 1
+			
+			#end-if
+			
+			; if there is a target building
+			#if gl-remote-total > 0
+			
+				; attack it
+				up-set-target-point gl-point1
+				up-clean-search search-remote object-data-distance search-order-asc
+				up-set-target-object search-remote c: 0
+				up-target-objects 1 action-default formation-stagger -1
+				up-get-point position-object gl-point2
+				
+				gl-used = YES
+				
+				up-full-reset-search
+				
+				; get available normal military
+
+				gl-units = GetAvailableMilitary(search-local)
+				;up-remove-objects search-local object-data-idling c:== 0
+				
+				up-get-search-state gl-search-state
+				up-chat-data-to-self "Guards: %d" g: gl-local-total
+				
+				; if there are units
+				#if gl-local-total > 0
+					
+					; get siege units in remote
+					gl-units = GetSiegeUnits(search-remote)
+				
+					; get siege unit closest to target building
+					up-set-target-point gl-point2
+					up-clean-search search-remote object-data-distance search-order-asc
+					up-set-target-object search-remote c: 0
+					up-get-point position-object gl-point1
+					up-set-target-point gl-point1
+					
+					; check for enemies
+					sn-focus-player-number = sn-target-player-number
+					up-reset-filters
+					up-reset-search 0 0 1 1
+					up-filter-include cmdid-military -1 -1 -1
+					up-filter-distance c: -1 c: 20
+					up-find-remote c: -1 c: 40
+					up-get-search-state gl-search-state
+					
+					#if gl-remote-total == 0
+					
+						up-reset-filters
+						up-reset-search 0 0 1 1
+						up-filter-include cmdid-villager -1 -1 -1
+						up-filter-distance c: -1 c: 40
+						up-find-remote c: -1 c: 40
+						up-get-search-state gl-search-state
+					
+					#end-if
+					
+					; if there are enemies
+					#if gl-remote-total > 0
+
+						; attack the closest few
+						up-clean-search search-remote object-data-distance search-order-asc
+						up-remove-objects search-remote object-data-index c:> 2
+						up-target-objects 0 action-default formation-stagger stance-defensive
+						
+						up-get-search-state gl-search-state
+						up-chat-data-to-self "Attacking %d enemies" g: gl-remote-total
+						
+					#else
+					
+						; guard the siege
+						up-set-target-point gl-point1
+						up-remove-objects search-local object-data-distance c:< 10
+						up-target-objects 1 action-guard -1 stance-defensive
+					
+					#end-if
+					
+				#end-if
+				
+			#end-if
+			
+		#end-if
+		
+		#if gl-used == NO
+		
+			chat-local-to-self "Not microing"
+			sn-number-attack-groups = 100
+		
+		#else
+		
+			sn-number-attack-groups = 0
+			
+		#end-if
+		
 	#end-if
 	
 #else
-
-	sn-number-attack-groups = 0
 	
-	up-get-point position-self gl-point1
-	up-get-point position-target gl-point2
-	#if gl-point2 == -1
+	#if timer-triggered ti-repeat-5
 	
-		up-get-point position-center gl-point2
-	
-	#end-if
-
-	var gl-safe-distance = sn-minimum-town-size
-	gl-safe-distance += 5
-	
-	#if building-type-count castle > 0
-
+		var gl-used = NO
+		
+		var gl-units
+		; get siege units and move them to base
+		
+		gl-units = GetSiegeUnits(search-local)
+		
+		up-get-point position-self gl-point1
+		up-set-target-point gl-point1
+		up-remove-objects search-local object-data-distance s:< sn-minimum-town-size
+		
+		up-target-point gl-point1 action-move formation-stagger -1
+		
+		; get available normal military
 		up-full-reset-search
-		up-find-local c: castle c: 10
-		up-set-target-point gl-point1
-		up-clean-search search-local object-data-distance search-order-desc
-		up-set-target-object search-local c: 0
-		up-get-object-data object-data-distance gl-safe-distance
-
-	#end-if
-
-	gl-safe-distance max= sn-minimum-town-size
-
-	sn-maximum-town-size = gl-safe-distance
-	sn-maximum-town-size += 3
-	
-	#if timer-triggered ti-repeat-13
-	
-		up-full-reset-search
-		up-set-target-point gl-point1
-		;up-find-local c: siege-weapon-class c: 20
-		up-find-local c: packed-trebuchet-class c: 20
-		up-find-local c: unpacked-trebuchet-class c: 20
-		up-set-target-point gl-point1
-		up-remove-objects search-local object-data-distance c:< 10
 		
-		up-target-point gl-point1 action-move -1 -1
+		gl-units = GetAvailableMilitary(search-local)
+		;up-remove-objects search-local object-data-idling c:== 0
+		up-get-search-state gl-search-state
 		
-	#end-if
-	
-	var gl-min
-	up-get-fact military-population 0 gl-min
-	gl-min %*= 200
-	
-	#if (sn-town-threat == HIGH) (sn-attack == OFF) (up-object-type-count-total s: sn-primary-unit s:< sn-min-primary-unit) (up-enemy-units-in-town g:> gl-min)
-	
-		up-gather-inside c: barracks c: 1
-		up-gather-inside c: archery-range c: 1
-		up-gather-inside c: stable c: 1
-		up-gather-inside c: siege-workshop c: 1
+		; if there are units
+		#if gl-local-total > 0
 		
-	#else
-	
-		up-gather-inside c: barracks c: 0
-		up-gather-inside c: archery-range c: 0
-		up-gather-inside c: stable c: 0
-		up-gather-inside c: siege-workshop c: 0
+			;up-chat-data-to-self "Controlling %d military" g: gl-local-total
+			
+			; get attacked castles/tc's
+			sn-focus-player-number = my-player-number
+			up-reset-filters
+			up-reset-search 0 0 1 1
+			up-find-remote c: castle c: 10
+			up-find-remote c: town-center c: 10
+			up-remove-objects search-remote object-data-attack-timer c:< 10
+			up-get-search-state gl-search-state
+			
+			; if there are attacked castles or TC's
+			#if gl-remote-total > 0
+			
+				chat-local-to-self "A castle or TC is under attack"
+				
+				; get latest attacked one
+				up-clean-search search-remote object-data-attack-timer search-order-desc
+				up-set-target-object search-remote c: 0
+				up-get-point position-object gl-point1
+				up-set-target-point gl-point1
+
+				; find attackers
+				sn-focus-player-number = sn-target-player-number
+				up-reset-filters
+				up-reset-search 0 0 1 1
+				up-filter-distance c: -1 c: 30
+				up-find-remote c: battering-ram-line c: 10
+				up-find-remote c: packed-trebuchet-class c: 10
+				up-find-remote c: unpacked-trebuchet-class c: 10
+				up-get-search-state gl-search-state
+				
+				; if there are siege attackers
+				#if gl-remote-total > 0
+				
+					up-chat-data-to-self "Attacking enemy siege with: %d" g: gl-local-total
+					
+					up-set-target-point gl-point1
+					up-clean-search search-remote object-data-distance search-order-asc
+					up-set-target-object search-remote c: 0
+					up-target-objects 1 action-default formation-stagger stance-defensive
+					
+					gl-used = YES
+					
+				#end-if
+				
+			#end-if
+			
+			#if (gl-used == NO) (up-enemy-units-in-town > 3)
+			
+				chat-local-to-self "Town is being invaded"
+				
+				up-get-point position-self gl-point1
+				up-set-target-point gl-point1
+				
+				; get enemies
+				
+				sn-focus-player-number = sn-target-player-number
+				up-reset-filters
+				up-reset-search 0 0 1 1
+				up-filter-distance c: -1 s: sn-maximum-town-size
+				up-filter-include cmdid-military -1 -1 -1
+				up-find-remote c: battering-ram-line c: 10
+				up-find-remote c: packed-trebuchet-class c: 10
+				up-find-remote c: unpacked-trebuchet-class c: 10
+				up-get-search-state gl-search-state
+				
+				#if gl-remote-total == 0
+				
+					up-find-remote c: -1 c: 40
+					up-get-search-state gl-search-state
+				
+				#end-if
+				
+				#if gl-remote-total > 0
+				
+					up-clean-search search-remote object-data-distance search-order-asc
+					up-remove-objects search-remote object-data-index c:> 1
+					up-target-objects 0 action-default formation-stagger stance-defensive
+					
+					gl-used = YES
+				
+				#end-if
+			
+			#end-if
+			
+			#if (gl-used == NO) (building-type-count castle > 0)
+			
+				;chat-local-to-self "Guard castle"
+				
+				sn-focus-player-number = my-player-number
+				up-reset-filters
+				up-reset-search 0 0 1 1
+				up-find-remote c: castle c: 10
+				
+				up-get-point position-target gl-point1
+				up-set-target-point gl-point1
+				up-clean-search search-remote object-data-distance search-order-asc
+				up-set-target-object search-remote c: 0
+				up-target-objects 1 action-guard -1 stance-defensive
+			
+			#end-if
+
+		#end-if
 		
 	#end-if
 	
@@ -179,7 +359,7 @@
 	gl-pop-cap -= 10
 	gl-pop-cap %*= gl-mod
 		
-	#if (sn-attack == NO) (sn-primary-unit != OFF) (sn-min-primary-unit >= 5)
+	#if (sn-attack == NO) (sn-primary-unit != OFF) (sn-min-primary-unit >= 5) (timer-triggered ti-repeat-3m)
 		
 		var gl-should-attack = NO
 		
@@ -189,53 +369,61 @@
 		
 		#end-if
 		
-		#if sn-town-threat == HIGH
-		
-			gl-should-attack = NO
-			
-		#end-if
-		
-		#if up-object-type-count-total s: sn-siege-unit c:== 0
-		
-			;gl-should-attack = NO
-			
-		#end-if
-		
 		#if gl-should-attack == YES
 		
 			sn-attack = YES
 			
 		#end-if
 		
-	#else
+	#end-if
 		
-		var gl-should-retreat = NO
+	var gl-should-retreat = NO
 		
-		gl-pop-cap %*= 80
-		#if or (gl-pop < gl-pop-cap) (military-population < 15)
+	gl-pop-cap %*= 80
+	#if or (gl-pop < gl-pop-cap) (military-population < 15)
 		
-			gl-should-retreat = YES
+		gl-should-retreat = YES
 			
-		#end-if
+	#end-if
 		
-		#if sn-town-threat == HIGH
+	#if sn-town-threat == HIGH
 		
-			gl-should-retreat = YES
+		gl-should-retreat = YES
 			
-		#end-if
+	#end-if
 		
-		#if up-object-type-count-total s: sn-siege-unit c:== 0
+	#if (up-object-type-count s: sn-siege-unit c:== 0) (unit-type-count battering-ram-line == 0) (unit-type-count packed-trebuchet-class == 0) (unit-type-count unpacked-trebuchet-class == 0)
 		
-			;gl-should-retreat = YES
+		gl-should-retreat = YES
 			
-		#end-if
+	#end-if
 		
-		#if (gl-should-retreat == YES)
+	up-full-reset-search
+	up-find-local c: castle c: 10
+	up-find-local c: town-center c: 10
+	up-remove-objects search-local object-data-attack-timer c:< 10
+	up-get-search-state gl-search-state
 		
-			sn-attack = NO
+	#if gl-local-total > 0
+		
+		;gl-should-retreat = YES
 			
-		#end-if
+	#end-if
+	
+	up-get-fact population 0 gl-pop
+	up-get-fact population-cap 0 gl-pop-cap
+	gl-pop += 10
+	
+	#if gl-pop >= gl-pop-cap
+	
+		gl-should-retreat = NO
 		
+	#end-if
+		
+	#if gl-should-retreat == YES
+		
+		sn-attack = NO
+			
 	#end-if
 	
 #end-if
