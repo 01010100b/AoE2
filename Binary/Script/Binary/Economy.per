@@ -30,10 +30,7 @@
 	
 	#if gl-escrow-amount < gl-escrow-$resource
 	
-		up-get-fact $resource-amount 0 gl-escrow-amount
-		gl-escrow-amount min= gl-escrow-$resource
-		up-modify-escrow $resource g:= gl-escrow-amount
-		set-escrow-percentage $resource 100
+		set-escrow-percentage $resource 50
 	
 	#end-if
 

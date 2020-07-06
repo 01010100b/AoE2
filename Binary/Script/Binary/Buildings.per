@@ -97,6 +97,13 @@
 				gl-lerp-tiles = sn-minimum-town-size
 				;gl-lerp-tiles += 5
 				gl-zone-size = 10
+				
+				#if or (sn-superiority < HIGH) (building-type-count castle == 0)
+				
+					gl-lerp-tiles = 10
+					gl-zone-size = 10
+					
+				#end-if
 					
 			#end-if
 			
@@ -182,7 +189,7 @@
 	(set-strategic-number sn-minimum-town-size 35)
 )
 
-up-assign-builders c: town-center-foundation c: 6
+up-assign-builders c: town-center-foundation c: 4
 up-assign-builders c: castle c: 10
 ;up-assign-builders c: stable c: 2
 ;up-assign-builders c: archery-range c: 2
@@ -446,17 +453,6 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 			
 		#end-if
 		
-		var gl-needed-camps
-		up-get-fact unit-type-count villager-wood gl-needed-camps
-		gl-needed-camps z/= 10
-		gl-needed-camps max= 1
-		
-		#if up-object-type-count-total c: lumber-camp g:< gl-needed-camps
-		
-			gl-should-build = YES
-			
-		#end-if
-		
 		up-get-point position-self gl-point1
 		up-set-target-point gl-point1
 		up-full-reset-search
@@ -486,23 +482,11 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 
 	#foreach $ore in gold stone
 		
-		#if (can-build-with-escrow mining-camp) (up-pending-objects c: mining-camp == 0) (sn-$ore-gatherer-percentage > 0) (resource-found $ore) (dropsite-min-distance $ore < 250)
+		#if (can-build-with-escrow mining-camp) (up-pending-objects c: mining-camp == 0) (sn-$ore-gatherer-percentage > 0) (resource-found $ore) (dropsite-min-distance $ore < MAX-CAMP-DISTANCE)
 
 			var gl-should-build = NO
 		
 			#if dropsite-min-distance $ore > 2
-		
-				gl-should-build = YES
-			
-			#end-if
-			
-			var gl-needed-camps
-			up-get-fact unit-type-count villager-$ore gl-needed-camps
-			gl-needed-camps z/= 10
-			gl-needed-camps *= 2
-			gl-needed-camps max= 1
-			
-			#if up-object-type-count-total c: mining-camp g:< gl-needed-camps
 		
 				gl-should-build = YES
 			
@@ -516,10 +500,10 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 			up-find-resource c: $ore c: 20
 			up-get-search-state gl-search-state
 		
-			#if (gl-should-build == YES) (gl-remote-total < 2)
+			#if (gl-should-build == YES) (gl-remote-total < 5)
 		
 				gl-should-build = NO
-				sn-camp-max-distance += 2
+				sn-camp-max-distance += 3
 				;up-chat-data-to-self "Camp distance $ore %d" s: sn-camp-max-distance
 			
 			#end-if
@@ -627,104 +611,6 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 
 ;endregion
 
-; delete old camps
-
-#if timer-triggered ti-repeat-13
-
-	var gl-index
-	var gl-resources
-	
-	#if building-type-count lumber-camp > 3
-	
-		up-full-reset-search
-		up-find-local c: lumber-camp c: 10
-		up-get-search-state gl-search-state
-		
-		gl-index = GetRandomNumber(gl-local-total)
-		up-set-target-object search-local g: gl-index
-		up-get-point position-object gl-point1
-		up-set-target-point gl-point1
-		
-		up-filter-status c: status-ready c: list-active
-		up-filter-distance c: -1 c: CAMP-DELETION-DISTANCE
-		up-find-resource c: wood c: 20
-		up-get-search-state gl-search-state
-		
-		gl-resources = gl-remote-total
-		
-		up-filter-status c: status-resource c: list-active
-		up-filter-distance c: -1 c: CAMP-DELETION-DISTANCE
-		up-find-resource c: wood c: 20
-		up-get-search-state gl-search-state
-		
-		gl-resources += gl-remote-total
-		
-		up-reset-search 0 0 1 1
-		up-filter-distance c: -1 c: 10
-		up-find-remote c: watch-tower-line c: 5
-		up-get-search-state gl-search-state
-		
-		#if gl-remote-total > 0
-		
-			gl-resources = 0
-			
-		#end-if
-		
-		#if gl-resources == 0
-		
-			up-remove-objects search-local object-data-index g:!= gl-index
-			up-target-point gl-point1 action-delete -1 -1
-			;chat-local-to-self "Deleting lumber camp"
-			
-		#end-if
-		
-	#end-if
-	
-	#if building-type-count mining-camp > 3
-	
-		up-full-reset-search
-		up-find-local c: mining-camp c: 10
-		up-get-search-state gl-search-state
-		
-		gl-index = GetRandomNumber(gl-local-total)
-		up-set-target-object search-local g: gl-index
-		up-get-point position-object gl-point1
-		up-set-target-point gl-point1
-		
-		up-filter-status c: status-resource c: list-active
-		up-filter-distance c: -1 c: CAMP-DELETION-DISTANCE
-		
-		up-find-resource c: gold c: 20
-		up-get-search-state gl-search-state
-		gl-resources = gl-remote-total
-		
-		up-find-resource c: stone c: 20
-		up-get-search-state gl-search-state
-		gl-resources += gl-remote-total
-		
-		up-reset-search 0 0 1 1
-		up-filter-distance c: -1 c: 10
-		up-find-remote c: watch-tower-line c: 5
-		up-get-search-state gl-search-state
-		
-		#if gl-remote-total > 0
-		
-			;gl-resources = 0
-			
-		#end-if
-		
-		#if gl-resources == 0
-		
-			up-remove-objects search-local object-data-index g:!= gl-index
-			up-target-point gl-point1 action-delete -1 -1
-			;chat-local-to-self "Deleting mining camp"
-			
-		#end-if
-		
-	#end-if
-	
-#end-if
-
 ; placement 
 
 #if gl-currently-placing-building != OFF
@@ -748,6 +634,9 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 			
 			up-chat-data-to-self "At x: %d" g: gl-currently-placing-point-x
 			up-chat-data-to-self "At y: %d" g: gl-currently-placing-point-y
+			
+			sn-mill-max-distance += 1
+			;sn-camp-max-distance += 1
 		
 		#end-if
 		
@@ -755,7 +644,7 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 		up-get-fact game-time 0 gl-time
 		gl-time -= gl-started-placing
 		
-		#if gl-time > 90
+		#if (gl-time > 90) (false)
 		
 			up-reset-placement g: gl-currently-placing-building
 			chat-local-to-self "Reseting building placement"

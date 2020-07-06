@@ -17,6 +17,8 @@
 		
 		#end-if
 		
+		up-clean-search search-local -1 search-order-asc
+		
 		up-get-search-state gl-search-state
 		gl-units = gl-local-total
 	
@@ -37,6 +39,8 @@
 			up-find-remote s: sn-siege-unit c: 20
 		
 		#end-if
+		
+		up-clean-search search-remote -1 search-order-asc
 		
 		up-get-search-state gl-search-state
 		gl-units = gl-remote-total

@@ -80,18 +80,8 @@ sn-market-eco-balance = LOW
 	
 #end-if
 
-#if (sn-town-threat == HIGH) (sn-important-research == castle-age)
-
-	;sn-important-research = OFF
-	
-#end-if
-
-#if current-age >= feudal-age
-
-	TryImportantResearch(ri-double-bit-axe)
-	TryImportantResearch(ri-horse-collar)
-	
-#end-if
+TryImportantResearch(ri-double-bit-axe)
+TryImportantResearch(ri-horse-collar)
 
 #if (sn-town-threat < MEDIUM) (up-research-status c: castle-age c:>= research-pending) (research-completed ri-double-bit-axe) (research-completed ri-horse-collar)
 
@@ -114,7 +104,7 @@ sn-market-eco-balance = LOW
 	
 #end-if
 
-#if (building-type-count castle > 0) (building-type-count university > 0)
+#if (building-type-count-total castle > 0) (building-type-count university > 0)
 
 	TryImportantResearch(ri-murder-holes)
 	
@@ -215,9 +205,9 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 	#if up-object-type-count-total c: town-center s:>= sn-min-town-center
 	
 		sn-siege-unit = gl-my-siege-unit
-		sn-min-siege-unit = 5
+		sn-min-siege-unit = 3
 		
-		#if (unit-available trebuchet) (unit-type-count-total trebuchet-set < 5)
+		#if (unit-available trebuchet) (unit-type-count-total trebuchet-set < 3)
 	
 			sn-siege-unit = trebuchet
 		
@@ -331,8 +321,50 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 	
 #end-if
 
+; have at least 1 monk
 #if (building-type-count monastery > 0) (unit-type-count-total monk == 0) (sn-important-unit == OFF)
 
 	sn-important-unit = monk
+	
+#end-if
+
+; fill up army with trash
+#if (up-resource-amount amount-military-population s:< sn-recent-target-army) (housing-headroom > 3)
+
+	var gl-unit
+	var gl-train-site
+	
+	#foreach $unit in gl-my-primary-trash-unit gl-my-secondary-trash-unit
+	
+		up-get-object-type-data g: $unit object-data-type gl-unit
+		up-get-object-type-data g: gl-unit object-data-train-site gl-train-site
+	
+		#if up-train-site-ready g: gl-unit
+	
+			#if up-can-train gl-without-escrow g: gl-unit
+		
+				up-train gl-without-escrow g: gl-unit
+			
+			#end-if
+		
+		#else
+	
+			#if (up-pending-objects g: gl-train-site c:== 0) (timer-triggered ti-repeat-13)
+			
+				#if (or (gl-train-site == archery-range) (gl-train-site == stable)) (building-type-count-total barracks == 0)
+					
+					TryImportantBuilding(barracks, BUILDING-NORMAL, -1, -1)
+				
+				#else
+				
+					TryImportantBuilding(gl-train-site, BUILDING-NORMAL, -1, -1)
+					
+				#end-if
+				
+			#end-if
+		
+		#end-if
+	
+	#end-foreach
 	
 #end-if

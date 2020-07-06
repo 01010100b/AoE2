@@ -73,7 +73,7 @@ up-get-fact unit-type-count-total trade-cart gl-trade-carts
 gl-pop-cap -= gl-trade-carts
 gl-pop-cap max= 0
 
-#if (up-object-type-count-total c: villager g:< gl-pop-cap) (can-train-with-escrow villager)
+#if (up-object-type-count-total c: villager g:< gl-pop-cap) (can-train-with-escrow villager) (or (up-pending-objects c: villager c:== 0) (up-resource-amount amount-military-population s:>= sn-recent-target-army))
 
 	up-train gl-with-escrow c: villager
 	
@@ -89,14 +89,6 @@ gl-pop-cap max= 0
 		
 		disable-timer ti-next-villager
 		enable-timer ti-next-villager 22
-		
-	#end-if
-	
-	#if (sn-kill-excess-villagers == YES) (up-object-type-count c: villager g:> gl-pop-cap) (housing-headroom < 3)
-	
-		delete-unit villager
-		
-		chat-local-to-self "Killing villager"
 		
 	#end-if
 	
@@ -120,7 +112,21 @@ gl-pop-cap max= 0
 	
 #end-if
 
+#if (sn-kill-excess-villagers == YES) (up-object-type-count c: villager g:> gl-pop-cap) (housing-headroom < 3)
+	
+		delete-unit villager
+		
+		chat-local-to-self "Killing villager"
+		
+	#end-if
+
 ; Normal units
+
+var gl-pop
+gl-pop = sn-recent-target-army
+var gl-percentage = target-army-escrow
+gl-percentage *= 10
+gl-pop %*= gl-percentage
 
 #foreach $unit in primary-unit secondary-unit tertiary-unit siege-unit
 
@@ -138,17 +144,7 @@ gl-pop-cap max= 0
 			
 		#else
 		
-			var gl-min = sn-min-$unit
-			gl-min /= 4
-			gl-min max= 1
-			
-			var gl-pop
-			gl-pop = sn-recent-target-army
-			var gl-percentage = target-army-escrow
-			gl-percentage *= 10
-			gl-pop %*= gl-percentage
-			
-			#if (up-can-train gl-with-escrow g: gl-unit) (building-type-count castle < 4) (or (up-object-type-count-total s: sn-$unit g:< gl-min) (or (sn-town-threat == HIGH) (up-resource-amount amount-military-population g:< gl-pop)))
+			#if (up-can-train gl-with-escrow g: gl-unit) (building-type-count castle < 4) (or (sn-town-threat == HIGH) (up-resource-amount amount-military-population g:< gl-pop))
 			
 				up-train gl-with-escrow g: gl-unit
 				
@@ -161,6 +157,7 @@ gl-pop-cap max= 0
 	#end-if
 		
 #end-foreach
+
 
 #if (sn-siege-unit != OFF) (up-object-type-count-total s: sn-siege-unit s:< sn-min-siege-unit) (up-object-type-count c: trebuchet-set s:< sn-min-siege-unit)
 
@@ -181,6 +178,10 @@ gl-pop-cap max= 0
 	
 #end-if
 
+
+
+
+; trush defense
 up-get-point position-self gl-point1
 up-set-target-point gl-point1
 
@@ -195,7 +196,7 @@ up-find-remote c: watch-tower c: 1
 up-find-remote c: watch-tower-line c: 1
 up-get-search-state gl-search-state
 
-#if (or (gl-remote-total > 0) (sn-attack == NO)) (sn-siege-unit != OFF) (up-object-type-count-total s: sn-siege-unit < 3) (sn-important-unit == OFF)
+#if (gl-remote-total > 0) (sn-siege-unit != OFF) (up-object-type-count-total s: sn-siege-unit < 1) (sn-important-unit == OFF)
 
 	#if (building-type-count siege-workshop > 0) 
 

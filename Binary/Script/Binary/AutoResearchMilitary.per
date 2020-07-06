@@ -246,7 +246,7 @@ gl-cavalry-armor += gl-current-amount
 	up-get-fact unit-type-count-total cavalry-cannon-class gl-current-amount
 	gl-cavalry += gl-current-amount
 	
-	#if gl-cavalry >= 10
+	#if gl-cavalry >= 5
 	
 		TryImportantResearch(ri-bloodlines)
 		TryImportantResearch(ri-husbandry)
@@ -255,7 +255,7 @@ gl-cavalry-armor += gl-current-amount
 	
 #end-if
 
-#if (building-type-count barracks > 0) (unit-type-count-total infantry-class >= 10)
+#if (building-type-count barracks > 0) (unit-type-count-total infantry-class >= 5)
 
 	TryImportantResearch(ri-squires)
 	TryResearch(ri-tracking)
@@ -270,13 +270,13 @@ gl-cavalry-armor += gl-current-amount
 	up-get-fact unit-type-count-total cavalry-archer-class gl-current-amount
 	gl-archers += gl-current-amount
 	
-	#if gl-archers >= 10
+	#if gl-archers >= 5
 	
 		TryImportantResearch(ri-thumb-ring)
 		
 	#end-if
 	
-	#if unit-type-count-total cavalry-archer-class >= 10
+	#if unit-type-count-total cavalry-archer-class >= 5
 	
 		TryResearch(ri-parthian-tactics)
 		
@@ -295,6 +295,13 @@ gl-cavalry-armor += gl-current-amount
 	TryResearch(ri-block-printing)
 	TryResearch(ri-theocracy)
 	TryResearch(ri-faith)
+	
+#end-if
+
+#if (building-type-count monastery > 0) (sn-monk-threat == HIGH)
+
+	TryImportantResearch(ri-heresy)
+	TryImportantResearch(ri-faith)
 	
 #end-if
 
