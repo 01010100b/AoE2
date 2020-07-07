@@ -15,20 +15,30 @@ var gl-tc-in-use = sn-min-town-center
 #end-if
 	
 sn-min-food-gatherer = gl-tc-in-use
-sn-min-food-gatherer *= 8 ; 8 farms per tc
+sn-min-food-gatherer *= 7 ; 8 farms per tc
 sn-min-wood-gatherer = gl-tc-in-use
 sn-min-wood-gatherer *= 4 ; build farms and houses for new villagers
 
-sn-min-food-gatherer += 3
-sn-min-wood-gatherer += 6
+sn-min-food-gatherer += 7
+sn-min-wood-gatherer += 9
 
-sn-min-gold-gatherer = 3 ; get at least some gold to trade with
+sn-min-gold-gatherer = 2 ; get at least some gold to trade with
 
-#if current-age >= castle-age
-
-	sn-min-stone-gatherer = 2
+#if current-age >= feudal-age
+	
+	sn-min-food-gatherer -= 3
+	sn-min-wood-gatherer -= 1
+	sn-min-gold-gatherer += 4
+	sn-min-stone-gatherer = 3
+	
+	#if (up-research-status c: castle-age c:>= research-pending) (building-type-count-total castle == 0)
+	
+		sn-min-stone-gatherer = 7
+		
+	#end-if
 	
 #end-if
+
 
 up-setup-cost-data 1 gl-cost
 gl-cost-food += 100

@@ -173,7 +173,7 @@ var gl-update = NO
 	#foreach $commodity in food wood stone
 		
 		; buy it
-		#if (can-buy-commodity $commodity) (up-resource-amount amount-gold c:> 1000) (or (up-resource-amount amount-$commodity c:< 100) (up-resource-amount amount-$commodity g:< gl-escrow-$commodity)) 
+		#if (can-buy-commodity $commodity) (up-resource-amount amount-gold c:> 1300) (or (up-resource-amount amount-$commodity c:< 100) (up-resource-amount amount-$commodity g:< gl-escrow-$commodity)) 
 		
 			var gl-price
 			up-get-fact commodity-buying-price $commodity gl-price
@@ -189,7 +189,7 @@ var gl-update = NO
 		#end-if
 		
 		; sell it
-		#if (can-sell-commodity $commodity) (up-resource-amount amount-$commodity c:> 1000)
+		#if (can-sell-commodity $commodity) (up-resource-amount amount-$commodity c:> 1300)
 		
 			var gl-price
 			up-get-fact commodity-selling-price $commodity gl-price

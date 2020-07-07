@@ -15,3 +15,23 @@ gl-team-attacking = sn-attack
 var gl-target
 up-find-player enemy find-closest gl-target
 sn-target-player-number = gl-target
+
+#foreach $resource in food wood gold stone
+
+	#if $resource-amount > 1100
+	
+		#foreach $player in 1 2 3 4 5 6 7 8
+		
+			#if (player-in-game $player) (players-stance $player ally) (up-compare-const my-player-number != $player) (up-allied-resource-amount $player $resource < 500)
+			
+				tribute-to-player $player $resource 100
+				TryImportantResearch(ri-coinage)
+				TryImportantResearch(ri-banking)
+				
+			#end-if
+		
+		#end-foreach
+	
+	#end-if
+
+#end-foreach
