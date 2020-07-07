@@ -184,12 +184,19 @@
 
 	#if (up-building-type-in-town c: town-center == 0) (up-building-type-in-town c: castle == 0) (up-building-type-in-town c: watch-tower == 0)
 	
-		sn-maximum-town-size += 5
+		sn-maximum-town-size += 2
 		sn-maximum-town-size min= 1500
+		
+		#if (sn-maximum-town-size > 250) (military-population > 20)
+		
+			sn-total-number-explorers = 10
+			sn-number-explore-groups = 10
+			
+		#end-if
 	
 	#else
 	
-		#if timer-triggered ti-repeat-5
+		#if timer-triggered ti-repeat-7
 	
 			chat-local-to-self "Attacking..."
 		
@@ -202,7 +209,7 @@
 			; if I have siege
 			#if gl-units > 0
 		
-				; get siege unit closest to target
+				; get siege unit furthest away
 				up-get-point position-self gl-point1
 				up-set-target-point gl-point1
 				up-clean-search search-remote object-data-distance search-order-desc
@@ -212,7 +219,7 @@
 				
 				sn-focus-player-number = sn-target-player-number
 				up-full-reset-search
-				up-filter-distance c: -1 c: 20
+				up-filter-distance c: -1 c: 15
 				up-filter-include cmdid-military -1 -1 -1
 				up-find-remote c: -1 c: 40
 				up-get-search-state gl-search-state
@@ -251,7 +258,8 @@
 						
 				#else
 				
-					up-remove-objects search-local object-data-distance c:< 5
+					; guard our siege
+					up-remove-objects search-local object-data-distance c:< 10
 					up-target-objects 1 action-guard -1 -1
 				
 				#end-if
@@ -265,18 +273,20 @@
 #else
 	
 	#if timer-triggered ti-repeat-7
-	
 		var gl-units
-		; get siege units and move them to base
 		
 		up-full-reset-search
 		gl-units = GetSiegeUnits(search-local)
 		
-		up-get-point position-self gl-point1
-		up-set-target-point gl-point1
-		up-remove-objects search-local object-data-distance s:< sn-minimum-town-size
+		#if up-enemy-buildings-in-town == 0
 		
-		up-target-point gl-point1 action-move -1 -1
+			up-get-point position-self gl-point1
+			up-set-target-point gl-point1
+			up-remove-objects search-local object-data-distance s:< sn-minimum-town-size
+		
+			up-target-point gl-point1 action-move -1 -1
+		
+		#end-if
 		
 		var gl-mil-pop
 		up-get-fact military-population 0 gl-mil-pop
@@ -296,7 +306,7 @@
 			up-gather-inside c: stable c: 0
 			up-gather-inside c: siege-workshop c: 0
 			up-gather-inside c: castle c: 0
-
+			
 		#end-if
 		
 	#end-if
