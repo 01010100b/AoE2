@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameServer", "GameServer\Ga
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AocDatLib", "AocDatLib\AocDatLib.csproj", "{2323E0A6-0C17-4B56-9462-A07738E9746B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptCompiler", "ScriptCompiler\ScriptCompiler.csproj", "{CC8557DD-D5B9-4805-BFEE-0345540D54EC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,10 +49,6 @@ Global
 		{2323E0A6-0C17-4B56-9462-A07738E9746B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2323E0A6-0C17-4B56-9462-A07738E9746B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2323E0A6-0C17-4B56-9462-A07738E9746B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CC8557DD-D5B9-4805-BFEE-0345540D54EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CC8557DD-D5B9-4805-BFEE-0345540D54EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CC8557DD-D5B9-4805-BFEE-0345540D54EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CC8557DD-D5B9-4805-BFEE-0345540D54EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
