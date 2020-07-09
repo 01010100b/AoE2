@@ -40,7 +40,7 @@ sn-market-eco-balance = LOW
 		
 	#end-if
 	
-	#if building-type-count-total blacksmith == 0
+	#if (building-type-count-total blacksmith == 0) (building-type-count-total market > 0)
 	
 		TryImportantBuilding(blacksmith, BUILDING-NORMAL, -1, -1)
 		
@@ -78,7 +78,7 @@ TryImportantResearch(imperial-age)
 
 #if (up-research-status c: castle-age c:>= research-pending)
 
-	sn-min-town-center max= 4
+	sn-min-town-center max= 3
 	
 #end-if
 
@@ -86,37 +86,6 @@ TryImportantResearch(imperial-age)
 
 	TryImportantResearch(ri-murder-holes)
 	
-#end-if
-
-var gl-unit
-up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
-
-#if (or (sn-primary-unit == OFF) (up-train-site-ready g: gl-unit)) (up-object-type-count-total c: town-center s:>= sn-min-town-center)
-
-	#if (current-age >= feudal-age) (building-type-count-total market == 0) 
-
-		TryImportantBuilding(market, BUILDING-NORMAL, -1, -1)
-	
-	#end-if
-
-	#if (current-age >= feudal-age) (building-type-count-total blacksmith == 0) (building-type-count-total market > 0)
-
-		TryImportantBuilding(blacksmith, BUILDING-NORMAL, -1, -1)
-	
-	#end-if
-
-	#if (current-age >= castle-age) (building-type-count-total university == 0)
-
-		TryImportantBuilding(university, BUILDING-NORMAL, -1, -1)
-	
-	#end-if
-	
-	#if (current-age >= castle-age) (building-type-count-total monastery == 0) (building-type-count-total university > 0)
-
-		TryImportantBuilding(monastery, BUILDING-NORMAL, -1, -1)
-	
-	#end-if
-
 #end-if
 
 ; units

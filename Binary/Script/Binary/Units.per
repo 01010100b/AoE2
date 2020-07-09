@@ -73,7 +73,7 @@ up-get-fact unit-type-count-total trade-cart gl-trade-carts
 gl-pop-cap -= gl-trade-carts
 gl-pop-cap max= 0
 
-#if (up-object-type-count-total c: villager g:< gl-pop-cap) (can-train-with-escrow villager)
+#if (up-object-type-count-total c: villager g:< gl-pop-cap) (can-train-with-escrow villager) (sn-train-villagers == YES)
 
 	up-train gl-with-escrow c: villager
 	
