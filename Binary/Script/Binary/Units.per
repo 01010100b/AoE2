@@ -73,7 +73,7 @@ up-get-fact unit-type-count-total trade-cart gl-trade-carts
 gl-pop-cap -= gl-trade-carts
 gl-pop-cap max= 0
 
-#if (up-object-type-count-total c: villager g:< gl-pop-cap) (can-train-with-escrow villager) (or (up-pending-objects c: villager c:== 0) (up-resource-amount amount-military-population s:>= sn-recent-target-army))
+#if (up-object-type-count-total c: villager g:< gl-pop-cap) (can-train-with-escrow villager)
 
 	up-train gl-with-escrow c: villager
 	
@@ -114,11 +114,11 @@ gl-pop-cap max= 0
 
 #if (sn-kill-excess-villagers == YES) (up-object-type-count c: villager g:> gl-pop-cap) (housing-headroom < 3)
 	
-		delete-unit villager
+	delete-unit villager
 		
-		chat-local-to-self "Killing villager"
+	chat-local-to-self "Killing villager"
 		
-	#end-if
+#end-if
 
 ; Normal units
 
@@ -158,7 +158,7 @@ gl-pop %*= gl-percentage
 		
 #end-foreach
 
-
+; siege units
 #if (sn-siege-unit != OFF) (up-object-type-count-total s: sn-siege-unit s:< sn-min-siege-unit) (up-object-type-count c: trebuchet-set s:< sn-min-siege-unit)
 
 	var gl-escrow = without-escrow
@@ -187,7 +187,7 @@ up-find-player enemy find-closest gl-focus
 sn-focus-player-number = gl-focus
 
 up-full-reset-search
-up-filter-distance c: -1 s: sn-minimum-town-size
+up-filter-distance c: -1 s: sn-maximum-town-size
 up-find-remote c: castle c: 1
 up-find-remote c: watch-tower c: 1
 up-find-remote c: watch-tower-line c: 1
@@ -201,15 +201,7 @@ up-get-search-state gl-search-state
 	
 	#else
 	
-		#if building-type-count-total blacksmith == 0
-		
-			TryImportantBuilding(blacksmith, BUILDING-NORMAL, -1, -1)
-	
-		#else
-		
-			TryImportantBuilding(siege-workshop, BUILDING-NORMAL, -1, -1)
-		
-		#end-if
+		TryImportantBuilding(siege-workshop, BUILDING-NORMAL, -1, -1)
 		
 	#end-if
 	

@@ -2,19 +2,26 @@
 
 	var gl-researched = NO
 	
-	#if up-research-status g: gl-research-id == research-available
+	#if up-can-research gl-without-escrow g: gl-research-id
 	
-		gl-researched = TryResearch(gl-research-id)
-
-		#if gl-researched == NO
+		up-research gl-without-escrow g: gl-research-id
+		gl-researched = YES
 		
-			#if up-can-research gl-with-escrow g: gl-research-id
-			
-				up-research gl-with-escrow g: gl-research-id
-				gl-researched = YES
-				
-			#end-if
+		up-store-tech-name g: gl-research-id
+		up-chat-data-to-player my-player-number "Researched %s" c: 7031232
+		
+	#end-if
 	
+	#if (up-research-status g: gl-research-id == research-available) (gl-researched == NO)
+	
+		#if up-can-research gl-with-escrow g: gl-research-id
+			
+			up-research gl-with-escrow g: gl-research-id
+			gl-researched = YES
+			
+			up-store-tech-name g: gl-research-id
+			up-chat-data-to-player my-player-number "Researched %s" c: 7031232
+				
 		#end-if
 		
 		#if (gl-researched == NO) (sn-important-research == OFF)

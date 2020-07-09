@@ -79,6 +79,19 @@ var gl-update = NO
 		gl-$resource-gatherers %/= gl-total-gatherers
 		
 		sn-$resource-gatherer-percentage = gl-$resource-gatherers
+		
+		#if $resource-amount > 1000
+		
+			var gl-div
+			up-get-fact $resource-amount 0 gl-div
+			gl-div %/= 1000
+			gl-div max= 100
+			
+			sn-$resource-gatherer-percentage *= 100
+			sn-$resource-gatherer-percentage /= gl-div
+		
+		#end-if
+		
 		gl-total-percentage += sn-$resource-gatherer-percentage
 		
 	#end-foreach
@@ -203,7 +216,34 @@ var gl-update = NO
 			#end-if
 			
 		#end-if
+		
+		#if ($commodity-amount < 1000) (gold-amount > 5000) (can-buy-commodity $commodity)
+		
+			buy-commodity $commodity
+			
+		#end-if
+		
+		#if ($commodity-amount > 5000) (can-sell-commodity $commodity)
+		
+			sell-commodity $commodity
+			
+		#end-if
 	
 	#end-foreach
+	
+	; ensure stone for TC
+	#if (current-age >= castle-age) (stone-amount < 100) (gold-amount > 2000) (can-buy-commodity stone)
+	
+		buy-commodity stone
+		
+	#end-if
+	
+	; ensure stone for castle
+	
+	#if (current-age >= imperial-age) (stone-amount < 700) (gold-amount > 2000) (can-buy-commodity stone) (building-type-count-total castle == 0)
+	
+		buy-commodity stone
+		
+	#end-if
 	
 #end-if

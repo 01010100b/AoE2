@@ -12,10 +12,44 @@
 
 gl-team-attacking = sn-attack
 
+; set target player
 var gl-target
 up-find-player enemy find-closest gl-target
 sn-target-player-number = gl-target
 
+#if (military-population > 20) (civilian-population > 10)
+
+	var gl-target-mil
+	var gl-target-civ
+	up-get-target-fact military-population 0 gl-target-mil
+	up-get-target-fact civilian-population 0 gl-target-civ
+	
+	gl-target-mil *= 4
+	gl-target-civ *= 4
+	
+	#if (up-resource-amount amount-military-population g:> gl-target-mil) (up-resource-amount amount-civilian-population g:> gl-target-civ)
+	
+		var gl-max-score = -1
+		
+		#foreach $player in 1 2 3 4 5 6 7 8
+		
+			var gl-score
+			up-get-player-fact $player current-score 0 gl-score
+			#if (player-in-game $player) (players-stance $player enemy) (gl-score > gl-max-score)
+			
+				sn-target-player-number = $player
+				gl-max-score = gl-score
+		
+			#end-if
+		
+		#end-foreach
+	
+	#end-if
+
+#end-if
+
+
+; distribute extra resources
 #foreach $resource in food wood gold stone
 
 	#if $resource-amount > 1100

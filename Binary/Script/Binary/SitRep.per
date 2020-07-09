@@ -70,9 +70,9 @@ gl-difference -= gl-target-score
 		
 #end-if
 
-#if up-resource-amount amount-military-population s:< sn-target-army
+#if up-resource-amount amount-military-population s:< sn-recent-target-army
 
-	sn-superiority = LOW
+	sn-superiority max= MEDIUM
 	
 #end-if
 
@@ -100,24 +100,24 @@ up-get-fact building-type-in-town watch-tower-line gl-extra-in-town
 gl-extra-in-town *= 5
 gl-enemies-in-town += gl-extra-in-town
 
-#if gl-enemies-in-town >= 5
+#if gl-enemies-in-town >= 3
 
-	sn-town-threat = LOW
+	sn-town-threat max= LOW
 	
 #end-if
 
-#if gl-enemies-in-town >= 10
+#if gl-enemies-in-town >= 5
 
-	sn-town-threat = MEDIUM
+	sn-town-threat max= MEDIUM
 	
 #end-if
 
 var gl-military
 up-get-fact military-population 0 gl-military
 
-#if (gl-military < gl-enemies-in-town) (gl-enemies-in-town >= 3)
+#if (gl-military < gl-enemies-in-town)
 
-	sn-town-threat = HIGH
+	sn-town-threat max= HIGH
 	
 #end-if
 

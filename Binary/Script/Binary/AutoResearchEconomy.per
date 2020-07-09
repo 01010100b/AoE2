@@ -1,25 +1,6 @@
 ﻿; AUTO RESEARCH ECONOMY
 
-var gl-should-research = NO
-
-#if sn-primary-unit == OFF
-
-	gl-should-research = YES
-	
-#else
-
-	var gl-train-site
-	up-get-object-type-data s: sn-primary-unit object-data-train-site gl-train-site
-	
-	#if up-object-type-count-total g: gl-train-site c:> 0
-	
-		gl-should-research = YES
-		
-	#end-if
-	
-#end-if
-
-#if (gl-should-research == YES) (civilian-population >= 10)
+#if civilian-population >= 10
 
 	#if (building-type-count town-center > 0) (up-research-status c: castle-age != research-pending)
 	
@@ -29,7 +10,7 @@ var gl-should-research = NO
 	
 #end-if
 
-#if (up-research-status c: castle-age >= research-pending) (goal gl-should-research YES)
+#if up-research-status c: castle-age >= research-pending
 
 	#if building-type-count lumber-camp > 0
 	
@@ -52,7 +33,7 @@ var gl-should-research = NO
 		
 	#end-if
 	
-	#if (building-type-count mining-camp > 0) (unit-type-count villager-gold >= 10)
+	#if (building-type-count mining-camp > 0) (unit-type-count villager-gold >= 5)
 	
 		TryImportantResearch(ri-gold-mining)
 	
@@ -66,7 +47,7 @@ var gl-should-research = NO
 	
 #end-if
 
-#if (up-research-status c: imperial-age >= research-pending) (goal gl-should-research YES)
+#if up-research-status c: imperial-age >= research-pending
 	
 	#if (building-type-count market > 0) (or (unit-type-count trade-cart > 2) (unit-type-count trade-cog > 2))
 		
@@ -75,7 +56,7 @@ var gl-should-research = NO
 		
 	#end-if
 	
-	#if (building-type-count mining-camp > 0) (unit-type-count villager-gold >= 10) (unit-type-count villager-stone >= 10)
+	#if (building-type-count mining-camp > 0) (unit-type-count villager-gold >= 5) (unit-type-count villager-stone >= 5)
 	
 		TryResearch(ri-gold-shaft-mining)
 	
@@ -86,7 +67,7 @@ var gl-should-research = NO
 	
 #end-if
 
-#if (current-age >= imperial-age) (current-age-time >= 600) (goal gl-should-research YES)
+#if (current-age >= imperial-age) (current-age-time >= 600)
 
 	#if (building-type-count lumber-camp > 0)
 	
@@ -106,10 +87,10 @@ var gl-should-research = NO
 		
 	#end-if
 	
-	#if (building-type-count town-center >= 3)
+	#if (building-type-count town-center > 1)
 	
 		TryResearch(ri-town-watch)
-		;TryResearch(ri-town-patrol)
+		TryResearch(ri-town-patrol)
 	
 	#end-if
 	

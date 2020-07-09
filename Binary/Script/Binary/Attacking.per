@@ -23,6 +23,28 @@
 	(disable-self)
 )
 
+#function SetRetreatTargetObject
+
+	var gl-found = NO
+	
+	up-full-reset-search
+	up-find-local c: town-center c: 10
+	up-find-local c: castle c: 10
+	up-find-local c: watch-tower-line c: 10
+	up-get-search-state gl-search-state
+	
+	#if gl-local-total > 0
+	
+		up-get-point position-target gl-point1
+		up-set-target-point gl-point1
+		up-clean-search search-local object-data-distance search-order-asc
+		up-set-target-object search-local c: 0
+		gl-found = YES
+		
+	#end-if
+	
+#return gl-found
+
 (defrule
 	(true)
 =>
@@ -45,23 +67,7 @@
 #if (sn-attack == NO) (gl-currently-attacking == YES)
 
 	gl-currently-attacking = NO
-	
-	sn-maximum-town-size = sn-minimum-town-size
-			
-	up-full-reset-search
-	up-find-local c: town-center c: 10
-	up-find-local c: castle c: 10
-	up-find-local c: house c: 50
-	up-get-point position-self gl-point1
-	up-set-target-point gl-point1
-	up-clean-search search-local object-data-distance search-order-desc
-	up-set-target-object search-local c: 0
-	var gl-distance
-	up-get-object-data object-data-distance gl-distance
-	sn-maximum-town-size max= gl-distance
-	
-	sn-maximum-town-size += 5
-			
+				
 	sn-total-number-explorers = 1
 	sn-number-explore-groups = 1
 	
@@ -75,7 +81,7 @@
 
 	var gl-pop
 	var gl-pop-cap
-	var gl-mod = 90
+	var gl-mod = 70
 	
 	var gl-ally-attacked = -1
 	gl-ally-attacked = GetAllyAttacked()
@@ -111,7 +117,7 @@
 		
 	var gl-should-retreat = NO
 		
-	gl-pop-cap %*= 80
+	gl-pop-cap %*= 70
 	#if or (gl-pop < gl-pop-cap) (military-population < 15)
 		
 		gl-should-retreat = YES
@@ -129,37 +135,10 @@
 		gl-should-retreat = YES
 			
 	#end-if
-		
-	up-full-reset-search
-	up-find-local c: castle c: 10
-	up-find-local c: town-center c: 10
-	up-remove-objects search-local object-data-attack-timer c:< 10
-	up-get-search-state gl-search-state
-		
-	; a castle or tc was attacked recently
-	#if gl-local-total > 0
-		
-		up-clean-search search-local object-data-attack-timer search-order-desc
-		up-set-target-object search-local c: 0
-		var gl-hp
-		var gl-min-hp
-		up-get-object-data object-data-hitpoints gl-hp
-		up-get-object-data object-data-maxhp gl-min-hp
-		gl-min-hp /= 2
-		
-		; if it's lower than half health
-		#if gl-hp <= gl-min-hp
-		
-			;chat-local-to-self "Aborting attack due to counter attack"
-			gl-should-retreat = YES
-			
-		#end-if
-			
-	#end-if
 	
 	up-get-fact population 0 gl-pop
 	up-get-fact population-cap 0 gl-pop-cap
-	gl-pop += 5
+	gl-pop += 10
 	
 	#if gl-pop >= gl-pop-cap
 	
@@ -175,13 +154,14 @@
 	
 #end-if
 
-
 ; Unit Micro
 
 ;up-set-attack-stance -1 c: stance-defensive
 
 #if gl-currently-attacking == YES
 
+	chat-local-to-self "Attacking..."
+	
 	#if (up-building-type-in-town c: town-center == 0) (up-building-type-in-town c: castle == 0) (up-building-type-in-town c: watch-tower == 0)
 	
 		sn-maximum-town-size += 2
@@ -197,9 +177,7 @@
 	#else
 	
 		#if timer-triggered ti-repeat-7
-	
-			chat-local-to-self "Attacking..."
-		
+
 			var gl-units
 		
 			; get siege
@@ -209,17 +187,17 @@
 			; if I have siege
 			#if gl-units > 0
 		
-				; get siege unit furthest away
-				up-get-point position-self gl-point1
+				; get siege unit closest to target
+				up-get-point position-target gl-point1
 				up-set-target-point gl-point1
-				up-clean-search search-remote object-data-distance search-order-desc
+				up-clean-search search-remote object-data-distance search-order-asc
 				up-set-target-object search-remote c: 0
 				up-get-point position-object gl-point1
 				up-set-target-point gl-point1
 				
 				sn-focus-player-number = sn-target-player-number
 				up-full-reset-search
-				up-filter-distance c: -1 c: 15
+				up-filter-distance c: -1 c: 10
 				up-filter-include cmdid-military -1 -1 -1
 				up-find-remote c: -1 c: 40
 				up-get-search-state gl-search-state
@@ -259,7 +237,7 @@
 				#else
 				
 					; guard our siege
-					up-remove-objects search-local object-data-distance c:< 10
+					up-remove-objects search-local object-data-distance c:< 5
 					up-target-objects 1 action-guard -1 -1
 				
 				#end-if
@@ -271,8 +249,26 @@
 	#end-if
 
 #else
-	
+
 	#if timer-triggered ti-repeat-7
+	
+		; set maximum-town-size
+		up-full-reset-search
+		up-find-local c: town-center c: 10
+		up-find-local c: castle c: 10
+		up-find-local c: watch-tower-line c: 10
+		up-find-local c: house c: 50
+		up-find-local c: mill c: 50
+		up-get-point position-self gl-point1
+		up-set-target-point gl-point1
+		up-clean-search search-local object-data-distance search-order-desc
+		up-set-target-object search-local c: 0
+		var gl-distance
+		up-get-object-data object-data-distance gl-distance
+		sn-maximum-town-size = gl-distance
+	
+		sn-maximum-town-size += 5
+		
 		var gl-units
 		
 		up-full-reset-search
@@ -293,14 +289,16 @@
 		gl-mil-pop %*= 150
 		#if up-enemy-units-in-town g:> gl-mil-pop
 			
+			; hide in buildings
 			up-gather-inside c: barracks c: 1
 			up-gather-inside c: archery-range c: 1
 			up-gather-inside c: stable c: 1
 			up-gather-inside c: siege-workshop c: 1
 			up-gather-inside c: castle c: 1
-				
+			
 		#else
 			
+			; pop out
 			up-gather-inside c: barracks c: 0
 			up-gather-inside c: archery-range c: 0
 			up-gather-inside c: stable c: 0

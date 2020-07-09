@@ -76,7 +76,26 @@
 
 			var gl-zone-size
 			var gl-lerp-tiles
-			gl-zone-size = sn-minimum-town-size
+			
+			gl-zone-size = 20
+			#if current-age == feudal-age
+			
+				gl-zone-size = 25
+				
+			#end-if
+			
+			#if current-age == castle-age
+			
+				gl-zone-size = 30
+				
+			#end-if
+			
+			#if current-age == imperial-age
+			
+				gl-zone-size = 35
+				
+			#end-if
+			
 			gl-zone-size -= 10
 			gl-lerp-tiles = -10
 			
@@ -92,16 +111,17 @@
 				
 			#end-if
 			
-			#if gl-building == castle
+			#if or (gl-building == castle) (gl-building == watch-tower)
 			
-				gl-lerp-tiles = sn-minimum-town-size
-				;gl-lerp-tiles += 5
+				gl-lerp-tiles = gl-zone-size
+				
 				gl-zone-size = 10
 				
-				#if or (sn-superiority < HIGH) (building-type-count castle == 0)
+				#if or (true) (building-type-count castle == 0)
 				
-					gl-lerp-tiles = 10
-					gl-zone-size = 10
+					gl-lerp-tiles = sn-maximum-town-size
+					gl-lerp-tiles += 10
+					gl-zone-size = 5
 					
 				#end-if
 					
@@ -109,7 +129,7 @@
 			
 			#if gl-building == watch-tower
 			
-				gl-lerp-tiles = sn-minimum-town-size
+				gl-lerp-tiles = sn-maximum-town-size
 				gl-zone-size = 5
 				
 			#end-if
@@ -163,7 +183,6 @@
 	(set-strategic-number sn-mill-max-distance 20)
 	(set-strategic-number sn-camp-max-distance 20)
 	(set-strategic-number sn-cap-civilian-builders 4)
-	(set-strategic-number sn-minimum-town-size 20)
 	(up-modify-sn sn-object-repair-level c:+ 4096) ; repair towers
 	(disable-self)
 )
@@ -172,31 +191,39 @@
 	(current-age == feudal-age)
 =>
 	(set-strategic-number sn-cap-civilian-builders 8)
-	(set-strategic-number sn-minimum-town-size 25)
 )
 
 (defrule
 	(current-age == castle-age)
 =>
 	(set-strategic-number sn-cap-civilian-builders 12)
-	(set-strategic-number sn-minimum-town-size 30)
 )
 
 (defrule
 	(current-age == imperial-age)
 =>
 	(set-strategic-number sn-cap-civilian-builders 16)
-	(set-strategic-number sn-minimum-town-size 35)
 )
 
-up-assign-builders c: town-center-foundation c: 4
-up-assign-builders c: castle c: 10
-;up-assign-builders c: stable c: 2
-;up-assign-builders c: archery-range c: 2
-up-assign-builders c: market c: 2
-;up-assign-builders c: siege-workshop c: 2
-	
-#if sn-town-threat == HIGH
+#if timer-triggered ti-repeat-3m
+
+	up-assign-builders c: town-center-foundation c: 2
+	up-assign-builders c: castle c: 3
+	;up-assign-builders c: stable c: 2
+	;up-assign-builders c: archery-range c: 2
+	up-assign-builders c: market c: 2
+	;up-assign-builders c: siege-workshop c: 2
+
+#end-if
+
+up-full-reset-search
+up-find-local c: 224 c: 10 ; dead male vill
+up-find-local c: 211 c: 10 ; dead female vill
+up-find-local c: 225 c: 10 ; dead male builder
+up-find-local c: 213 c: 10 ; dead female builder
+up-get-search-state gl-search-state
+
+#if or (sn-town-threat == HIGH) (gl-local-total > 0)
 
 	up-assign-builders c: town-center-foundation c: 1
 	up-assign-builders c: castle c: 1
@@ -289,9 +316,10 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 	up-get-fact building-type-count-total town-center-foundation gl-foundations
 	gl-town-centers-needed -= gl-foundations
 		
-	#if up-object-type-count-total c: town-center g:< gl-town-centers-needed
+	#if (up-object-type-count-total c: town-center g:< gl-town-centers-needed)
 		
-		sn-important-building = town-center
+		sn-important-building = OFF
+		TryImportantBuilding(town-center, BUILDING-NORMAL, -1, -1)
 			
 	#end-if
 		
@@ -300,6 +328,13 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 ; Military buildings
 
 #if sn-auto-production-buildings == ON
+	
+	var gl-max-buildings = 1
+	var gl-civs
+	up-get-fact civilian-population 0 gl-civs
+	gl-civs -= 15
+	gl-civs /= 5
+	gl-max-buildings max= gl-civs
 	
 	#foreach $unit in primary-unit secondary-unit tertiary-unit siege-unit
 	
@@ -333,7 +368,7 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 			var gl-train-site
 			up-get-object-type-data g: gl-unit object-data-train-site gl-train-site
 			
-			#if (not (up-train-site-ready g: gl-unit)) (up-pending-objects g: gl-train-site c:== 0) (timer-triggered ti-repeat-13)
+			#if (not (up-train-site-ready g: gl-unit)) (up-object-type-count-total g: gl-train-site g:< gl-max-buildings) (up-pending-objects g: gl-train-site c:== 0) (timer-triggered ti-repeat-1m)
 			
 				TryImportantBuilding(gl-train-site, BUILDING-NORMAL, -1, -1)
 				
@@ -342,18 +377,6 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 		#end-if
 		
 	#end-foreach
-	
-	#if (military-population >= 5) (building-type-count-total barracks > 0) (building-type-count-total blacksmith == 0)
-	
-		TryImportantBuilding(blacksmith, BUILDING-NORMAL, -1, -1)
-		
-		#if (building-type-count-total blacksmith == 1) (current-age >= imperial-age)
-		
-			TryImportantBuilding(blacksmith, BUILDING-NORMAL, -1, -1)
-			
-		#end-if
-		
-	#end-if
 	
 #end-if
 
@@ -447,7 +470,7 @@ sn-camp-max-distance min= MAX-CAMP-DISTANCE
 	
 		var gl-should-build = NO
 		
-		#if dropsite-min-distance wood > 2
+		#if dropsite-min-distance wood > 1
 		
 			gl-should-build = YES
 			

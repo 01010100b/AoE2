@@ -18,81 +18,59 @@ var gl-my-eagle-warrior-counter
 
 sn-market-eco-balance = LOW
 
-#if or (sn-gold-availability <= LOW) (current-age >= imperial-age)
+; age up
 
-	sn-market-eco-balance = HIGH
+#if civilian-population > 10
+
+	TryImportantResearch(ri-loom)
 	
 #end-if
 
-; age up
-
-#if (civilian-population >= 23)
+#if research-completed ri-loom
 
 	TryImportantResearch(feudal-age)
 	
 #end-if
 
-#if (civilian-population >= 29)
+#if current-age >= feudal-age
 
-	var gl-age-up = YES
+	#if building-type-count-total market == 0
 	
-	#if (sn-primary-unit != OFF) (up-resource-amount amount-military-population s:< sn-recent-target-army)
-	
-		;gl-age-up = NO
+		TryImportantBuilding(market, BUILDING-NORMAL, -1, -1)
 		
 	#end-if
 	
-	#if can-research-with-escrow castle-age
+	#if building-type-count-total blacksmith == 0
 	
-		up-research gl-with-escrow c: castle-age
+		TryImportantBuilding(blacksmith, BUILDING-NORMAL, -1, -1)
 		
 	#end-if
-	
-	#if gl-age-up == YES
-	
-		TryImportantResearch(castle-age)
-	
-	#end-if
-	
+
 #end-if
 
-#if (civilian-population >= 45)
+TryImportantResearch(castle-age)
 
-	var gl-age-up = YES
+#if (current-age >= castle-age) (up-object-type-count c: town-center s:>= sn-min-town-center)
+
+	#if building-type-count-total monastery == 0
 	
-	#if (sn-primary-unit != OFF) (up-resource-amount amount-military-population s:< sn-recent-target-army)
-	
-		;gl-age-up = NO
+		TryImportantBuilding(monastery, BUILDING-NORMAL, -1, -1)
 		
 	#end-if
 	
-	#if can-research-with-escrow imperial-age
+	#if building-type-count-total university == 0
 	
-		up-research gl-with-escrow c: imperial-age
+		TryImportantBuilding(university, BUILDING-NORMAL, -1, -1)
 		
 	#end-if
-	
-	#if gl-age-up == YES
-	
-		TryImportantResearch(imperial-age)
-	
-	#end-if
-	
+
 #end-if
 
-TryImportantResearch(ri-double-bit-axe)
-TryImportantResearch(ri-horse-collar)
-
-#if (sn-town-threat < MEDIUM) (up-research-status c: castle-age c:>= research-pending) (research-completed ri-double-bit-axe) (research-completed ri-horse-collar)
-
-	TryImportantResearch(ri-gold-mining)
-	TryImportantResearch(ri-stone-mining)
-	
-#end-if
+TryImportantResearch(imperial-age)
 
 ; buildings
 
-#if (current-age >= castle-age) (can-build castle) (or (players-military-population any-enemy > 10) (up-object-type-count c: town-center s:>= sn-min-town-center))
+#if (current-age >= castle-age) (can-build castle) (up-object-type-count c: town-center s:>= sn-min-town-center)
 
 	BuildNormal(gl-without-escrow, castle)
 
@@ -100,7 +78,7 @@ TryImportantResearch(ri-horse-collar)
 
 #if (up-research-status c: castle-age c:>= research-pending)
 
-	sn-min-town-center max= 3
+	sn-min-town-center max= 4
 	
 #end-if
 
@@ -202,17 +180,13 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 	sn-primary-unit = gl-my-primary-unit
 	sn-secondary-unit = gl-my-secondary-unit
 	
-	#if up-object-type-count-total c: town-center s:>= sn-min-town-center
-	
-		sn-siege-unit = gl-my-siege-unit
-		sn-min-siege-unit = 3
+	sn-siege-unit = gl-my-siege-unit
+	sn-min-siege-unit = 3
 		
-		#if (unit-available trebuchet) (unit-type-count-total trebuchet-set < 3)
+	#if (unit-available trebuchet) (unit-type-count-total trebuchet-set < 3) (building-type-count castle > 0)
 	
-			sn-siege-unit = trebuchet
+		sn-siege-unit = trebuchet
 		
-		#end-if
-	
 	#end-if
 	
 	sn-min-primary-unit = 20
@@ -287,7 +261,7 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 	var gl-pop-cap
 	up-get-fact population-cap 0 gl-pop-cap
 	
-	var gl-mil = 95
+	var gl-mil = 100
 	gl-mil -= sn-civilian-population-percentage
 	gl-mil %*= gl-pop-cap
 	
@@ -328,8 +302,8 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 	
 #end-if
 
-; fill up army with trash
-#if (up-resource-amount amount-military-population s:< sn-recent-target-army) (housing-headroom > 3)
+; fill up army with trash if no gold
+#if (up-resource-amount amount-military-population s:< sn-recent-target-army) (housing-headroom > 3) (gold-amount < 100) (up-object-type-count c: town-center s:>= sn-min-town-center)
 
 	var gl-unit
 	var gl-train-site
@@ -346,20 +320,20 @@ up-get-object-type-data s: sn-primary-unit object-data-type gl-unit
 				up-train gl-without-escrow g: gl-unit
 			
 			#end-if
+			
+			#if (sn-town-threat == HIGH) (up-can-train gl-with-escrow g: gl-unit)
+			
+				chat-local-to-self "Training trash urgently"
+				
+				up-train gl-with-escrow g: gl-unit
+				
+			#end-if
 		
 		#else
 	
 			#if (up-pending-objects g: gl-train-site c:== 0) (timer-triggered ti-repeat-13)
 			
-				#if (or (gl-train-site == archery-range) (gl-train-site == stable)) (building-type-count-total barracks == 0)
-					
-					TryImportantBuilding(barracks, BUILDING-NORMAL, -1, -1)
-				
-				#else
-				
-					TryImportantBuilding(gl-train-site, BUILDING-NORMAL, -1, -1)
-					
-				#end-if
+				TryImportantBuilding(gl-train-site, BUILDING-NORMAL, -1, -1)
 				
 			#end-if
 		

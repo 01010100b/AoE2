@@ -15,36 +15,33 @@ var gl-tc-in-use = sn-min-town-center
 #end-if
 	
 sn-min-food-gatherer = gl-tc-in-use
-sn-min-food-gatherer *= 7 ; 8 farms per tc
+sn-min-food-gatherer *= 8 ; 8 farms per tc
 sn-min-wood-gatherer = gl-tc-in-use
 sn-min-wood-gatherer *= 4 ; build farms and houses for new villagers
 
-sn-min-food-gatherer += 7
-sn-min-wood-gatherer += 9
-
-sn-min-gold-gatherer = 2 ; get at least some gold to trade with
+sn-min-food-gatherer += 5
+sn-min-wood-gatherer += 5
 
 #if current-age >= feudal-age
+
+	sn-min-gold-gatherer max= 2 ; get at least some gold
+
+#end-if
+
+#if up-research-status c: castle-age c:>= research-pending
+
+	sn-min-gold-gatherer max= 4
+	sn-min-stone-gatherer max= 3
 	
-	sn-min-food-gatherer -= 3
-	sn-min-wood-gatherer -= 1
-	sn-min-gold-gatherer += 4
-	sn-min-stone-gatherer = 3
+	#if building-type-count-total castle == 0
 	
-	#if (up-research-status c: castle-age c:>= research-pending) (building-type-count-total castle == 0)
-	
-		sn-min-stone-gatherer = 7
+		sn-min-stone-gatherer max= 7
 		
 	#end-if
 	
 #end-if
 
-
 up-setup-cost-data 1 gl-cost
-gl-cost-food += 100
-gl-cost-wood += 100
-gl-cost-gold += 50
-gl-cost-stone += 20
 
 ; lack of resources
 	
@@ -87,14 +84,14 @@ gl-total-cost += gl-cost-stone
 	
 	gl-cost-$resource %/= gl-total-cost
 	sn-percentage-extra-$resource = gl-cost-$resource
-		
+
 #end-foreach
 
 #if civilian-population <= 23
 
 	sn-min-food-gatherer = 6
 	sn-min-wood-gatherer = 4
-	sn-min-gold-gatherer = 3
+	sn-min-gold-gatherer = 2
 	sn-min-stone-gatherer = 0
 	sn-percentage-extra-food = 60
 	sn-percentage-extra-wood = 40

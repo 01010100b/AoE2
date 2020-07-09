@@ -36,8 +36,8 @@
 		
 	#end-foreach
 	
-	up-store-tech-name g: gl-current-important-research
-	up-chat-data-to-self "Saving up for research: %s" c: 7031232
+	;up-store-tech-name g: gl-current-important-research
+	;up-chat-data-to-self "Saving up for research: %s" c: 7031232
 	
 #end-if
 
@@ -56,7 +56,7 @@
 	up-research gl-with-escrow g: gl-current-important-research
 	
 	up-store-tech-name g: gl-current-important-research
-	up-chat-data-to-self "Researching: %s" c: 7031232
+	up-chat-data-to-self "Researched %s" c: 7031232
 	
 	gl-current-important-research = OFF
 	sn-important-research = OFF

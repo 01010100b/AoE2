@@ -1,5 +1,6 @@
 ﻿; BINARY
 
+; parameters (auto-optimized)
 (defconst target-army-escrow 8)
 (defconst use-offensive-priority 1)
 (defconst use-knight-counter 1)
@@ -42,7 +43,7 @@
 	(true)
 =>
 	(set-goal gl-team-id BINARY-ID)
-	(chat-to-all "Binary v0.3")
+	(chat-to-all "Binary v0.4")
 	(disable-self)
 )
 
@@ -155,8 +156,11 @@
 
 #end-if
 
-(load "Binary\Research")
+#if or (current-age < castle-age) (up-object-type-count c: town-center s:>= sn-min-town-center)
 
+	(load "Binary\Research")
+
+#end-if
 
 (load "Binary\Buildings")
 
@@ -203,6 +207,12 @@ up-set-target-point gl-point1
 		up-get-object-type-data s: sn-important-unit object-data-upgrade-type gl-unit
 		up-store-type-name g: gl-unit
 		up-chat-data-to-player my-player-number "Important unit: %s" c: 7031232
+		
+	#end-if
+	
+	#if sn-town-threat == HIGH
+	
+		chat-local-to-self "Town threat high"
 		
 	#end-if
 	
