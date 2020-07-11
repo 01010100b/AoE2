@@ -17,13 +17,7 @@
 
 (load "Binary\PublicInterface")
 
-(defconst gl-ran-everything 7)
-(defrule
-	(true)
-=>
-	(set-goal gl-ran-everything TRUE)
-	(disable-self)
-)
+#defglobal gl-ran-everything = TRUE
 
 (defrule
 	(not (goal gl-ran-everything TRUE))

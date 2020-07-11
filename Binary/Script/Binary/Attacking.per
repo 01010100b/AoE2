@@ -305,6 +305,34 @@
 			up-gather-inside c: siege-workshop c: 0
 			up-gather-inside c: castle c: 0
 			
+			#if up-enemy-units-in-town c:>= 3
+			
+				up-full-reset-search
+				up-get-point position-self gl-point1
+				up-set-target-point gl-point1
+				up-filter-distance c: -1 s: sn-maximum-town-size
+				up-filter-include cmdid-military -1 -1 -1
+				up-find-remote c: -1 c: 40
+				up-get-search-state gl-search-state
+				
+				#if gl-remote-total > 0
+				
+					up-clean-search search-remote object-data-distance search-order-asc
+					up-remove-objects search-remote object-data-index c:>= 3
+					
+					gl-units = GetAvailableMilitary(search-local)
+					#if gl-units > 5
+					
+						up-clean-search search-local object-data-distance search-order-asc
+						up-remove-objects search-local object-data-index c:>= 10
+						up-target-objects 0 action-default -1 -1
+						
+					#end-if
+					
+				#end-if
+				
+			#end-if
+			
 		#end-if
 		
 	#end-if
