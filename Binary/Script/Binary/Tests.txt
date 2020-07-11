@@ -14,3 +14,8 @@ train_percentage[knight] = outputs[knight]
 train_percentage[archer] = outputs[archer]
 train_percentage[spear] = outputs[spear]
 train_percentage[mangonel] = outputs[mangonel]
+
+speeds and ticks/min
+10 = 20
+fast = 100
+normal = 120
