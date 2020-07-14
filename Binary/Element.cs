@@ -83,7 +83,7 @@ namespace Binary
         {
             if (Code.Length > 255)
             {
-                var lines = ActualCode.Split('\n', '\r');
+                var lines = Code.Split('\n', '\r');
                 var new_lines = new List<string>();
 
                 foreach (var line in lines)
