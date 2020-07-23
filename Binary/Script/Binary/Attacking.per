@@ -160,12 +160,16 @@
 
 #if gl-currently-attacking == YES
 
-	chat-local-to-self "Attacking..."
+	#if timer-triggered ti-repeat-7
+	
+		chat-local-to-self "Attacking..."
+	
+	#end-if
 	
 	#if (up-building-type-in-town c: town-center == 0) (up-building-type-in-town c: castle == 0) (up-building-type-in-town c: watch-tower == 0)
 	
 		sn-maximum-town-size += 2
-		sn-maximum-town-size min= 1500
+		sn-maximum-town-size min= 1000
 		
 		#if (sn-maximum-town-size > 250) (military-population > 20)
 		
