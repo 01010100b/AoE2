@@ -81,6 +81,7 @@ namespace Binary
 
         public void Compactify()
         {
+            Code = ActualCode;
             if (Code.Length > 255)
             {
                 var lines = Code.Split('\n', '\r');

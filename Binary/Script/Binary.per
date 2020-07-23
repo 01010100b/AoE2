@@ -97,7 +97,7 @@
 )
 
 (defrule
-	(unit-type-count livestock-class > 0)
+	(or (unit-type-count livestock-class > 0) (game-time > 120))
 =>
 	(enable-timer ti-sheep-found 10)
 	(up-get-point position-self gl-point1)
